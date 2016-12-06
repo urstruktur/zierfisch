@@ -4,28 +4,32 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL32.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class ShaderBuilder {
 	
 	private int vertexShader = Integer.MIN_VALUE;
 	private int fragmentShader = Integer.MIN_VALUE;
 	private int geometryShader = Integer.MIN_VALUE;
 	
-	ShaderBuilder setVertexShader(String src) {
-		vertexShader = compile(src, GL_VERTEX_SHADER);
+	public ShaderBuilder setVertexShader(String srcFilePath) {
+		vertexShader = compile(srcFilePath, GL_VERTEX_SHADER);
 		return this;
 	}
 	
-	ShaderBuilder setFragmentShader(String src) {
-		fragmentShader = compile(src, GL_FRAGMENT_SHADER);
+	public ShaderBuilder setFragmentShader(String srcFilePath) {
+		fragmentShader = compile(srcFilePath, GL_FRAGMENT_SHADER);
 		return this;
 	}
 	
-	ShaderBuilder setGeometryShader(String src) {
-		geometryShader = compile(src, GL_GEOMETRY_SHADER);
+	public ShaderBuilder setGeometryShader(String srcFilePath) {
+		geometryShader = compile(srcFilePath, GL_GEOMETRY_SHADER);
 		return this;
 	}
 	
-	Shader build() {
+	public Shader build() {
 		if(vertexShader == Integer.MIN_VALUE || fragmentShader == Integer.MIN_VALUE) {
 			throw new RuntimeException("At least vertex and fragment shader are required");
 		}
@@ -67,7 +71,17 @@ public class ShaderBuilder {
         }
 	}
 	
-	int compile(String shaderSource, int shaderType) {
+	private String load(String path) {
+		try {
+			return String.join("\n", Files.readAllLines(Paths.get(path)));
+		} catch (IOException e) {
+			throw new RuntimeException("Loading shader source failed", e);
+		}
+	}
+	
+	public int compile(String shaderSourceFilePath, int shaderType) {
+		String shaderSource = load(shaderSourceFilePath);
+		
         int shader = glCreateShader(shaderType);
         glShaderSource(shader, shaderSource);
         glCompileShader(shader);
@@ -77,8 +91,9 @@ public class ShaderBuilder {
         glGetShaderiv(shader, GL_COMPILE_STATUS, isCompiled);
         
         if(isCompiled[0] == GL_FALSE) {
+        	String log = glGetShaderInfoLog(shader);
         	glDeleteShader(shader);
-        	throw new RuntimeException("Error occurred compiling shader:\n" + glGetShaderInfoLog(shader));
+        	throw new RuntimeException(shaderSourceFilePath + "\nError occurred compiling shader:\n" + log);
         }
         
         return shader;
