@@ -15,7 +15,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			GLFWErrorCallback.createPrint(System.err).set();
-			if (glfwInit()) {
+			if (!glfwInit()) {
 	            throw new IllegalStateException("Error initializing GLFW");
 	        }
 
