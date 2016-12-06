@@ -8,9 +8,13 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
+import com.zierfisch.shader.Shader;
+import com.zierfisch.shader.ShaderBuilder;
+
 public class Main {
 
 	private static long window;
+	private static Shader shader;
 
 	public static void main(String[] args) {
 		try {
@@ -39,6 +43,13 @@ public class Main {
 
 			// Make the window visible
 			glfwShowWindow(window);
+			
+			// This line is critical for LWJGL's interoperation with GLFW's
+			// OpenGL context, or any context that is managed externally.
+			// LWJGL detects the context that is current in the current thread,
+			// creates the GLCapabilities instance and makes the OpenGL
+			// bindings available for use.
+			GL.createCapabilities();
 
 			init();
 			loop();
@@ -53,17 +64,12 @@ public class Main {
 	}
 
 	private static void init() {
-		
+		shader = new ShaderBuilder().setVertexShader("assets/shaders/cc/cc.vert.glsl")
+		                            .setFragmentShader("assets/shaders/cc/cc.frag.glsl")
+		                            .build();
 	}
 
 	private static void loop() {
-		// This line is critical for LWJGL's interoperation with GLFW's
-		// OpenGL context, or any context that is managed externally.
-		// LWJGL detects the context that is current in the current thread,
-		// creates the GLCapabilities instance and makes the OpenGL
-		// bindings available for use.
-		GL.createCapabilities();
-
 		// Set the clear color
 		glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 

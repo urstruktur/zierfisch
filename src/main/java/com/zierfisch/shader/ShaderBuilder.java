@@ -73,7 +73,7 @@ public class ShaderBuilder {
 	
 	private String load(String path) {
 		try {
-			return String.join("", Files.readAllLines(Paths.get(path)));
+			return String.join("\n", Files.readAllLines(Paths.get(path)));
 		} catch (IOException e) {
 			throw new RuntimeException("Loading shader source failed", e);
 		}
@@ -91,8 +91,9 @@ public class ShaderBuilder {
         glGetShaderiv(shader, GL_COMPILE_STATUS, isCompiled);
         
         if(isCompiled[0] == GL_FALSE) {
+        	String log = glGetShaderInfoLog(shader);
         	glDeleteShader(shader);
-        	throw new RuntimeException("Error occurred compiling shader:\n" + glGetShaderInfoLog(shader));
+        	throw new RuntimeException(shaderSourceFilePath + "\nError occurred compiling shader:\n" + log);
         }
         
         return shader;
