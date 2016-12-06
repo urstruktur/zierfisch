@@ -1,0 +1,46 @@
+import org.gradle.internal.os.OperatingSystem
+
+apply plugin: 'application'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+
+mainClassName = "com.zierfisch.Main"
+
+switch ( OperatingSystem.current() ) {
+	case OperatingSystem.WINDOWS:
+		project.ext.lwjglNatives = "natives-windows"
+		break
+	case OperatingSystem.LINUX:
+		project.ext.lwjglNatives = "natives-linux"
+	break
+	case OperatingSystem.MAC_OS:
+		project.ext.lwjglNatives = "natives-macos"
+		break
+}
+
+project.ext.lwjglVersion = "3.1.0"
+project.ext.jomlVersion = "1.9.0"
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile "org.lwjgl:lwjgl:${lwjglVersion}"
+	compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}"
+	compile "org.lwjgl:lwjgl-jemalloc:${lwjglVersion}"
+	compile "org.lwjgl:lwjgl-nuklear:${lwjglVersion}"
+	compile "org.lwjgl:lwjgl-openal:${lwjglVersion}"
+	compile "org.lwjgl:lwjgl-opencl:${lwjglVersion}"
+	compile "org.lwjgl:lwjgl-opengl:${lwjglVersion}"
+	compile "org.lwjgl:lwjgl-stb:${lwjglVersion}"
+	runtime "org.lwjgl:lwjgl:${lwjglVersion}:${lwjglNatives}"
+	runtime "org.lwjgl:lwjgl-glfw:${lwjglVersion}:${lwjglNatives}"
+	runtime "org.lwjgl:lwjgl-jemalloc:${lwjglVersion}:${lwjglNatives}"
+	runtime "org.lwjgl:lwjgl-nuklear:${lwjglVersion}:${lwjglNatives}"
+	runtime "org.lwjgl:lwjgl-openal:${lwjglVersion}:${lwjglNatives}"
+	runtime "org.lwjgl:lwjgl-stb:${lwjglVersion}:${lwjglNatives}"
+	compile "org.joml:joml:${jomlVersion}"
+}
