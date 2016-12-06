@@ -40,6 +40,7 @@ public class Main {
 			// Make the window visible
 			glfwShowWindow(window);
 
+			init();
 			loop();
 	        
 	        glfwFreeCallbacks(window);
@@ -48,6 +49,10 @@ public class Main {
 			glfwTerminate();
 			//glfwSetErrorCallback(null).free();
 		}
+		
+	}
+
+	private static void init() {
 		
 	}
 
