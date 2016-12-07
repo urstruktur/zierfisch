@@ -4,12 +4,9 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-import org.joml.Matrix4f;
-
 import com.zierfisch.app.ApplicationListener;
 import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
-import com.zierfisch.util.GLErrors;
 
 import xyz.krachzack.gfx.assets.CuboidMaker;
 import xyz.krachzack.gfx.mesh.Mesh;
@@ -19,8 +16,9 @@ import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 public class Zierfisch implements ApplicationListener {
 
-	private Shader shader;
-	private Mesh cuboid;
+	private static Shader shader;
+	private static Mesh cuboid;
+	private static Mesh objMesh;
 	private Matrix4f scale = new Matrix4f();
 	
 	@Override
@@ -34,8 +32,16 @@ public class Zierfisch implements ApplicationListener {
 
 		MeshBuilder builder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
 		CuboidMaker cuboidMaker = new CuboidMaker();
-		
 		cuboid = cuboidMaker.make(builder, 0.5);
+		
+		ObjImporter importer = new ObjImporter();
+		try {
+			importer.load("assets/models/pascal.obj");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
+		objMesh = importer.make(objBuilder);
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
@@ -68,5 +74,6 @@ public class Zierfisch implements ApplicationListener {
 		shader.setUniform("u_model", scale);
 		
 		shader.render(cuboid);
+		shader.render(objMesh);
 	}
 }
