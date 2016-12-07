@@ -4,9 +4,14 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
+import java.io.IOException;
+
+import org.joml.Matrix4f;
+
 import com.zierfisch.app.ApplicationListener;
 import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
+import com.zierfisch.util.ObjImporter;
 
 import xyz.krachzack.gfx.assets.CuboidMaker;
 import xyz.krachzack.gfx.mesh.Mesh;
