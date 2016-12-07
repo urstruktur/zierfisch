@@ -62,11 +62,11 @@ public class ShaderBuilder {
         } else {
         	//Always detach shaders after a successful link.
             glDetachShader(shaderProgram, vertexShader);
-            glDetachShader(shaderProgram, vertexShader);
+            glDetachShader(shaderProgram, fragmentShader);
             if(geometryShader != Integer.MIN_VALUE) {
                 glDetachShader(shaderProgram, geometryShader);
             }
-
+            
             return new Shader(shaderProgram);
         }
 	}

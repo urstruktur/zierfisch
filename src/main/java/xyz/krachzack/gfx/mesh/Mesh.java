@@ -1,8 +1,13 @@
 package xyz.krachzack.gfx.mesh;
 
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.glGetError;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import com.zierfisch.vbo.VBO;
 
 import xyz.krachzack.gfx.mesh.Primitive;
 
@@ -11,12 +16,41 @@ public class Mesh {
 	private int[] indexes;
 	private Primitive type;
 	private VertexAttribute[] attributes;
+	private VBO vertexBuffer;
+	private VBO indexBuffer;
 	
 	public Mesh(float[] vertices, int[] indexes, Primitive type, VertexAttribute... attributes) {
 		this.vertices = vertices;
 		this.indexes = indexes;
 		this.type = type;
 		this.attributes = attributes;
+	}
+	
+	/**
+	 * Uploads the contents of vertices and indexes into vertex bufer objects.
+	 */
+	public void upload() {
+		vertexBuffer = new VBO();
+		vertexBuffer.setContents(vertices);
+		
+		indexBuffer = new VBO();
+		indexBuffer.setContents(indexes);
+	}
+	
+	public VBO getVertexBuffer() {
+		if(vertexBuffer == null) {
+			upload();
+		}
+		
+		return vertexBuffer;
+	}
+	
+	public VBO getIndexBuffer() {
+		if(indexBuffer == null) {
+			upload();
+		}
+		
+		return indexBuffer;
 	}
 	
 	public List<VertexAttribute> getAttributes() {

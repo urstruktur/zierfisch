@@ -1,6 +1,13 @@
 package com.zierfisch.vbo;
 
-import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+
+import com.zierfisch.util.GLErrors;
 
 public class VBO {
 
@@ -22,19 +29,50 @@ public class VBO {
 		verifyHasContents();
 		glBindBuffer(target, name);
 	}
-	
+
+	/**
+	 * Sets the contents of this buffer to the given float array.
+	 * 
+	 * Note that this leaves this VBO bound to GL_ARRAY_BUFFER as a side effect.
+	 * 
+	 * @param data
+	 */
 	public void setContents(float[] data) {
 		name = glGenBuffers();
 		target = GL_ARRAY_BUFFER;
 		glBindBuffer(target, name);
-        glBufferData(name, data, GL_STATIC_DRAW);
+        glBufferData(target, data, GL_STATIC_DRAW);
+        GLErrors.check();
 	}
 	
+	/**
+	 * Sets the contents of this buffer to the given short array.
+	 * 
+	 * Note that this leaves this VBO bound to GL_ELEMENT_ARRAY_BUFFER as a side effect.
+	 * 
+	 * @param data
+	 */
 	public void setContents(short[] data) {
 		name = glGenBuffers();
 		target = GL_ELEMENT_ARRAY_BUFFER;
 		glBindBuffer(target, name);
-        glBufferData(name, data, GL_STATIC_DRAW);
+        glBufferData(target, data, GL_STATIC_DRAW);
+        GLErrors.check();
+	}
+	
+	/**
+	 * Sets the contents of this buffer to the given short array.
+	 * 
+	 * Note that this leaves this VBO bound to GL_ELEMENT_ARRAY_BUFFER as a side effect.
+	 * 
+	 * @param data
+	 */
+	public void setContents(int[] data) {
+		name = glGenBuffers();
+		target = GL_ELEMENT_ARRAY_BUFFER;
+		glBindBuffer(target, name);
+        glBufferData(target, data, GL_STATIC_DRAW);
+        GLErrors.check();
 	}
 
 }

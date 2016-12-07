@@ -3,6 +3,7 @@ package com.zierfisch;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -10,11 +11,19 @@ import org.lwjgl.opengl.GL;
 
 import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
+import com.zierfisch.util.GLErrors;
+
+import xyz.krachzack.gfx.assets.CuboidMaker;
+import xyz.krachzack.gfx.mesh.Mesh;
+import xyz.krachzack.gfx.mesh.MeshBuilder;
+import xyz.krachzack.gfx.mesh.Primitive;
+import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 public class Main {
 
 	private static long window;
 	private static Shader shader;
+	private static Mesh cuboid;
 
 	public static void main(String[] args) {
 		try {
@@ -64,9 +73,22 @@ public class Main {
 	}
 
 	private static void init() {
+		int vao = glGenVertexArrays();
+		glBindVertexArray(vao);
+		
 		shader = new ShaderBuilder().setVertexShader("assets/shaders/cc/cc.vert.glsl")
 		                            .setFragmentShader("assets/shaders/cc/cc.frag.glsl")
 		                            .build();
+		
+		MeshBuilder builder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
+		CuboidMaker cuboidMaker = new CuboidMaker();
+		
+		cuboid = cuboidMaker.make(builder, 0.5);
+		cuboid.upload();
+	}
+	
+	private static void render() {
+		shader.render(cuboid);
 	}
 
 	private static void loop() {
@@ -78,6 +100,8 @@ public class Main {
 		while ( !glfwWindowShouldClose(window) ) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
+			render();
+			
 			glfwSwapBuffers(window); // swap the color buffers
 
 			// Poll for window events. The key callback above will only be
