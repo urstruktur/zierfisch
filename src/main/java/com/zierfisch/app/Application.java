@@ -42,10 +42,19 @@ public class Application {
 	private long window;
 	private boolean exitScheduled = false;
 	private ApplicationListener listener;
-	private String title;
+	private String title = "Mysterious Window";
+	/** The initial width of the window, may change later */
+	private int windowWidth = 1000;
+	/** The initial height of the window, may change later */
+	private int windowHeight = 600;
 	
 	public Application(ApplicationListener listener) {
 		this.listener = listener;
+	}
+	
+	public void setWindowSize(int width, int height) {
+		this.windowWidth = width;
+		this.windowHeight = height;
 	}
 	
 	public void setTitle(String title) {
@@ -70,7 +79,7 @@ public class Application {
 	}
 	
 	private void initWindow() {
-		window = glfwCreateWindow(640, 480, "zierfisch", 0, 0);
+		window = glfwCreateWindow(windowWidth, windowHeight, title, 0, 0);
         if (window == 0) {
         	throw new IllegalStateException("Error creating GLFW window");
         }
