@@ -1,8 +1,7 @@
 package xyz.krachzack.gfx.mesh;
 
-import at.fhooe.mtd.sgl.math.Vector2d;
-import at.fhooe.mtd.sgl.math.Vector3d;
-import xyz.krachzack.gfx.render.Primitive;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public abstract class AbstractMeshBuilder implements MeshBuilder {
 
@@ -87,12 +86,12 @@ public abstract class AbstractMeshBuilder implements MeshBuilder {
 	}
 
 	@Override
-	public int addPosition(Vector2d attributeValue) {
+	public int addPosition(Vector2f attributeValue) {
 		return addAttribute(ATTR_POSITIONS, attributeValue);
 	}
 	
 	@Override
-	public int addPosition(Vector3d attributeValue) {
+	public int addPosition(Vector3f attributeValue) {
 		return addAttribute(ATTR_POSITIONS, attributeValue);
 	}
 	
@@ -107,7 +106,7 @@ public abstract class AbstractMeshBuilder implements MeshBuilder {
 	}
 	
 	@Override
-	public int addNormal(Vector3d attributeValue) {
+	public int addNormal(Vector3f attributeValue) {
 		return addAttribute(ATTR_NORMALS, attributeValue);
 	}
 	
@@ -122,12 +121,12 @@ public abstract class AbstractMeshBuilder implements MeshBuilder {
 	}
 	
 	@Override
-	public int addTexCoords(Vector2d attributeValue) {
+	public int addTexCoords(Vector2f attributeValue) {
 		return addAttribute(ATTR_TEX_COORDS, attributeValue);
 	}
 	
 	@Override
-	public int addTexCoords(Vector3d attributeValue) {
+	public int addTexCoords(Vector3f attributeValue) {
 		return addAttribute(ATTR_TEX_COORDS, attributeValue);
 	}
 	
@@ -142,7 +141,7 @@ public abstract class AbstractMeshBuilder implements MeshBuilder {
 	}
 	
 	@Override
-	public int addTangent(Vector3d attributeValue) {
+	public int addTangent(Vector3f attributeValue) {
 		return addAttribute(ATTR_TANGENTS, attributeValue);
 	}
 	
@@ -157,7 +156,7 @@ public abstract class AbstractMeshBuilder implements MeshBuilder {
 	}
 	
 	@Override
-	public int addBitangent(Vector3d attributeValue) {
+	public int addBitangent(Vector3f attributeValue) {
 		return addAttribute(ATTR_BITANGENTS, attributeValue);
 	}
 	
@@ -172,7 +171,7 @@ public abstract class AbstractMeshBuilder implements MeshBuilder {
 	}
 	
 	@Override
-	public int addColor(Vector3d attributeValue) {
+	public int addColor(Vector3f attributeValue) {
 		return addAttribute(ATTR_COLORS, attributeValue);
 	}
 	
@@ -195,7 +194,7 @@ public abstract class AbstractMeshBuilder implements MeshBuilder {
 		}
 	}*/
 
-	private int addAttribute(int attributeMask, Vector2d attributeValue) {
+	private int addAttribute(int attributeMask, Vector2f attributeValue) {
 		if(isIrrelevant(attributeMask)) {
 			return -1;
 		} else {
@@ -205,7 +204,7 @@ public abstract class AbstractMeshBuilder implements MeshBuilder {
 		}
 	}
 
-	private int addAttribute(int attributeMask, Vector3d attributeValue) {
+	private int addAttribute(int attributeMask, Vector3f attributeValue) {
 		if(isIrrelevant(attributeMask)) {
 			return -1;
 		} else {

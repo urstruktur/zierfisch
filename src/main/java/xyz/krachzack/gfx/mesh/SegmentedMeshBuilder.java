@@ -7,8 +7,6 @@ import java.util.List;
 import com.carrotsearch.hppc.DoubleArrayList;
 import com.carrotsearch.hppc.IntArrayList;
 
-import xyz.krachzack.gfx.render.Primitive;
-
 /**
  * <p>
  * Builds meshes with the attributes stored tightly packed one attribute after

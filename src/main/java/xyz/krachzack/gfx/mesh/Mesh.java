@@ -4,10 +4,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import at.fhooe.mtd.ecs.Component;
-import xyz.krachzack.gfx.render.Primitive;
+import xyz.krachzack.gfx.mesh.Primitive;
 
-public class Mesh extends Component {
+public class Mesh {
 	private float[] vertices;
 	private int[] indexes;
 	private Primitive type;

@@ -1,7 +1,7 @@
 package xyz.krachzack.gfx.mesh;
 
-import at.fhooe.mtd.sgl.math.Vector2d;
-import at.fhooe.mtd.sgl.math.Vector3d;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public interface MeshBuilder {
 
@@ -15,41 +15,41 @@ public interface MeshBuilder {
 	 * @param attributeValue
 	 * @return
 	 */
-	int addPosition(Vector2d attributeValue);
+	int addPosition(Vector2f attributeValue);
 
-	int addPosition(Vector3d attributeValue);
+	int addPosition(Vector3f attributeValue);
 
 	int addPosition(double... attributeValue);
 
 	int addPosition(double[] attributeValue, int offset, int length);
 
-	int addNormal(Vector3d attributeValue);
+	int addNormal(Vector3f attributeValue);
 
 	int addNormal(double... attributeValue);
 
 	int addNormal(double[] attributeValue, int offset, int length);
 
-	int addTexCoords(Vector2d attributeValue);
+	int addTexCoords(Vector2f attributeValue);
 
-	int addTexCoords(Vector3d attributeValue);
+	int addTexCoords(Vector3f attributeValue);
 
 	int addTexCoords(double... attributeValue);
 
 	int addTexCoords(double[] attributeValue, int offset, int length);
 
-	int addColor(Vector3d attributeValue);
+	int addColor(Vector3f attributeValue);
 
 	int addColor(double... attributeValue);
 
 	int addColor(double[] attributeValue, int offset, int length);
 
-	int addTangent(Vector3d attributeValue);
+	int addTangent(Vector3f attributeValue);
 
 	int addTangent(double... attributeValue);
 
 	int addTangent(double[] attributeValue, int offset, int length);
 
-	int addBitangent(Vector3d attributeValue);
+	int addBitangent(Vector3f attributeValue);
 
 	int addBitangent(double... attributeValue);
 

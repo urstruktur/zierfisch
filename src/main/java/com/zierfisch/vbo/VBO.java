@@ -9,7 +9,7 @@ public class VBO {
 	
 	private void verifyHasContents() {
 		if(name == Integer.MIN_VALUE) {
-			throw new RuntimeException("Trying to use buffer with no contents");
+			throw new RuntimeException("Trying to use buffer that has no contents set");
 		}
 	}
 	
