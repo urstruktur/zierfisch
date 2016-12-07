@@ -52,33 +52,47 @@ public class Shader {
 	}
 	
 	public void setUniform(int location, int value) {
-		glUniform1i(location, value);
+		if(location != -1) {
+			glUniform1i(location, value);
+		}
 	}
 	
 	public void setUniform(int location, float value) {
-		glUniform1f(location, value);
+		if(location != -1) {
+			glUniform1f(location, value);
+		}
 	}
 	
 	public void setUniform(int location, Vector2f value) {
-		glUniform2f(location, value.x, value.y);
+		if(location != -1) {
+			glUniform2f(location, value.x, value.y);
+		}
 	}
 	
 	public void setUniform(int location, Vector3f value) {
-		glUniform3f(location, value.x, value.y, value.z);
+		if(location != -1) {
+			glUniform3f(location, value.x, value.y, value.z);
+		}
 	}
 	
 	public void setUniform(int location, Vector4f value) {
-		glUniform4f(location, value.x, value.y, value.z, value.w);
+		if(location != -1) {
+			glUniform4f(location, value.x, value.y, value.z, value.w);
+		}
 	}
 	
 	public void setUniform(int location, Matrix4f value) {
-		tmp4x4Buf.clear();
-		glUniformMatrix4fv(location, false, value.get(tmp4x4Buf));
+		if(location != -1) {
+			tmp4x4Buf.clear();
+			glUniformMatrix4fv(location, false, value.get(tmp4x4Buf));
+		}
 	}
 	
 	public void setUniform(int location, Matrix3f value) {
-		tmp4x4Buf.clear();
-		glUniformMatrix4fv(location, false, value.get(tmp4x4Buf));
+		if(location != -1) {
+			tmp4x4Buf.clear();
+			glUniformMatrix4fv(location, false, value.get(tmp4x4Buf));
+		}
 	}
 	
 	public void setUniform(String uniformName, int value) {
@@ -118,8 +132,6 @@ public class Shader {
 	}
 	
 	public void render(Mesh mesh) {
-		bind();
-		
 		VBO vertexBuffer = mesh.getVertexBuffer();
 		VBO indexBuffer = mesh.getIndexBuffer();
 		

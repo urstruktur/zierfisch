@@ -18,8 +18,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -109,9 +108,8 @@ public class Application {
 		ensureGlfwLoaded();
 		setWindowHints();
 		initWindow();
-		initContext();
-		
 		glfwShowWindow(window);
+		initContext();
 		
 		listener.enter();
 		while(!glfwWindowShouldClose(window) && !exitScheduled) {
