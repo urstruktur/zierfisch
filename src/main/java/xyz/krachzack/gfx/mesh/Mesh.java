@@ -1,15 +1,10 @@
 package xyz.krachzack.gfx.mesh;
 
-import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
-import static org.lwjgl.opengl.GL11.glGetError;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import com.zierfisch.vbo.VBO;
-
-import xyz.krachzack.gfx.mesh.Primitive;
 
 public class Mesh {
 	private float[] vertices;
