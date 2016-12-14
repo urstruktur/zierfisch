@@ -1,0 +1,14 @@
+# Blender MTL File: 'zierfisch.blend'
+# Material Count: 1
+
+newmtl Material.001
+Ns 15.686275
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd fish-diffuse.png
+map_Ke fish-emission.png
