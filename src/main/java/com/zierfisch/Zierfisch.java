@@ -67,6 +67,7 @@ public class Zierfisch implements ApplicationListener {
 		System.out.println(rotation);
 		
 		//scale.rotateY(rotation);
+		scale.identity();
 		scale.scale((sine + 1) / 2.0f);
 	}
 

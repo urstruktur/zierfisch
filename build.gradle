@@ -26,6 +26,10 @@ project.ext.jomlVersion = "1.9.0"
 
 repositories {
 	mavenCentral()
+
+	// repos for ashley ECS
+	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
 }
 
 dependencies {
@@ -48,5 +52,6 @@ dependencies {
 	compile "org.joml:joml:${jomlVersion}"
 	// High performance primitive collections:
 	compile group: 'com.carrotsearch', name: 'hppc', version: '0.3.4'
-
+	// Ashley Entity Component System
+	compile "com.badlogicgames.ashley:ashley:1.7.3"
 }
