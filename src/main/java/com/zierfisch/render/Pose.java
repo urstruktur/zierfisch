@@ -35,6 +35,8 @@ public class Pose implements Component {
 	public float scale = 1.0f;
 	public Quaternionf orientation = new Quaternionf();
 	public boolean dirty = false;
+	public Vector3f velocity = new Vector3f();
+	public Vector3f acceleration = new Vector3f();
 	
 	private Matrix4f model = new Matrix4f();
 
