@@ -28,20 +28,14 @@ public interface ApplicationListener {
 
 	/**
 	 * <p>
-	 * Called on each iteration of the main loop right before render.
+	 * Called on each iteration of the main loop.
 	 * </p>
 	 * 
 	 * <p>
-	 * The method is intended for updating the state of the application prior to presenting
-	 * a frame.
+	 * The method is intended for updating the state of the application
+	 * and then presenting it as a new frame to show the current state
+	 * of the application.
 	 * </p>
 	 */
-	void update();
-
-	/**
-	 * <p>
-	 * Renders the current state of the application.
-	 * </p>
-	 */
-	void render();
+	void update(float dt);
 }

@@ -1,9 +1,13 @@
 package com.zierfisch.render;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL21.*;
 import static org.lwjgl.opengl.GL30.*;
+
+import java.io.IOException;
 
 import org.joml.Matrix4f;
 
@@ -16,6 +20,10 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
+import com.zierfisch.tex.Texture;
+import com.zierfisch.tex.TextureLoader;
+import com.zierfisch.util.GLErrors;
+import com.zierfisch.util.ObjImporter;
 
 import xyz.krachzack.gfx.assets.CuboidMaker;
 import xyz.krachzack.gfx.mesh.Mesh;
@@ -35,7 +43,7 @@ public class RenderSystem extends EntitySystem {
 	 * shaders. If uninitialized, holds -1.
 	 */
 	private int vao = -1;
-	
+
 	private Shader lastShader;
 
 	private Shader defaultShader;
@@ -43,7 +51,7 @@ public class RenderSystem extends EntitySystem {
 	@Override
 	public void addedToEngine(Engine engine) {
 		super.addedToEngine(engine);
-
+		
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 
@@ -51,14 +59,14 @@ public class RenderSystem extends EntitySystem {
 
 		initDefaultShader();
 
-		//addTestEntities();
+		addTestEntities();
 	}
 
 	private void initDefaultShader() {
 		defaultShader = new ShaderBuilder()
-				            .setVertexShader("assets/shaders/cc/cc.vert.glsl")
-				            .setFragmentShader("assets/shaders/cc/cc.frag.glsl")
-				            .build();
+				.setVertexShader("assets/shaders/cc/cc.vert.glsl")
+				.setFragmentShader("assets/shaders/cc/cc.frag.glsl")
+				.build();
 	}
 
 	private void addTestEntities() {
@@ -69,19 +77,31 @@ public class RenderSystem extends EntitySystem {
 	public Entity makeCubeEntity() {
 		Entity ent = new Entity();
 		ent.add(new Pose());
+		ent.getComponent(Pose.class).setScale(1.0f);
 		ent.add(makeDefaultGestalt());
 		return ent;
 	}
 
 	private Component makeDefaultGestalt() {
+		ObjImporter importer = new ObjImporter();
+		try {
+			importer.load("assets/models/frontcal.obj");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
+		Mesh mesh = importer.make(objBuilder);
+		
 		MeshBuilder builder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
 		CuboidMaker cuboidMaker = new CuboidMaker();
 		Mesh cuboid = cuboidMaker.make(builder, 0.5);
 
 		Gestalt gestalt = new Gestalt();
 
-		gestalt.mesh = cuboid;
+		gestalt.mesh = mesh;
 		gestalt.shader = null;
+		gestalt.texture0 = new TextureLoader().load("assets/textures/fins.png");
 
 		return gestalt;
 	}
@@ -97,9 +117,11 @@ public class RenderSystem extends EntitySystem {
 	@Override
 	public void update(float deltaTime) {
 		super.update(deltaTime);
+		
+		System.out.println("UPDAATE");
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+
 		for (int i = 0; i < entities.size(); ++i) {
 			Entity entity = entities.get(i);
 			Pose pose = pm.get(entity);
@@ -110,23 +132,48 @@ public class RenderSystem extends EntitySystem {
 	}
 
 	private void render(Pose pose, Gestalt gestalt) {
-		Matrix4f model = pose.getModel();
 		Shader shader = selectShader(gestalt);
-		
+
 		if (shader != lastShader) {
 			shader.bind();
 		}
 
-		shader.setUniform("u_model", model);
+		System.out.println("rendering");
+		setTextureUniforms(shader, gestalt);
+		setMatrixUniforms(shader, pose);
 		shader.render(gestalt.mesh);
 
 		lastShader = shader;
 	}
 
+	private void setTextureUniforms(Shader shader, Gestalt gestalt) {
+		setTextureUniform(shader, gestalt.texture0, 0);
+		setTextureUniform(shader, gestalt.texture1, 1);
+		setTextureUniform(shader, gestalt.texture2, 2);
+		setTextureUniform(shader, gestalt.texture3, 3);
+		setTextureUniform(shader, gestalt.texture4, 4);
+	}
+
+	public void setTextureUniform(Shader shader, Texture tex, int offset) {
+		if(tex != null) {
+			int loc = shader.getUniformLocation("texture" + offset);
+			if(loc != -1) {
+				shader.setUniform(loc, offset);
+				glActiveTexture(GL_TEXTURE0 + offset);
+				tex.bind();
+			}
+		}
+	}
+
+	public void setMatrixUniforms(Shader shader, Pose pose) {
+		Matrix4f model = pose.getModel();
+		shader.setUniform("u_model", model);
+	}
+
 	public Shader selectShader(Gestalt gestalt) {
 		Shader shader = gestalt.shader;
-		
-		if(shader == null) {
+
+		if (shader == null) {
 			shader = defaultShader;
 		}
 
