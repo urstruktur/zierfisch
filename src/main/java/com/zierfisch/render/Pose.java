@@ -33,46 +33,68 @@ public class Pose implements Component {
 	 * </p>
 	 */
 	public float scale = 1.0f;
+	/**
+	 * <p>
+	 * Holds the orientation for calculation of the rotation matrix.
+	 * </p>
+	 * 
+	 * <p>
+	 * You can change this orientation directly, but do not forget to call
+	 * <code>smut()</code> after, or the new orientation will not be applied
+	 * immediately.
+	 * </p>
+	 */
 	public Quaternionf orientation = new Quaternionf();
+	/**
+	 * If <code>true</code> the model matrix of the pose is out of sync with the
+	 * rest of the transform properties and must be recalculated when next
+	 * accessed with <code>getModel()</code>.
+	 */
 	public boolean dirty = false;
-	
+	/**
+	 * Holds the model matrix that applies all transformations specified in the
+	 * pose transform parameters. If <code>dirty</code> the model matrix must be
+	 * recalculated.
+	 */
 	private Matrix4f model = new Matrix4f();
 
 	public void setScale(float scale) {
 		this.scale = scale;
-		dirty = true;
+		smut();
 	}
 
 	public void setPosition(Vector3f position) {
 		this.position.set(position);
-		dirty = true;
+		smut();
 	}
 
 	public void setOrientation(Quaternionf orientation) {
 		this.orientation.set(orientation);
-		dirty = true;
+		smut();
 	}
 
 	public void smut() {
 		dirty = true;
 	}
 
-	public void clean() {
+	private void clean() {
 		dirty = false;
 	}
 
 	public boolean isDirty() {
 		return dirty;
 	}
-	
+
 	public Matrix4f getModel() {
-		if(dirty) {
+		if (dirty) {
 			model.identity();
 			model.translate(position);
 			model.rotate(orientation);
 			model.scale(scale);
+			
+			clean();
 		}
-		
+
 		return model;
 	}
 
