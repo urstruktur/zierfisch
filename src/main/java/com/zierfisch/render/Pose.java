@@ -56,6 +56,9 @@ public class Pose implements Component {
 	 * pose transform parameters. If <code>dirty</code> the model matrix must be
 	 * recalculated.
 	 */
+	public Vector3f velocity = new Vector3f();
+	public Vector3f acceleration = new Vector3f();
+	
 	private Matrix4f model = new Matrix4f();
 
 	public void setScale(float scale) {
