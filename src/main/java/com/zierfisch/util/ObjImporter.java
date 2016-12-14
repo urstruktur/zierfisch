@@ -33,15 +33,18 @@ public class ObjImporter {
 			meshBuilder.addFace(
 					meshBuilder.addVertex(
 							meshBuilder.addPosition(face.vertices.get(0).v.x, face.vertices.get(0).v.y, face.vertices.get(0).v.z),
-							meshBuilder.addNormal(face.vertices.get(0).n.x, face.vertices.get(0).n.y, face.vertices.get(0).n.z)
+							meshBuilder.addNormal(face.vertices.get(0).n.x, face.vertices.get(0).n.y, face.vertices.get(0).n.z),
+							meshBuilder.addTexCoords(face.vertices.get(0).t.u, face.vertices.get(0).t.v)
 					),
 					meshBuilder.addVertex(
 							meshBuilder.addPosition(face.vertices.get(1).v.x, face.vertices.get(1).v.y, face.vertices.get(1).v.z),
-							meshBuilder.addNormal(face.vertices.get(1).n.x, face.vertices.get(1).n.y, face.vertices.get(1).n.z)
-					),
+							meshBuilder.addNormal(face.vertices.get(1).n.x, face.vertices.get(1).n.y, face.vertices.get(1).n.z),
+							meshBuilder.addTexCoords(face.vertices.get(1).t.u, face.vertices.get(1).t.v)
+							),
 					meshBuilder.addVertex(
 							meshBuilder.addPosition(face.vertices.get(2).v.x, face.vertices.get(2).v.y, face.vertices.get(2).v.z),
-							meshBuilder.addNormal(face.vertices.get(2).n.x, face.vertices.get(2).n.y, face.vertices.get(2).n.z)
+							meshBuilder.addNormal(face.vertices.get(2).n.x, face.vertices.get(2).n.y, face.vertices.get(2).n.z),
+							meshBuilder.addTexCoords(face.vertices.get(2).t.u, face.vertices.get(2).t.v)
 					)
 			);
 			
