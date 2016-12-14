@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL11;
 
 import com.badlogic.ashley.core.Engine;
 import com.zierfisch.app.ApplicationListener;
@@ -52,7 +53,9 @@ public class Zierfisch implements ApplicationListener {
 
 	private void initEngine() {
 		 engine = new Engine();
-		 engine.addSystem(new RenderSystem());
+		 
+		 RenderSystem sys = new RenderSystem();
+		 engine.addSystem(sys);
 	}
 
 	@Override
@@ -62,7 +65,7 @@ public class Zierfisch implements ApplicationListener {
 	static long startTime = System.currentTimeMillis();
 
 	@Override
-	public void update() {
+	public void update(float dt) {
 		float secs = (System.currentTimeMillis() - startTime) / 1000.0f;
 		float sine = (float) Math.sin(secs);
 		float rotation = (float) (sine * Math.PI);
@@ -71,18 +74,7 @@ public class Zierfisch implements ApplicationListener {
 		scale.identity();
 		scale.scale((sine + 1) / 2.0f);
 		
-		engine.update(16.0f);
-	}
-
-	@Override
-	public void render() {
-		
-		
-		/*shader.bind();
-		
-		shader.setUniform("u_model", scale);
-		
-		shader.render(cuboid);
-		shader.render(objMesh);*/
+		GL11.glClearColor(0.5f, 0.5f, 0.6f, 1.0f);
+		engine.update(dt);
 	}
 }

@@ -96,31 +96,59 @@ public class Shader {
 	}
 	
 	public void setUniform(String uniformName, int value) {
-		setUniform(getUniformLocation(uniformName), value);
+		int loc = getUniformLocation(uniformName);
+		
+		if(loc != -1) {
+			setUniform(getUniformLocation(uniformName), value);
+		}
 	}
 	
 	public void setUniform(String uniformName, float value) {
-		setUniform(getUniformLocation(uniformName), value);
+		int loc = getUniformLocation(uniformName);
+		
+		if(loc != -1) {
+			setUniform(getUniformLocation(uniformName), value);
+		}
 	}
 	
 	public void setUniform(String uniformName, Vector2f value) {
-		setUniform(getUniformLocation(uniformName), value);
+		int loc = getUniformLocation(uniformName);
+		
+		if(loc != -1) {
+			setUniform(getUniformLocation(uniformName), value);
+		}
 	}
 	
 	public void setUniform(String uniformName, Vector3f value) {
-		setUniform(getUniformLocation(uniformName), value);
+		int loc = getUniformLocation(uniformName);
+		
+		if(loc != -1) {
+			setUniform(getUniformLocation(uniformName), value);
+		}
 	}
 	
 	public void setUniform(String uniformName, Vector4f value) {
-		setUniform(getUniformLocation(uniformName), value);
+		int loc = getUniformLocation(uniformName);
+		
+		if(loc != -1) {
+			setUniform(getUniformLocation(uniformName), value);
+		}
 	}
 	
 	public void setUniform(String uniformName, Matrix3f value) {
-		setUniform(getUniformLocation(uniformName), value);
+		int loc = getUniformLocation(uniformName);
+		
+		if(loc != -1) {
+			setUniform(getUniformLocation(uniformName), value);
+		}
 	}
 	
 	public void setUniform(String uniformName, Matrix4f value) {
-		setUniform(getUniformLocation(uniformName), value);
+		int loc = getUniformLocation(uniformName);
+		
+		if(loc != -1) {
+			setUniform(getUniformLocation(uniformName), value);
+		}
 	}
 	
 	public int getUniformLocation(String uniformName) {
