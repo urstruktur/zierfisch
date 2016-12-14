@@ -115,8 +115,7 @@ public class Application {
 		while(!glfwWindowShouldClose(window) && !exitScheduled) {
 			glfwPollEvents();
 			
-			listener.update();
-			listener.render();
+			listener.update(16.0f);
 			
 			glfwSwapBuffers(window);
 
