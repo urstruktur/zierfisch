@@ -34,20 +34,13 @@ public class Zierfisch implements ApplicationListener {
 		int vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 		
-		shader = new ShaderBuilder().setVertexShader("assets/shaders/cc/cc.vert.glsl")
-                                    .setFragmentShader("assets/shaders/cc/cc.frag.glsl")
-                                    .build();
-
-		MeshBuilder builder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
-		CuboidMaker cuboidMaker = new CuboidMaker();
-		cuboid = cuboidMaker.make(builder, 0.5);
-		
 		ObjImporter importer = new ObjImporter();
 		try {
 			importer.load("assets/models/pascal.obj");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
 		objMesh = importer.make(objBuilder);
 		
@@ -74,22 +67,22 @@ public class Zierfisch implements ApplicationListener {
 		float sine = (float) Math.sin(secs);
 		float rotation = (float) (sine * Math.PI);
 		
-		System.out.println(rotation);
-		
 		//scale.rotateY(rotation);
 		scale.identity();
 		scale.scale((sine + 1) / 2.0f);
+		
+		engine.update(16.0f);
 	}
 
 	@Override
 	public void render() {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		shader.bind();
+		
+		/*shader.bind();
 		
 		shader.setUniform("u_model", scale);
 		
 		shader.render(cuboid);
-		shader.render(objMesh);
+		shader.render(objMesh);*/
 	}
 }
