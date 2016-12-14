@@ -85,7 +85,7 @@ public class RenderSystem extends EntitySystem {
 	private Component makeDefaultGestalt() {
 		ObjImporter importer = new ObjImporter();
 		try {
-			importer.load("assets/models/frontcal.obj");
+			importer.load("assets/models/zierfisch.obj");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -101,7 +101,7 @@ public class RenderSystem extends EntitySystem {
 
 		gestalt.mesh = mesh;
 		gestalt.shader = null;
-		gestalt.texture0 = new TextureLoader().load("assets/textures/fins.png");
+		gestalt.texture0 = new TextureLoader().load("assets/textures/fish-diffuse.png");
 
 		return gestalt;
 	}
@@ -118,8 +118,6 @@ public class RenderSystem extends EntitySystem {
 	public void update(float deltaTime) {
 		super.update(deltaTime);
 		
-		System.out.println("UPDAATE");
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		for (int i = 0; i < entities.size(); ++i) {
@@ -138,7 +136,6 @@ public class RenderSystem extends EntitySystem {
 			shader.bind();
 		}
 
-		System.out.println("rendering");
 		setTextureUniforms(shader, gestalt);
 		setMatrixUniforms(shader, pose);
 		shader.render(gestalt.mesh);
