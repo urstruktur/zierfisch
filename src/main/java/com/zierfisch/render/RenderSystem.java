@@ -7,6 +7,8 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL21.*;
 import static org.lwjgl.opengl.GL30.*;
 
+import java.io.IOException;
+
 import org.joml.Matrix4f;
 
 import com.badlogic.ashley.core.Component;
@@ -21,6 +23,7 @@ import com.zierfisch.shader.ShaderBuilder;
 import com.zierfisch.tex.Texture;
 import com.zierfisch.tex.TextureLoader;
 import com.zierfisch.util.GLErrors;
+import com.zierfisch.util.ObjImporter;
 
 import xyz.krachzack.gfx.assets.CuboidMaker;
 import xyz.krachzack.gfx.mesh.Mesh;
@@ -54,13 +57,9 @@ public class RenderSystem extends EntitySystem {
 
 		entities = engine.getEntitiesFor(Family.all(Pose.class, Gestalt.class).get());
 
-		System.out.println("initing shader");
 		initDefaultShader();
 
-		System.out.println("adding test entities");
 		addTestEntities();
-		
-		System.out.println("added test entities");
 	}
 
 	private void initDefaultShader() {
@@ -78,18 +77,29 @@ public class RenderSystem extends EntitySystem {
 	public Entity makeCubeEntity() {
 		Entity ent = new Entity();
 		ent.add(new Pose());
+		ent.getComponent(Pose.class).setScale(1.0f);
 		ent.add(makeDefaultGestalt());
 		return ent;
 	}
 
 	private Component makeDefaultGestalt() {
+		ObjImporter importer = new ObjImporter();
+		try {
+			importer.load("assets/models/frontcal.obj");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
+		Mesh mesh = importer.make(objBuilder);
+		
 		MeshBuilder builder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
 		CuboidMaker cuboidMaker = new CuboidMaker();
 		Mesh cuboid = cuboidMaker.make(builder, 0.5);
 
 		Gestalt gestalt = new Gestalt();
 
-		gestalt.mesh = cuboid;
+		gestalt.mesh = mesh;
 		gestalt.shader = null;
 		gestalt.texture0 = new TextureLoader().load("assets/textures/fins.png");
 
