@@ -8,7 +8,9 @@ import java.io.IOException;
 
 import org.joml.Matrix4f;
 
+import com.badlogic.ashley.core.Engine;
 import com.zierfisch.app.ApplicationListener;
+import com.zierfisch.render.RenderSystem;
 import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
 import com.zierfisch.util.ObjImporter;
@@ -21,6 +23,7 @@ import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 public class Zierfisch implements ApplicationListener {
 
+	private Engine engine;
 	private static Shader shader;
 	private static Mesh cuboid;
 	private static Mesh objMesh;
@@ -48,8 +51,15 @@ public class Zierfisch implements ApplicationListener {
 		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
 		objMesh = importer.make(objBuilder);
 		
+		initEngine();
+		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
+	}
+
+	private void initEngine() {
+		 engine = new Engine();
+		 engine.addSystem(new RenderSystem());
 	}
 
 	@Override
