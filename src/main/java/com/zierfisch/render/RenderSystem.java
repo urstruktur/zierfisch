@@ -18,6 +18,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.zierfisch.cam.Camera;
+import com.zierfisch.cam.CameraSystem;
 import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
 import com.zierfisch.tex.Texture;
@@ -47,6 +49,8 @@ public class RenderSystem extends EntitySystem {
 	private Shader lastShader;
 
 	private Shader defaultShader;
+	
+	private CameraSystem camSys;
 
 	@Override
 	public void addedToEngine(Engine engine) {
@@ -60,6 +64,8 @@ public class RenderSystem extends EntitySystem {
 		initDefaultShader();
 
 		addTestEntities();
+		
+		camSys = engine.getSystem(CameraSystem.class);
 	}
 
 	private void initDefaultShader() {
@@ -163,8 +169,14 @@ public class RenderSystem extends EntitySystem {
 	}
 
 	public void setMatrixUniforms(Shader shader, Pose pose) {
+		Camera cam = camSys.getMainCamera();
 		Matrix4f model = pose.getModel();
+		Matrix4f view = cam.view;
+		Matrix4f projection = cam.projection;
+		
 		shader.setUniform("u_model", model);
+		shader.setUniform("u_view", view);
+		shader.setUniform("u_projection", projection);
 	}
 
 	public Shader selectShader(Gestalt gestalt) {

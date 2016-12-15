@@ -123,4 +123,10 @@ public final class VertexAttribute {
 		int startIdx = offset + index * (width + stride);
 		System.arraycopy(values, 0, vertices, startIdx, width);
 	}
+
+	@Override
+	public String toString() {
+		return "VertexAttribute [name=" + name + ", width=" + width + ", offset=" + offset + ", stride=" + stride + "]";
+	}
+	
 }
