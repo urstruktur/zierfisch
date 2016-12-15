@@ -12,6 +12,9 @@ import com.badlogic.ashley.core.Component;
  */
 public class Pose implements Component {
 
+	private static final Vector3f TEMP = new Vector3f();
+	private static final Vector3f TEMP2 = new Vector3f();
+	
 	public static final float maxSpeed = 2f;
 	public static final float maxForce = 0.03f;
 	
@@ -85,6 +88,24 @@ public class Pose implements Component {
 
 	public void setOrientation(Quaternionf orientation) {
 		this.orientation.set(orientation);
+		smut();
+	}
+	
+	public void setFocus(Vector3f focusPoint) {
+		setFocus(focusPoint.x, focusPoint.y, focusPoint.z);
+	}
+	
+	public void setFocus(float x, float y, float z) {
+		Vector3f oldFoward = TEMP;
+		oldFoward.set(0, 0, 1);
+		orientation.transform(oldFoward);
+		
+		Vector3f newForward = TEMP2;
+		newForward.set(x, y, z);
+		newForward.sub(position);
+		newForward.normalize();
+		
+		orientation.rotateTo(oldFoward, newForward);
 		smut();
 	}
 
