@@ -7,9 +7,12 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL21.*;
 import static org.lwjgl.opengl.GL30.*;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
@@ -28,6 +31,7 @@ import com.zierfisch.util.GLErrors;
 import com.zierfisch.util.ObjImporter;
 
 import xyz.krachzack.gfx.assets.CuboidMaker;
+import xyz.krachzack.gfx.assets.ObjLoader;
 import xyz.krachzack.gfx.mesh.Mesh;
 import xyz.krachzack.gfx.mesh.MeshBuilder;
 import xyz.krachzack.gfx.mesh.Primitive;
@@ -76,11 +80,11 @@ public class RenderSystem extends EntitySystem {
 	}
 
 	private void addTestEntities() {
-		Entity cube = makeCubeEntity();
-		getEngine().addEntity(cube);
+		Entity fish = makeFishEntity();
+		getEngine().addEntity(fish);
 	}
 
-	public Entity makeCubeEntity() {
+	public Entity makeFishEntity() {
 		Entity ent = new Entity();
 		ent.add(new Pose());
 		ent.getComponent(Pose.class).setScale(1.0f);

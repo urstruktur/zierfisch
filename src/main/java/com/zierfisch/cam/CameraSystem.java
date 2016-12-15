@@ -56,6 +56,12 @@ public class CameraSystem extends IteratingSystem {
 	}
 	
 	private void updateCam(Camera cam, Pose pose) {
+		//pose.orientation.rotateY((float) (Math.PI * 0.1f));
+		
+		pose.position.x = (float) Math.sin(System.currentTimeMillis() / 1000.0) * 3;
+		pose.position.z = (float) Math.cos(System.currentTimeMillis() / 1000.0) * 3;
+		pose.setFocus(0, 0, 0);
+		
 		recalculateView(cam, pose);
 		recalculateProjection(cam);
 	}
