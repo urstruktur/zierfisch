@@ -29,9 +29,15 @@ public class MovementSystem extends IteratingSystem {
 		}
 		
 		p.position.add(p.velocity.mul(deltaTime, new Vector3f()));
-		p.acceleration.zero();
-		//p.orientation.lookAlong(p.acceleration, new Vector3f(0,0,1));
 		
+		if(p.acceleration.lengthSquared() > 0){
+			p.orientation.identity();
+			p.orientation.lookAlong(p.acceleration.normalize(), new Vector3f(0,1,0));
+			p.orientation.normalize();
+		}
+		
+		p.acceleration.zero();
+
 		p.smut();
 	}
 
