@@ -6,8 +6,20 @@ import org.joml.Vector3f;
 
 import com.badlogic.ashley.core.Component;
 
+/**
+ * This component holds properties for position and movement of an entity.
+ * <p> The concept of movement is based on the <em>simple vehicle model</em> by Craig W. Reynolds @see http://www.red3d.com/cwr/steer/gdc99/ </p>
+ */
 public class Pose implements Component {
 
+	public static final float maxSpeed = 2f;
+	public static final float maxForce = 0.03f;
+	
+	/**
+	 * Holds mass of an object. It determines the effect of an applied steering force on the velocity.
+	 */
+	public float mass = 1f;
+	
 	/**
 	 * <p>
 	 * Holds the offset of an object as compared to the origin of the world
