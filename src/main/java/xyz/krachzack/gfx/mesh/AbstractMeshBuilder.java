@@ -62,9 +62,8 @@ public abstract class AbstractMeshBuilder implements MeshBuilder {
 	}
 	
 	public int pack(int attributeMask, int idx) {
-		if(idx > 0xffffff) {
-			throw new RuntimeException("Index does not fit in three bytes");
-		}
+		// Ignore already stored attributeMask in idx
+		idx = idx & 0x00ffffff;
 		
 		return (attributeMask << (3*8)) | (idx & 0xffffff);
 	}

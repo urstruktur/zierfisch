@@ -174,7 +174,8 @@ public class Shader {
 			GLErrors.check("Getting attribute location");
 			
 			if(loc != -1) {
-				glVertexAttribPointer(loc, attr.width, GL_FLOAT, false, attr.stride, 0);
+				final int glFloatSize = 4;
+				glVertexAttribPointer(loc, attr.width, GL_FLOAT, false, glFloatSize*attr.stride, glFloatSize*attr.offset);
 				GLErrors.check("Setting vertex attrib pointers");
 				
 				glEnableVertexAttribArray(loc);

@@ -31,7 +31,7 @@ import xyz.krachzack.gfx.mesh.MeshBuilder;
  */
 public class ObjLoader {
 
-	private static final Pattern vertexPattern = Pattern.compile("(?<position>\\d*)/(?<texCoords>\\d*)/(?<normal>\\d*)");
+	private static final Pattern vertexPattern = Pattern.compile("(?<position>\\d*)/(?<texCoords>\\d*)/(?<normal>\\d*)|(?<position2>\\d*)/(?<texCoords2>\\d*)");
 	
 	private MeshBuilder builder;
 
@@ -135,6 +135,14 @@ public class ObjLoader {
 	
 	private int extractIndex(Matcher matcher, String groupName) {
 		String idxString = matcher.group(groupName);
+		
+		if(idxString == null) {
+			if(groupName == "position" || groupName == "texCoords") {
+				idxString = matcher.group(groupName + "2");
+			} else {
+				idxString = "";
+			}
+		}
 		
 		if(idxString.isEmpty()) {
 			return -1;

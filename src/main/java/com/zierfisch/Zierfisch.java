@@ -66,7 +66,7 @@ public class Zierfisch implements ApplicationListener {
 
 	private void addMainCamera() {
 		Pose pose = new Pose();
-		pose.position.set(0, 0, 9.9f);
+		pose.position.set(0, 0, 1.1f);
 		pose.orientation.rotateY((float) Math.PI);
 		//pose.setFocus(new Vector3f());
 		
@@ -104,6 +104,7 @@ public class Zierfisch implements ApplicationListener {
 		scale.scale((sine + 1) / 2.0f);
 		
 		GL11.glClearColor(0.5f, 0.5f, 0.6f, 1.0f);
+		
 		engine.update(dt);
 	}
 	
