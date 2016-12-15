@@ -16,7 +16,7 @@ public class RuleSeperation implements Rule {
 	
 	public RuleSeperation(){
 		weight = 1f;
-		influenceDist = 20f;
+		influenceDist = 2f;
 	}
 	
 	public void setWeight(float weight){
@@ -39,7 +39,7 @@ public class RuleSeperation implements Rule {
 			Vector3f neighborPos = boid.getComponent(Pose.class).position;
 			float dist = targetPos.distance(neighborPos);
 			
-			if(dist > 0 && dist < influenceDist){
+			if(dist > 0 && dist < influenceDist * target.getComponent(FlockingComponent.class).influence){
 				Vector3f toTarget = new Vector3f();
 				targetPos.sub(neighborPos, toTarget);
 				toTarget.normalize();

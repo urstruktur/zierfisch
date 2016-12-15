@@ -63,7 +63,7 @@ public class RenderSystem extends EntitySystem {
 
 		initDefaultShader();
 
-		addTestEntities();
+		//addTestEntities();
 		
 		camSys = engine.getSystem(CameraSystem.class);
 	}
@@ -88,7 +88,7 @@ public class RenderSystem extends EntitySystem {
 		return ent;
 	}
 
-	private Component makeDefaultGestalt() {
+	public static Component makeDefaultGestalt() {
 		ObjImporter importer = new ObjImporter();
 		try {
 			importer.load("assets/models/zierfisch.obj");
@@ -99,9 +99,9 @@ public class RenderSystem extends EntitySystem {
 		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
 		Mesh mesh = importer.make(objBuilder);
 		
-		MeshBuilder builder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
-		CuboidMaker cuboidMaker = new CuboidMaker();
-		Mesh cuboid = cuboidMaker.make(builder, 0.5);
+		//MeshBuilder builder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
+		//CuboidMaker cuboidMaker = new CuboidMaker();
+		//Mesh cuboid = cuboidMaker.make(builder, 0.5);
 
 		Gestalt gestalt = new Gestalt();
 

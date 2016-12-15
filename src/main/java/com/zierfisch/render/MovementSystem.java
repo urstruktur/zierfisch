@@ -1,6 +1,7 @@
 package com.zierfisch.render;
 
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -29,6 +30,9 @@ public class MovementSystem extends IteratingSystem {
 		
 		p.position.add(p.velocity.mul(deltaTime, new Vector3f()));
 		p.acceleration.zero();
+		//p.orientation.lookAlong(p.acceleration, new Vector3f(0,0,1));
+		
+		p.smut();
 	}
 
 }

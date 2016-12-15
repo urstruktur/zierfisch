@@ -1,6 +1,7 @@
 package com.zierfisch.flocking;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.joml.Vector3f;
 
@@ -16,10 +17,12 @@ import com.zierfisch.render.Pose;
  */
 public class FlockingSystem extends IteratingSystem {
 	
-	LinkedList<Rule> rulez;
+	List<Rule> rulez;
 
 	public FlockingSystem() {
 		super(Family.all(FlockingComponent.class, Pose.class).get());
+		rulez = new LinkedList<Rule>();
+		
 		rulez.add(new RuleSeperation());
 		rulez.add(new RuleCohesion());
 		rulez.add(new RuleAlign());

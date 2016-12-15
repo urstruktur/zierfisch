@@ -12,11 +12,17 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
+import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.zierfisch.app.ApplicationListener;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
+import com.zierfisch.flocking.FlockingComponent;
+import com.zierfisch.flocking.FlockingSystem;
+import com.zierfisch.gui.TweakingSystem;
+import com.zierfisch.render.Gestalt;
+import com.zierfisch.render.MovementSystem;
 import com.zierfisch.render.Pose;
 import com.zierfisch.render.RenderSystem;
 import com.zierfisch.shader.Shader;
@@ -52,6 +58,7 @@ public class Zierfisch implements ApplicationListener {
 		
 		initEngine();
 		addMainCamera();
+		createFishflock(5, 5, 5, 1);
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
@@ -73,8 +80,11 @@ public class Zierfisch implements ApplicationListener {
 	private void initEngine() {
 		 engine = new Engine();
 		 
+		 engine.addSystem(new MovementSystem());
 		 engine.addSystem(new CameraSystem());
 		 engine.addSystem(new RenderSystem());
+		 engine.addSystem(new FlockingSystem());
+		 //engine.addSystem(new TweakingSystem());
 	}
 
 	@Override
@@ -95,5 +105,31 @@ public class Zierfisch implements ApplicationListener {
 		
 		GL11.glClearColor(0.5f, 0.5f, 0.6f, 1.0f);
 		engine.update(dt);
+	}
+	
+	public void createFishflock(int nrX, int nrY, int nrZ, float margin){
+		Component gestalt = RenderSystem.makeDefaultGestalt();
+		
+		for(int x = 0; x < nrX; x++){
+			for(int y = 0; y < nrY; y++){
+				for(int z = 0; z < nrZ; z++){
+					Entity fish = new Entity();
+					Pose p = new Pose();
+					p.scale = 0.5f;
+					p.mass = 1f;
+					p.position.x = x*margin - (nrX-1)*margin/2;
+					p.position.y = y*margin - (nrY-1)*margin/2;
+					p.position.z = z*margin - (nrZ-1)*margin/2;
+					//p.acceleration = new Vector3f(0,0,-.01f);
+					
+					fish.add(new FlockingComponent());
+					fish.getComponent(FlockingComponent.class).influence = 0.3f;
+					fish.add(p);
+					fish.add(gestalt);
+					p.smut();
+					engine.addEntity(fish);
+				}
+			}
+		}
 	}
 }

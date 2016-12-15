@@ -16,7 +16,7 @@ public class RuleAlign implements Rule {
 	
 	public RuleAlign(){
 		weight = 1f;
-		influenceDist = 50f;
+		influenceDist = 5f;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class RuleAlign implements Rule {
 		for (Entity boid : neighbours) {
 			Vector3f neighborVel = boid.getComponent(Pose.class).velocity;
 			float dist = targetPose.position.distance(neighborVel);
-			if (dist > 0 && dist < influenceDist) {
+			if (dist > 0 && dist < influenceDist * target.getComponent(FlockingComponent.class).influence) {
 				velSum.add(neighborVel);
 				countOfInfluenced++;
 			}
