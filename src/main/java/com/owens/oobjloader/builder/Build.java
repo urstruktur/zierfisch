@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 public class Build implements BuilderInterface {
 
     private Logger log = Logger.getLogger(Build.class.getName());
+    public boolean logActive = false;
 
     public String objFilename = null;
     // these accumulate each type of vertex as they are parsed, so they can then be referenced via index.
@@ -72,11 +73,11 @@ public class Build implements BuilderInterface {
     }
 
     public void addPoints(int[] values) {
-        log.log(INFO, "@TODO: Got " + values.length + " points in builder, ignoring");
+        //log.log(INFO, "@TODO: Got " + values.length + " points in builder, ignoring");
     }
 
     public void addLine(int[] values) {
-        log.log(INFO, "@TODO: Got a line of " + values.length + " segments in builder, ignoring");
+        //log.log(INFO, "@TODO: Got a line of " + values.length + " segments in builder, ignoring");
     }
 
     public void addFace(int[] vertexIndices) {
@@ -121,7 +122,7 @@ public class Build implements BuilderInterface {
                     // one, so we offset by -1 for the 0-indexed array lists.
                     fv.t = verticesT.get(vertexIndex - 1);
                 } else {
-                    log.log(SEVERE, "Index for texture vertex=" + vertexIndex + " is out of the current range of texture vertex values 1 to " + verticesT.size() + ", ignoring");
+                    if(logActive) log.log(SEVERE, "Index for texture vertex=" + vertexIndex + " is out of the current range of texture vertex values 1 to " + verticesT.size() + ", ignoring");
                 }
             }
 
@@ -311,16 +312,16 @@ public class Build implements BuilderInterface {
     // >     defined. There is no default.
     public void addMapLib(String[] names) {
         if (null == names) {
-            log.log(INFO, "@TODO: ERROR! Got a maplib line with null names array - blank group line? (i.e. \"g\\n\" ?)");
+        	if(logActive) log.log(INFO, "@TODO: ERROR! Got a maplib line with null names array - blank group line? (i.e. \"g\\n\" ?)");
             return;
         }
         if (names.length == 1) {
-            log.log(INFO, "@TODO: Got a maplib line with one name=|" + names[0] + "|");
+        	if(logActive) log.log(INFO, "@TODO: Got a maplib line with one name=|" + names[0] + "|");
             return;
         }
-        log.log(INFO, "@TODO: Got a maplib line;");
+        if(logActive) log.log(INFO, "@TODO: Got a maplib line;");
         for (int loopi = 0; loopi < names.length; loopi++) {
-            log.log(INFO, "        names[" + loopi + "] = |" + names[loopi] + "|");
+        	if(logActive) log.log(INFO, "        names[" + loopi + "] = |" + names[loopi] + "|");
         }
     }
 
@@ -433,12 +434,12 @@ public class Build implements BuilderInterface {
     public void setD(boolean halo, float factor) {
         currentMaterialBeingParsed.dHalo = halo;
         currentMaterialBeingParsed.dFactor = factor;
-        log.log(INFO, "@TODO: got a setD call!");
+        if(logActive) log.log(INFO, "@TODO: got a setD call!");
     }
 
     public void setNs(float exponent) {
         currentMaterialBeingParsed.nsExponent = exponent;
-        log.log(INFO, "@TODO: got a setNs call!");
+        if(logActive) log.log(INFO, "@TODO: got a setNs call!");
     }
 
     public void setSharpness(float value) {

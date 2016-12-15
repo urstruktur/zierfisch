@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 
 public class Parse {
     private Logger log = Logger.getLogger(Parse.class.getName());
+    public boolean logActive = false;
 
     // Tokens for parsing. 
     private final static String OBJ_VERTEX_TEXTURE = "vt";
@@ -130,13 +131,13 @@ public class Parse {
             } else if (line.startsWith(OBJ_MTLLIB)) {
                 processMaterialLib(line);
             } else {
-                log.log(WARNING, "line " + lineCount + " unknown line |" + line + "|");
+            	if(logActive) log.log(WARNING, "line " + lineCount + " unknown line |" + line + "|");
             }
             lineCount++;
         }
         bufferedReader.close();
 
-        log.log(INFO, "Loaded " + lineCount + " lines");
+        //log.log(INFO, "Loaded " + lineCount + " lines");
     }
 
     // @TODO: processVertex calls parseFloatList with params expecting
@@ -688,14 +689,13 @@ public class Parse {
             } else if (line.startsWith(MTL_REFL)) {
                 processRefl(line);
             } else {
-                log.log(WARNING, "line " + lineCount + " unknown line |" + line + "|");
-
+            	if(logActive) log.log(WARNING, "line " + lineCount + " unknown line |" + line + "|");
             }
             lineCount++;
         }
         bufferedReader.close();
 
-        log.log(INFO, "Parse.parseMtlFile: Loaded " + lineCount + " lines");
+        if(logActive) log.log(INFO, "Parse.parseMtlFile: Loaded " + lineCount + " lines");
     }
 
     private void processNewmtl(String line) {
