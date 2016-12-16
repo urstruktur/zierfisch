@@ -124,6 +124,7 @@ public class Application {
 		
 		glfwFreeCallbacks(window);
 		glfwDestroyWindow(window);
+		System.exit(0);
 	}
 
 }

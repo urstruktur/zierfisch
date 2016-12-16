@@ -66,7 +66,7 @@ public class Zierfisch implements ApplicationListener {
 
 	private void addMainCamera() {
 		Pose pose = new Pose();
-		pose.position.set(0, 0, 1.1f);
+		pose.position.set(0, 0, 10f);
 		pose.orientation.rotateY((float) Math.PI);
 		//pose.setFocus(new Vector3f());
 		
@@ -83,8 +83,9 @@ public class Zierfisch implements ApplicationListener {
 		 engine.addSystem(new MovementSystem());
 		 engine.addSystem(new CameraSystem());
 		 engine.addSystem(new RenderSystem());
+
+		 engine.addSystem(new TweakingSystem());
 		 engine.addSystem(new FlockingSystem());
-		 //engine.addSystem(new TweakingSystem());
 	}
 
 	@Override
@@ -111,6 +112,8 @@ public class Zierfisch implements ApplicationListener {
 	public void createFishflock(int nrX, int nrY, int nrZ, float margin){
 		Component gestalt = RenderSystem.makeDefaultGestalt();
 		
+		Vector3f center = new Vector3f(0,0,0);
+		
 		for(int x = 0; x < nrX; x++){
 			for(int y = 0; y < nrY; y++){
 				for(int z = 0; z < nrZ; z++){
@@ -118,10 +121,10 @@ public class Zierfisch implements ApplicationListener {
 					Pose p = new Pose();
 					p.scale = 0.5f;
 					p.mass = 1f;
-					p.position.x = x*margin - (nrX-1)*margin/2;
-					p.position.y = y*margin - (nrY-1)*margin/2;
-					p.position.z = z*margin - (nrZ-1)*margin/2;
-					//p.acceleration = new Vector3f(0,0,-.01f);
+					p.position.x = x*margin - (nrX-1)*margin/2 + center.x;
+					p.position.y = y*margin - (nrY-1)*margin/2 + center.y;
+					p.position.z = z*margin - (nrZ-1)*margin/2 + center.z;
+					
 					
 					fish.add(new FlockingComponent());
 					fish.getComponent(FlockingComponent.class).influence = 0.3f;

@@ -15,8 +15,8 @@ public class RuleSeperation implements Rule {
 	private float influenceDist;
 	
 	public RuleSeperation(){
-		weight = 1f;
-		influenceDist = 2f;
+		weight = 0.1f;
+		influenceDist = 2.5f;
 	}
 	
 	public void setWeight(float weight){

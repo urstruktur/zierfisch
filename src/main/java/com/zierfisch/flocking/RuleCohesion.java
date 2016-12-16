@@ -15,8 +15,8 @@ public class RuleCohesion implements Rule {
 	private float influenceDist;
 	
 	public RuleCohesion(){
-		weight = 1f;
-		influenceDist = 6f;
+		weight = 0.3f;
+		influenceDist = 8f;
 	}
 	
 	@Override
@@ -55,6 +55,10 @@ public class RuleCohesion implements Rule {
 		} else {
 			return new Vector3f();
 		}
+	}
+	
+	public float getWeight(){
+		return weight;
 	}
 
 	public void setWeight(float weight){

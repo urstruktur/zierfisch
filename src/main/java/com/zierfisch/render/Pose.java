@@ -15,7 +15,7 @@ public class Pose implements Component {
 	private static final Vector3f TEMP = new Vector3f();
 	private static final Vector3f TEMP2 = new Vector3f();
 	
-	public static final float maxSpeed = 0.01f;
+	public static final float maxSpeed = 0.005f;
 	public static final float maxForce = 0.001f;
 	
 	/**

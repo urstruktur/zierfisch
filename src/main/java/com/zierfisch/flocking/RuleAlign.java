@@ -15,8 +15,8 @@ public class RuleAlign implements Rule {
 	private float influenceDist;
 	
 	public RuleAlign(){
-		weight = 1f;
-		influenceDist = 5f;
+		weight = 0.5f;
+		influenceDist = 6f;
 	}
 
 	@Override
