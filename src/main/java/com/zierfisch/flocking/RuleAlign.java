@@ -15,8 +15,8 @@ public class RuleAlign implements Rule {
 	private float influenceDist;
 	
 	public RuleAlign(){
-		weight = 0.5f;
-		influenceDist = 6f;
+		weight = 1.4f;
+		influenceDist = 1f;
 	}
 
 	@Override
@@ -54,5 +54,17 @@ public class RuleAlign implements Rule {
 
 	public void setWeight(float weight){
 		this.weight = weight;
+	}
+
+	public float getWeight() {
+		return weight;
+	}
+	
+	public float getDist(){
+		return influenceDist;
+	}
+
+	public void setDist(float val) {
+		this.influenceDist = val;
 	}
 }

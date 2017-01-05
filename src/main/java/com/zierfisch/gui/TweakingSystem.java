@@ -1,6 +1,7 @@
 package com.zierfisch.gui;
 
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,9 @@ import javax.swing.event.ChangeListener;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 
+/***
+ * This system enables easy cheesy tweaking of float values
+ */
 public class TweakingSystem extends EntitySystem {
 	
 	JPanel panel;
@@ -49,7 +53,7 @@ public class TweakingSystem extends EntitySystem {
 		slider.setMinorTickSpacing(5);
 		slider.setPaintTicks(true);
 		
-		//slider.setPreferredSize(new Dimension(350, 100));
+		//slider.setPreferredSize(new Dimension(350, 60));
 		
 		// Set the labels to be painted on the slider
 		slider.setPaintLabels(true);
@@ -93,15 +97,7 @@ public class TweakingSystem extends EntitySystem {
 		// Set the panel to add buttons
 		panel = new JPanel();
 		
-		/*
-		addSlider(new PropertyAccessor(){
-			float property = 3.5f;
-			public void setProperty(float val) 	{ property = val; }
-			public float getProperty() 			{ return property; }
-			public float getMin() 				{ return 2; }
-			public float getMax() 				{ return 4; }
-		}, "test");
-		*/
+		panel.setLayout(new GridLayout(0,3));
 		
 		// Set the window to be visible as the default to be false
 		frame.add(panel);

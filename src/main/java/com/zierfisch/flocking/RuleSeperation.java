@@ -15,8 +15,8 @@ public class RuleSeperation implements Rule {
 	private float influenceDist;
 	
 	public RuleSeperation(){
-		weight = 0.1f;
-		influenceDist = 2.5f;
+		weight = 1f;
+		influenceDist = 0.4f;
 	}
 	
 	public void setWeight(float weight){
@@ -57,5 +57,15 @@ public class RuleSeperation implements Rule {
 		return steer.mul(weight);
 	}
 
+	public float getWeight() {
+		return weight;
+	}
 
+	public float getDist(){
+		return influenceDist;
+	}
+
+	public void setDist(float val) {
+		this.influenceDist = val;
+	}
 }

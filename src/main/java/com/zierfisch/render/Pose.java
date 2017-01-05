@@ -15,13 +15,13 @@ public class Pose implements Component {
 	private static final Vector3f TEMP = new Vector3f();
 	private static final Vector3f TEMP2 = new Vector3f();
 	
-	public static final float maxSpeed = 0.005f;
-	public static final float maxForce = 0.001f;
+	public static final float maxSpeed = 0.001f;
+	public static final float maxForce = 0.0002f;
 	
 	/**
 	 * Holds mass of an object. It determines the effect of an applied steering force on the velocity.
 	 */
-	public float mass = 1f;
+	public float mass = 2f;
 	
 	/**
 	 * <p>

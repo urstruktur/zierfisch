@@ -74,8 +74,8 @@ public class RenderSystem extends EntitySystem {
 
 	private void initDefaultShader() {
 		defaultShader = new ShaderBuilder()
-				.setVertexShader("assets/shaders/cc/cc.vert.glsl")
-				.setFragmentShader("assets/shaders/cc/cc.frag.glsl")
+				.setVertexShader("assets/shaders/cc/depth.vert.glsl")
+				.setFragmentShader("assets/shaders/cc/depth.frag.glsl")
 				.build();
 	}
 
@@ -129,6 +129,7 @@ public class RenderSystem extends EntitySystem {
 		super.update(deltaTime);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
 
 		for (int i = 0; i < entities.size(); ++i) {
 			Entity entity = entities.get(i);

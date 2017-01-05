@@ -29,7 +29,7 @@ public class FlockingSystem extends IteratingSystem {
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
 		for(Rule rule : rulez){
-			applyForce(entity, rule.calcForce(entity, getEntities()));
+			applyForce(entity, rule.calcForce(entity, getEntities()).mul(deltaTime*0.1f));
 		}
 	}
 
@@ -42,20 +42,58 @@ public class FlockingSystem extends IteratingSystem {
 		rulez = new LinkedList<Rule>();
 		
 		RuleCohesion rc = new RuleCohesion();
+		RuleSeperation rs = new RuleSeperation();
+		RuleAlign ra = new RuleAlign();
 		
+		// add tweaking sliders
 		TweakingSystem ts = getEngine().getSystem(TweakingSystem.class);
 		if(ts != null){
 			ts.addSlider(new PropertyAccessor(){
 				public void setProperty(float val) 	{ rc.setWeight(val); }
 				public float getProperty() 			{ return rc.getWeight(); }
 				public float getMin() 				{ return 0; }
-				public float getMax() 				{ return 2; }
+				public float getMax() 				{ return 1; }
 			},"cohesion weight");
+			
+			ts.addSlider(new PropertyAccessor(){
+				public void setProperty(float val) 	{ rc.setDist(val); }
+				public float getProperty() 			{ return rc.getDist(); }
+				public float getMin() 				{ return 0; }
+				public float getMax() 				{ return 10; }
+			},"cohesion distance");
+			
+			ts.addSlider(new PropertyAccessor(){
+				public void setProperty(float val) 	{ ra.setWeight(val); }
+				public float getProperty() 			{ return ra.getWeight(); }
+				public float getMin() 				{ return 0; }
+				public float getMax() 				{ return 3; }
+			},"align weight");
+			
+			ts.addSlider(new PropertyAccessor(){
+				public void setProperty(float val) 	{ ra.setDist(val); }
+				public float getProperty() 			{ return ra.getDist(); }
+				public float getMin() 				{ return 0; }
+				public float getMax() 				{ return 10; }
+			},"align distance");
+			
+			ts.addSlider(new PropertyAccessor(){
+				public void setProperty(float val) 	{ rs.setWeight(val); }
+				public float getProperty() 			{ return rs.getWeight(); }
+				public float getMin() 				{ return 0; }
+				public float getMax() 				{ return 1; }
+			},"seperation weight");
+			
+			ts.addSlider(new PropertyAccessor(){
+				public void setProperty(float val) 	{ rs.setDist(val); }
+				public float getProperty() 			{ return rs.getDist(); }
+				public float getMin() 				{ return 0; }
+				public float getMax() 				{ return 10; }
+			},"seperation distance");
 		}
 
 		rulez.add(rc);
-		rulez.add(new RuleSeperation());
-		rulez.add(new RuleAlign());
+		rulez.add(rs);
+		rulez.add(ra);
 		
 		super.addedToEngine(engine);
 	}

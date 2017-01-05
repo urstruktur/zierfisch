@@ -26,6 +26,8 @@ import com.zierfisch.render.MovementSystem;
 import com.zierfisch.render.Pose;
 import com.zierfisch.render.RenderSystem;
 import com.zierfisch.shader.Shader;
+import com.zierfisch.shader.ShaderBuilder;
+import com.zierfisch.tex.TextureLoader;
 import com.zierfisch.util.ObjImporter;
 
 import xyz.krachzack.gfx.mesh.Mesh;
@@ -38,7 +40,7 @@ public class Zierfisch implements ApplicationListener {
 	private Engine engine;
 	private static Shader shader;
 	private static Mesh cuboid;
-	private static Mesh objMesh;
+	private static Mesh enviromentMesh;
 	private Matrix4f scale = new Matrix4f();
 	
 	@Override
@@ -48,17 +50,30 @@ public class Zierfisch implements ApplicationListener {
 		
 		ObjImporter importer = new ObjImporter();
 		try {
-			importer.load("assets/models/pascal.obj");
+			importer.load("assets/models/enviroment.obj");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
-		objMesh = importer.make(objBuilder);
+		enviromentMesh = importer.make(objBuilder);
+		
+		Gestalt g = new Gestalt();
+		g.mesh = enviromentMesh;
+		g.shader = new ShaderBuilder()
+				.setVertexShader("assets/shaders/cc/depth.vert.glsl")
+				.setFragmentShader("assets/shaders/cc/depth.frag.glsl")
+				.build();
+		g.texture0 = new TextureLoader().load("assets/textures/RockPerforated0029_1_seamless_S.png");
+		
+		Entity enviroment = new Entity();
+		enviroment.add(g);
+		enviroment.add(new Pose());
 		
 		initEngine();
+		
+		engine.addEntity(enviroment);
 		addMainCamera();
-		createFishflock(5, 5, 5, 1);
+		createFishflock(5, 5, 5, 0.2f);
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
@@ -66,7 +81,7 @@ public class Zierfisch implements ApplicationListener {
 
 	private void addMainCamera() {
 		Pose pose = new Pose();
-		pose.position.set(0, 0, 10f);
+		pose.position.set(0, 0, 1f);
 		pose.orientation.rotateY((float) Math.PI);
 		//pose.setFocus(new Vector3f());
 		
@@ -104,7 +119,7 @@ public class Zierfisch implements ApplicationListener {
 		scale.identity();
 		scale.scale((sine + 1) / 2.0f);
 		
-		GL11.glClearColor(0.5f, 0.5f, 0.6f, 1.0f);
+		GL11.glClearColor(0.0f, 0.2f, 0.3f, 1.0f);
 		
 		engine.update(dt);
 	}
