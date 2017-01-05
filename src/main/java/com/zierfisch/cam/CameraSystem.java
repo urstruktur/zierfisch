@@ -1,6 +1,10 @@
 package com.zierfisch.cam;
 
+import java.nio.DoubleBuffer;
+
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
@@ -10,10 +14,17 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.zierfisch.Main;
 import com.zierfisch.render.Pose;
+import com.zierfisch.util.Keyboard;
+import com.zierfisch.util.MousePos;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 
 public class CameraSystem extends IteratingSystem {
 
+	private static final float ROTATION_SPEED = 0.001f;
+	private static final float MOVEMENT_SPEED = 0.001f;
+	
 	private static final Family CAM_FAMILY = Family.all(Camera.class, Pose.class).get();
 	private ComponentMapper<Camera> cm = ComponentMapper.getFor(Camera.class);
 	private ComponentMapper<Pose> pm = ComponentMapper.getFor(Pose.class);
@@ -22,6 +33,7 @@ public class CameraSystem extends IteratingSystem {
 	private Vector3f forward = new Vector3f();
 	private Vector3f up = new Vector3f();
 	private Vector3f focus = new Vector3f();
+
 	/**
 	 * Sets the camera whose entity was first added to the engine as the main
 	 * camera. If that same entity is later removed, mainCam will be set to null
@@ -52,15 +64,51 @@ public class CameraSystem extends IteratingSystem {
 	protected void processEntity(Entity entity, float deltaTime) {
 		Camera cam = cm.get(entity);
 		Pose pose = pm.get(entity);
+
+		// - CAMERA CONTROLS -
+		pose.orientation.rotate(0, (float)MousePos.getXDelta() * ROTATION_SPEED , 0);
+		pose.orientation.rotate(-(float)MousePos.getYDelta() * ROTATION_SPEED, 0 , 0);
+		pose.orientation.x = 0;
+		
+		float speed = MOVEMENT_SPEED;
+		
+		if(Keyboard.isShiftDown()){
+			speed *= 10;
+		}
+		
+		Vector3f t = new Vector3f();
+		if(Keyboard.isKeyDown(GLFW_KEY_W)){
+			t.z = speed*deltaTime;
+		}
+		
+		if(Keyboard.isKeyDown(GLFW_KEY_S)){
+			t.z = -speed*deltaTime;
+		}
+		
+		if(Keyboard.isKeyDown(GLFW_KEY_A)){
+			t.x = speed*deltaTime;
+		}
+		
+		if(Keyboard.isKeyDown(GLFW_KEY_D)){
+			t.x = -speed*deltaTime;
+		}
+		
+		if(t.lengthSquared() > 0){
+			t.rotate(pose.orientation);
+			pose.position.add(t);
+		}
+		
+		pose.smut();
+
 		updateCam(cam, pose);
 	}
 	
 	private void updateCam(Camera cam, Pose pose) {
 		//pose.orientation.rotateY((float) (Math.PI * 0.1f));
 		
-		pose.position.x = (float) Math.sin(System.currentTimeMillis() / 1000.0) * 10;
-		pose.position.z = (float) Math.cos(System.currentTimeMillis() / 1000.0) * 10;
-		pose.setFocus(0, 0, 0);
+		//pose.position.x = (float) Math.sin(System.currentTimeMillis() / 1000.0) ;
+		//pose.position.z = (float) Math.cos(System.currentTimeMillis() / 1000.0) ;
+		//pose.setFocus(0, 0, 0);
 		
 		recalculateView(cam, pose);
 		recalculateProjection(cam);
