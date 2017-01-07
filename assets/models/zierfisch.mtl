@@ -10,5 +10,5 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd fish-diffuse.png
-map_Ke fish-emission.png
+map_Kd C:\Users\tom p\ownCloud\IM\AdvComputerGraphics\Projekt\fish-diffuse.png
+map_Ke C:\\Users\\tom p\\ownCloud\\IM\\AdvComputerGraphics\\Projekt\\fish-emission.png

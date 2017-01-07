@@ -18,11 +18,10 @@ import com.badlogic.ashley.core.Entity;
 import com.zierfisch.app.ApplicationListener;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
-import com.zierfisch.flocking.FlockingComponent;
+import com.zierfisch.flocking.Boid;
 import com.zierfisch.flocking.FlockingSystem;
 import com.zierfisch.gui.TweakingSystem;
 import com.zierfisch.render.Gestalt;
-import com.zierfisch.render.MovementSystem;
 import com.zierfisch.render.Pose;
 import com.zierfisch.render.RenderSystem;
 import com.zierfisch.shader.Shader;
@@ -73,7 +72,8 @@ public class Zierfisch implements ApplicationListener {
 		
 		engine.addEntity(enviroment);
 		addMainCamera();
-		createFishflock(5, 5, 5, 0.2f);
+		createFishflock(4, 3, 3, 0.2f);
+		createFishflock(3, 5, 3, 0.5f);
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
@@ -95,7 +95,6 @@ public class Zierfisch implements ApplicationListener {
 	private void initEngine() {
 		 engine = new Engine();
 		 
-		 engine.addSystem(new MovementSystem());
 		 engine.addSystem(new CameraSystem());
 		 engine.addSystem(new RenderSystem());
 
@@ -135,14 +134,12 @@ public class Zierfisch implements ApplicationListener {
 					Entity fish = new Entity();
 					Pose p = new Pose();
 					p.scale = 0.5f;
-					p.mass = 1f;
 					p.position.x = x*margin - (nrX-1)*margin/2 + center.x;
 					p.position.y = y*margin - (nrY-1)*margin/2 + center.y;
 					p.position.z = z*margin - (nrZ-1)*margin/2 + center.z;
 					
-					
-					fish.add(new FlockingComponent());
-					fish.getComponent(FlockingComponent.class).influence = 0.3f;
+					fish.add(new Boid());
+					fish.getComponent(Boid.class).influence = 0.3f;
 					fish.add(p);
 					fish.add(gestalt);
 					p.smut();

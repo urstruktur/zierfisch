@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.opengl.GL;
 
 import com.zierfisch.util.Keyboard;
@@ -101,8 +102,21 @@ public class Application {
 		glfwShowWindow(window);
 		initContext();
 		glfwSetKeyCallback(window, new Keyboard());	
-		glfwSetCursorPosCallback(window, new MousePos());
+		MousePos m = new MousePos();
+		glfwSetCursorPosCallback(window, m);
 		glfwSetMouseButtonCallback(window, new MouseButton());
+		glfwSetWindowFocusCallback(window, new GLFWWindowFocusCallback() {
+			@Override
+			public void invoke(long window, boolean focused) {
+				m.focused = focused;
+				if(focused){
+					glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+				}else{
+					glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+				}
+				
+			}
+		});
 		
 		listener.enter();
 		while(!glfwWindowShouldClose(window) && !exitScheduled) {
@@ -111,12 +125,13 @@ public class Application {
 			listener.update(16.0f);
 			
 			glfwSwapBuffers(window);
-
 		}
 		listener.exit();
 		
 		glfwFreeCallbacks(window);
 		glfwDestroyWindow(window);
+		
+		System.out.println("das ist das letzte");
 		System.exit(0);
 	}
 

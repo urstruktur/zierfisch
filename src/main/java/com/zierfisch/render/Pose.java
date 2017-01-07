@@ -15,13 +15,6 @@ public class Pose implements Component {
 	private static final Vector3f TEMP = new Vector3f();
 	private static final Vector3f TEMP2 = new Vector3f();
 	
-	public static final float maxSpeed = 0.001f;
-	public static final float maxForce = 0.0002f;
-	
-	/**
-	 * Holds mass of an object. It determines the effect of an applied steering force on the velocity.
-	 */
-	public float mass = 2f;
 	
 	/**
 	 * <p>
@@ -70,12 +63,12 @@ public class Pose implements Component {
 	 * Holds the model matrix that applies all transformations specified in the
 	 * pose transform parameters. If <code>dirty</code> the model matrix must be
 	 * recalculated.
-	 */
+	 */	
+	private Matrix4f model = new Matrix4f();
+
 	public Vector3f velocity = new Vector3f();
 	public Vector3f acceleration = new Vector3f();
 	
-	private Matrix4f model = new Matrix4f();
-
 	public void setScale(float scale) {
 		this.scale = scale;
 		smut();
@@ -125,7 +118,7 @@ public class Pose implements Component {
 		if (dirty) {
 			model.identity();
 			model.translate(position);
-			model.rotate(orientation);
+			model.rotate(orientation.invert()); // strange fix
 			model.scale(scale);
 			
 			clean();
@@ -133,5 +126,6 @@ public class Pose implements Component {
 
 		return model;
 	}
+	
 
 }

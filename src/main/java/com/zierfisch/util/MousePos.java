@@ -10,16 +10,20 @@ public class MousePos extends GLFWCursorPosCallback{
 	
 	private static double deltaX = 0;
 	private static double deltaY = 0;
-
+	
+	public boolean focused = true;
+	
     @Override
     public void invoke(long window, double xpos, double ypos) {
-    	deltaX = xpos - x;
-    	deltaY = ypos - y;
+    	if(focused){
+        	deltaX = xpos - x;
+        	deltaY = ypos - y;
+        	
+        	glfwSetCursorPos(window, 800, 400);
+    	}
+
     	x = xpos;
     	y = ypos;
-    	
-    	glfwSetCursorPos(window, 200, 200);
-    	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     }
     
     public static double getXDelta(){

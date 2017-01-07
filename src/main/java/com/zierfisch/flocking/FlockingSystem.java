@@ -23,20 +23,9 @@ public class FlockingSystem extends IteratingSystem {
 	List<Rule> rulez;
 
 	public FlockingSystem() {
-		super(Family.all(FlockingComponent.class, Pose.class).get());
+		super(Family.all(Boid.class, Pose.class).get());
 	}
 
-	@Override
-	protected void processEntity(Entity entity, float deltaTime) {
-		for(Rule rule : rulez){
-			applyForce(entity, rule.calcForce(entity, getEntities()).mul(deltaTime*0.1f));
-		}
-	}
-
-	private void applyForce(Entity entity, Vector3f force){
-		entity.getComponent(Pose.class).acceleration.add(force);
-	}
-	
 	@Override
 	public void addedToEngine(Engine engine) {
 		rulez = new LinkedList<Rule>();
@@ -44,6 +33,7 @@ public class FlockingSystem extends IteratingSystem {
 		RuleCohesion rc = new RuleCohesion();
 		RuleSeperation rs = new RuleSeperation();
 		RuleAlign ra = new RuleAlign();
+		RuleFollowPath rf = new RuleFollowPath(null);
 		
 		// add tweaking sliders
 		TweakingSystem ts = getEngine().getSystem(TweakingSystem.class);
@@ -89,12 +79,73 @@ public class FlockingSystem extends IteratingSystem {
 				public float getMin() 				{ return 0; }
 				public float getMax() 				{ return 10; }
 			},"seperation distance");
+			
+			ts.addSlider(new PropertyAccessor(){
+				public void setProperty(float val) 	{ rf.setWeight(val); }
+				public float getProperty() 			{ return rf.getWeight(); }
+				public float getMin() 				{ return 0; }
+				public float getMax() 				{ return 1; }
+			},"follow path");
 		}
 
 		rulez.add(rc);
 		rulez.add(rs);
 		rulez.add(ra);
+		//rulez.add(rf);
 		
 		super.addedToEngine(engine);
+	}
+	
+	
+	@Override
+	protected void processEntity(Entity entity, float deltaTime) {
+		
+		float deltaTimeSec = deltaTime;
+		
+		// calculate and apply forces
+		for(Rule rule : rulez){
+			entity.getComponent(Pose.class).acceleration.add(rule.calcForce(entity, getEntities()));
+		}
+
+		// move boid according to velocity & acceleration
+		Pose p = entity.getComponent(Pose.class);
+		Boid b = entity.getComponent(Boid.class);
+		p.velocity.add(p.acceleration);
+		
+		// clamp to maxSpeed
+		if(p.velocity.lengthSquared() > Boid.maxSpeed*Boid.maxSpeed){
+			p.velocity.normalize();
+			p.velocity.mul(Boid.maxSpeed);
+		}
+		
+		p.position.add(p.velocity.mul(deltaTimeSec, new Vector3f()));
+		
+		// calculate orientation
+		if(p.velocity.lengthSquared() > 0){
+			p.orientation.identity();
+			
+		    //Vector3f new_forward = new Vector3f(p.velocity).normalize();
+		   // b.up.normalize();      
+		   // Vector3f new_side = new Vector3f(new_forward).cross(b.up);
+		   // b.up = new_forward.cross(new_side);
+		    
+			//p.orientation.lookAlong(new_forward, b.up);
+
+			// simple method
+			p.orientation.lookAlong(new Vector3f(p.velocity).normalize(), new Vector3f(0,1,0));
+		}
+		
+		// reset acceleration
+		p.acceleration.zero();
+
+		p.smut();
+	}
+	
+
+	/**
+	 * @see http://www.red3d.com/cwr/steer/gdc99/ vehicle model
+	 */
+	public void applySteeringForce(Vector3f force){
+		
 	}
 }

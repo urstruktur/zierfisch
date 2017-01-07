@@ -13,7 +13,7 @@ public class Camera implements Component {
 	 * with a maximum of PI.
 	 */
 	public float fovy = (float) Math.toRadians(70.0);
-	public float nearPlaneDist = 0.1f;
+	public float nearPlaneDist = 0.01f;
 	public float farPlaneDist = 100f;
 	
 }

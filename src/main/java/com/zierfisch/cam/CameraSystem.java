@@ -1,11 +1,6 @@
 package com.zierfisch.cam;
 
-import java.nio.DoubleBuffer;
-
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFW;
-
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -66,8 +61,8 @@ public class CameraSystem extends IteratingSystem {
 		Pose pose = pm.get(entity);
 
 		// - CAMERA CONTROLS -
-		pose.orientation.rotate(0, (float)MousePos.getXDelta() * ROTATION_SPEED , 0);
-		pose.orientation.rotate(-(float)MousePos.getYDelta() * ROTATION_SPEED, 0 , 0);
+		pose.orientation.rotateXYZ(0, (float)MousePos.getXDelta() * ROTATION_SPEED , 0);
+		pose.orientation.rotateXYZ(-(float)MousePos.getYDelta() * ROTATION_SPEED, 0 , 0);
 		pose.orientation.x = 0;
 		
 		float speed = MOVEMENT_SPEED;

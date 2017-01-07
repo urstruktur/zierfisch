@@ -1,8 +1,10 @@
 package com.zierfisch.util;
 
-import org.lwjgl.glfw.GLFW;
-
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
 
@@ -13,8 +15,13 @@ public class Keyboard extends GLFWKeyCallback{
 
 	@Override
 	public void invoke(long window, int key, int scancode, int action, int mod) {
-		keys[key] = action == GLFW.GLFW_REPEAT || action == GLFW.GLFW_PRESS;
+		keys[key] = action == GLFW_REPEAT || action == GLFW_PRESS;
 		shift = mod == GLFW_MOD_SHIFT;
+
+		if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
+			glfwDestroyWindow(window);
+			System.exit(0);
+		}
 	}
 	
 	// boolean method that returns true if a given key

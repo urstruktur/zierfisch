@@ -29,7 +29,7 @@ public class RuleCohesion implements Rule {
 		for (Entity boid : neighbours) {
 			Vector3f neighborPos = boid.getComponent(Pose.class).position;
 			float dist = targetPos.distance(neighborPos);
-			if (dist > 0 && dist < influenceDist * target.getComponent(FlockingComponent.class).influence) {
+			if (dist > 0 && dist < influenceDist * target.getComponent(Boid.class).influence) {
 				sum.add(neighborPos);
 				countOfInfluenced++;
 			}
@@ -41,14 +41,14 @@ public class RuleCohesion implements Rule {
 
 			sum.sub(targetPos, steer); // TODO: check if direction is right
 			steer.normalize();
-			steer.mul(Pose.maxSpeed);
+			steer.mul(Boid.maxSpeed);
 			
 			steer.sub(target.getComponent(Pose.class).velocity); // Steering = Desired - Velocity
 			
 			// clamp to maxForce
-			if(steer.lengthSquared() > Pose.maxForce*Pose.maxForce){	
+			if(steer.lengthSquared() > Boid.maxForce*Boid.maxForce){	
 				steer.normalize();
-				steer.mul(Pose.maxForce);
+				steer.mul(Boid.maxForce);
 			}
 
 			return steer.mul(weight);

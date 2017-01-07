@@ -27,7 +27,7 @@ public class RuleAlign implements Rule {
 		for (Entity boid : neighbours) {
 			Vector3f neighborVel = boid.getComponent(Pose.class).velocity;
 			float dist = targetPose.position.distance(neighborVel);
-			if (dist > 0 && dist < influenceDist * target.getComponent(FlockingComponent.class).influence) {
+			if (dist > 0 && dist < influenceDist * target.getComponent(Boid.class).influence) {
 				velSum.add(neighborVel);
 				countOfInfluenced++;
 			}
@@ -36,14 +36,14 @@ public class RuleAlign implements Rule {
 		if (countOfInfluenced > 0) {
 			velSum.div(countOfInfluenced);
 			velSum.normalize();
-			velSum.mul(Pose.maxSpeed);
+			velSum.mul(Boid.maxSpeed);
 			
 			Vector3f steer = velSum.sub(target.getComponent(Pose.class).velocity); // Steering = Desired - Velocity
 			
 			// clamp to maxForce
-			if(steer.lengthSquared() > Pose.maxForce * Pose.maxForce){	
+			if(steer.lengthSquared() > Boid.maxForce * Boid.maxForce){	
 				steer.normalize();
-				steer.mul(Pose.maxForce);
+				steer.mul(Boid.maxForce);
 			}
 			
 			return steer.mul(weight);
