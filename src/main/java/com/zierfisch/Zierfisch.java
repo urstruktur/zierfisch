@@ -72,8 +72,8 @@ public class Zierfisch implements ApplicationListener {
 		
 		engine.addEntity(enviroment);
 		addMainCamera();
-		createFishflock(4, 3, 3, 0.2f);
-		createFishflock(3, 5, 3, 0.5f);
+		createFishflock(6, 6, 6, 0.4f);
+		//createFishflock(3, 5, 3, 0.5f);
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);

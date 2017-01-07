@@ -91,7 +91,7 @@ public class FlockingSystem extends IteratingSystem {
 		rulez.add(rc);
 		rulez.add(rs);
 		rulez.add(ra);
-		//rulez.add(rf);
+		rulez.add(rf);
 		
 		super.addedToEngine(engine);
 	}
@@ -100,11 +100,11 @@ public class FlockingSystem extends IteratingSystem {
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
 		
-		float deltaTimeSec = deltaTime;
+		float deltaTimeSec = deltaTime * 0.001f;
 		
 		// calculate and apply forces
 		for(Rule rule : rulez){
-			entity.getComponent(Pose.class).acceleration.add(rule.calcForce(entity, getEntities()));
+			entity.getComponent(Pose.class).acceleration.add(rule.calcForce(entity, getEntities()).mul(deltaTimeSec));
 		}
 
 		// move boid according to velocity & acceleration
@@ -128,7 +128,6 @@ public class FlockingSystem extends IteratingSystem {
 		   // b.up.normalize();      
 		   // Vector3f new_side = new Vector3f(new_forward).cross(b.up);
 		   // b.up = new_forward.cross(new_side);
-		    
 			//p.orientation.lookAlong(new_forward, b.up);
 
 			// simple method

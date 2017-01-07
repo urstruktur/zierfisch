@@ -16,7 +16,7 @@ public class RuleAlign implements Rule {
 	
 	public RuleAlign(){
 		weight = 1.4f;
-		influenceDist = 1f;
+		influenceDist = 5f;
 	}
 
 	@Override

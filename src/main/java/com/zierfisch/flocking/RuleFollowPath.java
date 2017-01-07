@@ -26,7 +26,7 @@ public class RuleFollowPath implements Rule {
 	}
 	
 	public RuleFollowPath(Bezier<Vector3> curve){
-		this(curve, 1f);
+		this(curve, 0.5f);
 	}
 	
 	public void setWeight(float weight){
@@ -51,8 +51,7 @@ public class RuleFollowPath implements Rule {
 		
 		//return steer.mul(weight);
 		
-		Vector3f dir = new Vector3f(0.005f*weight,0.005f*weight,-.01f*weight);
-		//Vector3f dir = new Vector3f(-0.01f*weight,0,0);
+		Vector3f dir = new Vector3f(0.1f*weight,0,-weight);
 		
 		return dir;
 	}

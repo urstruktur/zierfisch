@@ -13,12 +13,12 @@ public class Boid implements Component{
 	/**
 	 * describes the maxium thrust the entity can generate itself
 	 */
-	public static final float maxForce = 0.0001f;
+	public static final float maxForce = 1f;
 	
 	/**
 	 * describes the maximum speed that the entity can reach, to simulate friction and viscous drag
 	 */
-	public static final float maxSpeed = 0.0008f;
+	public static final float maxSpeed = 1f;
 	
 	/**
 	 * Holds mass of an object. It determines the effect of an applied steering force on the velocity.

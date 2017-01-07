@@ -15,7 +15,7 @@ public class RuleSeperation implements Rule {
 	private float influenceDist;
 	
 	public RuleSeperation(){
-		weight = 0.01f;
+		weight = 0.1f;
 		influenceDist = 0.4f;
 	}
 	
@@ -43,7 +43,7 @@ public class RuleSeperation implements Rule {
 				Vector3f toTarget = new Vector3f();
 				targetPos.sub(neighborPos, toTarget);
 				toTarget.normalize();
-				toTarget.mul(1/(dist*dist*dist)); // weight by distance
+				toTarget.mul(1/(dist*dist)); // weight by distance
 				steer.add(toTarget);
 				countOfInfluenced++;
 			}

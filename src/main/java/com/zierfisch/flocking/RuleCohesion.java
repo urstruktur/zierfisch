@@ -15,8 +15,8 @@ public class RuleCohesion implements Rule {
 	private float influenceDist;
 	
 	public RuleCohesion(){
-		weight = 0.2f;
-		influenceDist = 5f;
+		weight = 1f;
+		influenceDist = 8f;
 	}
 	
 	@Override
