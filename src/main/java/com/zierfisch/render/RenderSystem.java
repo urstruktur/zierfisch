@@ -123,9 +123,14 @@ public class RenderSystem extends EntitySystem {
 
 		setTextureUniforms(shader, gestalt);
 		setMatrixUniforms(shader, pose);
+		setTimeUniform(shader);
 		shader.render(gestalt.mesh);
 
 		lastShader = shader;
+	}
+	
+	private void setTimeUniform(Shader shader){
+		shader.setUniform("time", (float)(System.currentTimeMillis()/1000f));
 	}
 
 	private void setTextureUniforms(Shader shader, Gestalt gestalt) {
