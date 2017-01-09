@@ -6,8 +6,6 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-import java.io.IOException;
-
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -21,25 +19,12 @@ import com.zierfisch.cam.CameraSystem;
 import com.zierfisch.flocking.Boid;
 import com.zierfisch.flocking.FlockingSystem;
 import com.zierfisch.gui.TweakingSystem;
-import com.zierfisch.render.Gestalt;
 import com.zierfisch.render.Pose;
 import com.zierfisch.render.RenderSystem;
-import com.zierfisch.shader.Shader;
-import com.zierfisch.shader.ShaderBuilder;
-import com.zierfisch.tex.TextureLoader;
-import com.zierfisch.util.ObjImporter;
-
-import xyz.krachzack.gfx.mesh.Mesh;
-import xyz.krachzack.gfx.mesh.MeshBuilder;
-import xyz.krachzack.gfx.mesh.Primitive;
-import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 public class Zierfisch implements ApplicationListener {
 
 	private Engine engine;
-	private static Shader shader;
-	private static Mesh cuboid;
-	private static Mesh enviromentMesh;
 	private Matrix4f scale = new Matrix4f();
 	
 	@Override
@@ -47,32 +32,16 @@ public class Zierfisch implements ApplicationListener {
 		int vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 		
-		ObjImporter importer = new ObjImporter();
-		try {
-			importer.load("assets/models/enviroment.obj");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
-		enviromentMesh = importer.make(objBuilder);
-		
-		Gestalt g = new Gestalt();
-		g.mesh = enviromentMesh;
-		g.shader = new ShaderBuilder()
-				.setVertexShader("assets/shaders/cc/depth.vert.glsl")
-				.setFragmentShader("assets/shaders/cc/depth.frag.glsl")
-				.build();
-		g.texture0 = new TextureLoader().load("assets/textures/RockPerforated0029_1_seamless_S.png");
-		
+
 		Entity enviroment = new Entity();
-		enviroment.add(g);
+		enviroment.add(RenderSystem.makeEnviromentGestalt());
 		enviroment.add(new Pose());
 		
 		initEngine();
 		
 		engine.addEntity(enviroment);
 		addMainCamera();
-		createFishflock(6, 6, 6, 0.4f);
+		createFishflock(7, 5, 7, 0.4f);
 		//createFishflock(3, 5, 3, 0.5f);
 		
 		glEnable(GL_DEPTH_TEST);

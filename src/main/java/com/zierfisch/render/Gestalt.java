@@ -103,4 +103,8 @@ public class Gestalt implements Component {
 	 */
 	public Texture texture4;
 
+	/**
+	 * Determines if the textures will be scaled. Is 1.0 when left alone.
+	 */
+	public float uvscale;
 }

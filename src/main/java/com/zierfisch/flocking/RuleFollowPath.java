@@ -52,6 +52,7 @@ public class RuleFollowPath implements Rule {
 		//return steer.mul(weight);
 		
 		Vector3f dir = new Vector3f(0.1f*weight,0,-weight);
+		//Vector3f dir = new Vector3f(0,0,0);
 		
 		return dir;
 	}

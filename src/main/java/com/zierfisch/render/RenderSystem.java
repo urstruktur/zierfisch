@@ -1,18 +1,24 @@
 package com.zierfisch.render;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL21.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
+
+import xyz.krachzack.gfx.mesh.Mesh;
+import xyz.krachzack.gfx.mesh.MeshBuilder;
+import xyz.krachzack.gfx.mesh.Primitive;
+import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
@@ -27,15 +33,7 @@ import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
 import com.zierfisch.tex.Texture;
 import com.zierfisch.tex.TextureLoader;
-import com.zierfisch.util.GLErrors;
 import com.zierfisch.util.ObjImporter;
-
-import xyz.krachzack.gfx.assets.CuboidMaker;
-import xyz.krachzack.gfx.assets.ObjLoader;
-import xyz.krachzack.gfx.mesh.Mesh;
-import xyz.krachzack.gfx.mesh.MeshBuilder;
-import xyz.krachzack.gfx.mesh.Primitive;
-import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 public class RenderSystem extends EntitySystem {
 
@@ -92,30 +90,6 @@ public class RenderSystem extends EntitySystem {
 		return ent;
 	}
 
-	public static Component makeDefaultGestalt() {
-		ObjImporter importer = new ObjImporter();
-		try {
-			importer.load("assets/models/zierfisch.obj");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
-		Mesh mesh = importer.make(objBuilder);
-		
-		//MeshBuilder builder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
-		//CuboidMaker cuboidMaker = new CuboidMaker();
-		//Mesh cuboid = cuboidMaker.make(builder, 0.5);
-
-		Gestalt gestalt = new Gestalt();
-
-		gestalt.mesh = mesh;
-		gestalt.shader = null;
-		gestalt.texture0 = new TextureLoader().load("assets/textures/fish-diffuse.png");
-
-		return gestalt;
-	}
-
 	@Override
 	public void removedFromEngine(Engine engine) {
 		super.removedFromEngine(engine);
@@ -160,6 +134,12 @@ public class RenderSystem extends EntitySystem {
 		setTextureUniform(shader, gestalt.texture2, 2);
 		setTextureUniform(shader, gestalt.texture3, 3);
 		setTextureUniform(shader, gestalt.texture4, 4);
+		
+		if(gestalt.uvscale > 0){
+			shader.setUniform("uvscale", gestalt.uvscale);
+		}else{
+			shader.setUniform("uvscale", 1.0f);
+		}
 	}
 
 	public void setTextureUniform(Shader shader, Texture tex, int offset) {
@@ -192,6 +172,53 @@ public class RenderSystem extends EntitySystem {
 		}
 
 		return shader;
+	}
+	
+	public static Component makeDefaultGestalt() {
+		ObjImporter importer = new ObjImporter();
+		try {
+			importer.load("assets/models/zierfisch.obj");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
+		Mesh mesh = importer.make(objBuilder);
+		
+		//MeshBuilder builder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
+		//CuboidMaker cuboidMaker = new CuboidMaker();
+		//Mesh cuboid = cuboidMaker.make(builder, 0.5);
+
+		Gestalt gestalt = new Gestalt();
+
+		gestalt.mesh = mesh;
+		gestalt.shader = null;
+		gestalt.texture0 = new TextureLoader().load("assets/textures/fish-diffuse.png");
+		gestalt.texture4 = new TextureLoader().load("assets/textures/fog-gradient-03.png");
+
+		return gestalt;
+	}
+
+	public static Component makeEnviromentGestalt() {
+		ObjImporter importer = new ObjImporter();
+		try {
+			importer.load("assets/models/enviroment.obj");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
+		Mesh enviromentMesh = importer.make(objBuilder);
+		
+		Gestalt g = new Gestalt();
+		g.mesh = enviromentMesh;
+		g.shader = new ShaderBuilder()
+				.setVertexShader("assets/shaders/cc/depth.vert.glsl")
+				.setFragmentShader("assets/shaders/cc/depth.frag.glsl")
+				.build();
+		g.texture0 = new TextureLoader().load("assets/textures/RockPerforated0029_1_seamless_S.png");
+		g.texture4 = new TextureLoader().load("assets/textures/fog-gradient-03.png"); // texture4 is used for fog texture gradient
+		g.uvscale = 12f;
+		return g;
 	}
 
 }

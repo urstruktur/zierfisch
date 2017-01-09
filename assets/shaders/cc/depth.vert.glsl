@@ -9,6 +9,7 @@ in vec2 texCoords;
 
 out vec2 fragTexCoords;
 out vec4 fragPos;
+out vec4 viewSpace;
 
 void main()
 {
