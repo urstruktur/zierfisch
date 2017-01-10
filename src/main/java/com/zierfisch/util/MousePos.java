@@ -3,6 +3,8 @@ package com.zierfisch.util;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.*;
 
+import org.lwjgl.glfw.GLFW;
+
 public class MousePos extends GLFWCursorPosCallback{
 	
 	private static double x = 0;
@@ -15,11 +17,11 @@ public class MousePos extends GLFWCursorPosCallback{
 	
     @Override
     public void invoke(long window, double xpos, double ypos) {
+    	glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+    	
     	if(focused){
         	deltaX = xpos - x;
         	deltaY = ypos - y;
-        	
-        	glfwSetCursorPos(window, 800, 400);
     	}
 
     	x = xpos;
