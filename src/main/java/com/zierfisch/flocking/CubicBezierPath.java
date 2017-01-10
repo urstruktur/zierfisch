@@ -43,7 +43,7 @@ public class CubicBezierPath {
 		// search for the 4 needed points
 		
 		// derivative of polynom for tangent
-		// dM/dt = t²(-3A + 9B - 9C + 3D) + t(6A - 12B + 6C) + (-3A + 3B)
+		// dM/dt = tâ‰¤(-3A + 9B - 9C + 3D) + t(6A - 12B + 6C) + (-3A + 3B)
 		//Vector3f point = 
 		
 		return null;
