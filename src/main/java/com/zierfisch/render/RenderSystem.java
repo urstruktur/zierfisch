@@ -53,6 +53,16 @@ public class RenderSystem extends EntitySystem {
 	private Shader defaultShader;
 	
 	private CameraSystem camSys;
+	
+	private Surface surface;
+	
+	public Surface getSurface() {
+		return surface;
+	}
+	
+	public void setSurface(Surface surface) {
+		this.surface = surface;
+	}
 
 	@Override
 	public void addedToEngine(Engine engine) {
