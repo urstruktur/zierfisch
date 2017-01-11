@@ -1,45 +1,39 @@
 package com.zierfisch.render;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
+import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER_HEIGHT;
+import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER_WIDTH;
+import static org.lwjgl.opengl.GL30.glGetRenderbufferParameteri;
 
-public class PhysicalSurface implements Surface {
+import org.lwjgl.glfw.GLFWFramebufferSizeCallbackI;
 
-	int fbo;
+public class PhysicalSurface extends AbstractSurface {
 	
-	public PhysicalSurface(int physicalFbo) {
-		fbo = physicalFbo;
-	}
+	private int width;
+	private int height;
 	
-	@Override
-	public int getWidth() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getHeight() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void bind() {
+	public PhysicalSurface() {
 		// Note that this is not guaranteed to work
 		// Usually 0 is used for default rendering, but some platforms like iOS
 		// are known to implement this differently.
 		// An alternative aproach is to get the initially bound framebuffer, which
 		// is actually already done in application but then never used.
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		super(0);
+	}
+	
+	public void resize(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
+	
+	@Override
+	public int getWidth() {
+		return width;
 	}
 
 	@Override
-	public void clear() {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	public int getHeight() {
+		return height;
 	}
-
 }

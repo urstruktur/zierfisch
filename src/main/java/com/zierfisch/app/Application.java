@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.opengl.GL;
@@ -45,7 +46,7 @@ public class Application {
 	private int windowHeight = 600;
 	
 	private int defaultVao;
-	private Surface physicalSurface;
+	private PhysicalSurface physicalSurface;
 	
 	public Application(ApplicationListener listener) {
 		this.listener = listener;
@@ -112,7 +113,7 @@ public class Application {
 	 */
 	private void initPhysicalSurface() {
 		int fbo = glGetInteger(GL_FRAMEBUFFER_BINDING);
-		physicalSurface = new PhysicalSurface(fbo);
+		physicalSurface = new PhysicalSurface();
 	}
 
 	/**
@@ -147,7 +148,18 @@ public class Application {
 			}
 		});
 		
-		listener.enter();
+		glfwSetFramebufferSizeCallback(window, new GLFWFramebufferSizeCallback() {
+			@Override
+			public void invoke(long window, int width, int height) {
+				physicalSurface.resize(width, height);
+			}
+		});
+		int[] width = new int[1];
+		int[] height = new int[1];
+		glfwGetFramebufferSize(window, width, height);
+		physicalSurface.resize(width[0], height[0]);
+		
+		listener.enter(this);
 		while(!glfwWindowShouldClose(window) && !exitScheduled) {
 			glfwPollEvents();
 			
@@ -155,12 +167,11 @@ public class Application {
 			
 			glfwSwapBuffers(window);
 		}
-		listener.exit();
+		listener.exit(this);
 		
 		glfwFreeCallbacks(window);
 		glfwDestroyWindow(window);
 		
-		System.out.println("das ist das letzte");
 		System.exit(0);
 	}
 }

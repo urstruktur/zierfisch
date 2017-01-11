@@ -33,6 +33,7 @@ import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
 import com.zierfisch.tex.Texture;
 import com.zierfisch.tex.TextureLoader;
+import com.zierfisch.util.GLErrors;
 import com.zierfisch.util.ObjImporter;
 
 public class RenderSystem extends EntitySystem {
@@ -55,6 +56,10 @@ public class RenderSystem extends EntitySystem {
 	private CameraSystem camSys;
 	
 	private Surface surface;
+	
+	public RenderSystem(Surface surface) {
+		this.surface = surface;
+	}
 	
 	public Surface getSurface() {
 		return surface;
@@ -112,9 +117,16 @@ public class RenderSystem extends EntitySystem {
 	public void update(float deltaTime) {
 		super.update(deltaTime);
 		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GLErrors.check("Before binding physical surface");
+		surface.bind();
+		GLErrors.check("After binding physical surface");
+		surface.clear();
+		GLErrors.check();
+		
 		glEnable(GL_DEPTH_TEST);
-
+		
+		//glClear(GL_COLOR_BUFFER_BIT);
+		
 		for (int i = 0; i < entities.size(); ++i) {
 			Entity entity = entities.get(i);
 			Pose pose = pm.get(entity);
@@ -162,6 +174,7 @@ public class RenderSystem extends EntitySystem {
 			int loc = shader.getUniformLocation("texture" + offset);
 			if(loc != -1) {
 				shader.setUniform(loc, offset);
+				GLErrors.check();
 				glActiveTexture(GL_TEXTURE0 + offset);
 				tex.bind();
 			}

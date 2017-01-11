@@ -22,14 +22,20 @@ import com.zierfisch.flocking.FlockingSystem;
 import com.zierfisch.gui.TweakingSystem;
 import com.zierfisch.render.Pose;
 import com.zierfisch.render.RenderSystem;
+import com.zierfisch.render.Surface;
+import com.zierfisch.render.Surfaces;
+import com.zierfisch.util.GLErrors;
 
 public class Zierfisch implements ApplicationListener {
 
+	private Application app;
 	private Engine engine;
 	private Matrix4f scale = new Matrix4f();
 	
 	@Override
 	public void enter(Application app) {
+		this.app = app;
+		
 		Entity enviroment = new Entity();
 		enviroment.add(RenderSystem.makeEnviromentGestalt());
 		enviroment.add(new Pose());
@@ -38,7 +44,7 @@ public class Zierfisch implements ApplicationListener {
 		
 		engine.addEntity(enviroment);
 		addMainCamera();
-		createFishflock(7, 5, 7, 0.4f);
+		//createFishflock(7, 5, 7, 0.4f);
 		//createFishflock(3, 5, 3, 0.5f);
 		
 		glEnable(GL_DEPTH_TEST);
@@ -62,10 +68,10 @@ public class Zierfisch implements ApplicationListener {
 		 engine = new Engine();
 		 
 		 engine.addSystem(new CameraSystem());
-		 engine.addSystem(new RenderSystem());
+		 engine.addSystem(new RenderSystem(app.getPhysicalSurface()));
 
 		 //engine.addSystem(new TweakingSystem());
-		 engine.addSystem(new FlockingSystem());
+		 //engine.addSystem(new FlockingSystem());
 	}
 
 	@Override
