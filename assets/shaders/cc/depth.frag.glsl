@@ -39,5 +39,5 @@ void main()
 	fogColor = texture(texture4, vec2(clamp(1.0-fogFactor,0.01,0.99),0.1)); // clamp is a fix for the problem that edge pixels are grey (?)
 	fogFactor = 1.0 - fogColor.a;
 
-    color = mix(fogColor, lightColor, fogFactor);
+    color = mix(fogColor, lightColor, fogFactor) + fragPos;
 }

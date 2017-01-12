@@ -107,7 +107,7 @@ public class RenderSystem extends EntitySystem {
 				
 		offscreenColor = new Texture();
 		offscreenDepth = new Texture();
-		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth);
+		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth, true);
 	}
 	
 	private void present(Texture texture) {
