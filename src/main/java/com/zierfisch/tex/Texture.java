@@ -18,6 +18,7 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL11;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 import com.zierfisch.util.GLErrors;
 
 public class Texture {
@@ -88,7 +89,7 @@ public class Texture {
 			allocate(usage, width, height, 8);
 			break;
 		case DEPTH:
-			allocate(usage, width, height, 32);
+			allocate(usage, width, height, 24);
 			break;
 		case VECTOR:
 			allocate(usage, width, height, 32);
@@ -122,7 +123,22 @@ public class Texture {
 		int format = format(usage, componentBits, componentCount);
 		int type = type(usage, componentBits, componentCount);
 		
-		System.out.println(format);
+		switch(usage) {
+		case DEPTH:
+			setWrapping(WRAPPING_REPEAT);
+			setFiltering(FILTERING_NEAREST);
+			break;
+			
+		default:
+			setFiltering(FILTERING_LINEAR);
+			setWrapping(WRAPPING_REPEAT);
+			break;
+		}
+		GLErrors.check();
+		
+//		System.out.println("Internal: " + Integer.toHexString(internalFormat));
+//		System.out.println("Format: " + Integer.toHexString(format));
+//		System.out.println("Type: " + Integer.toHexString(type));
 		
 		glTexImage2D(target, level, internalFormat, width, height, border, format, type, contents);
 		GLErrors.check();
@@ -133,7 +149,7 @@ public class Texture {
 		case COLOR:
 			switch (componentCount) {
 			case 1:
-				switch (componentBits) {
+			switch (componentBits) {
 				case 8:
 					return GL_R8;
 				case 16:
@@ -224,7 +240,7 @@ public class Texture {
 	private int type(TextureUsage usage, int bitsPerComponent, int componentCount) {
 		switch(usage) {
 		case DEPTH:
-			return GL_DEPTH_COMPONENT;
+			return GL_UNSIGNED_BYTE;
 
 		case COLOR:
 			switch(bitsPerComponent) {

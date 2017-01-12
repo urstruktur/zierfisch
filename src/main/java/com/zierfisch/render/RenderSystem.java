@@ -62,7 +62,10 @@ public class RenderSystem extends EntitySystem {
 
 	private Shader presentShader;
 
-	private Texture someTexture;
+	private Surface offscreen;
+	
+	private Texture offscreenColor;
+	private Texture offscreenDepth;
 	
 	public RenderSystem(Surface surface) {
 		this.surface = surface;
@@ -102,7 +105,9 @@ public class RenderSystem extends EntitySystem {
 				              .setFragmentShader("assets/shaders/present/present.frag.glsl")
 				              .build();
 				
-		someTexture = new TextureLoader().load("assets/textures/fish-diffuse.png");
+		offscreenColor = new Texture();
+		offscreenDepth = new Texture();
+		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth);
 	}
 	
 	private void present(Texture texture) {
@@ -115,6 +120,7 @@ public class RenderSystem extends EntitySystem {
 		texture.bind();
 		
 		presentShader.render(fullscreenQuad);
+		lastShader = presentShader;
 	}
 
 	private void initDefaultShader() {
@@ -144,25 +150,29 @@ public class RenderSystem extends EntitySystem {
 	public void update(float deltaTime) {
 		super.update(deltaTime);
 		
+		offscreen.bind();
+		GLErrors.check("Bound offscreen surface");
+		System.out.println("Complete: " + offscreen.isComplete());
+		
+		offscreen.clear();
+		GLErrors.check("Cleared offscreen surface");
+		
+		glEnable(GL_DEPTH_TEST);
+		for (int i = 0; i < entities.size(); ++i) {
+			Entity entity = entities.get(i);
+			Pose pose = pm.get(entity);
+			Gestalt gestalt = gm.get(entity);
+
+			render(pose, gestalt);
+		}
+		
 		GLErrors.check("Before binding physical surface");
 		surface.bind();
 		GLErrors.check("After binding physical surface");
 		surface.clear();
 		GLErrors.check();
 		
-		glEnable(GL_DEPTH_TEST);
-		
-		//glClear(GL_COLOR_BUFFER_BIT);
-		
-		/*for (int i = 0; i < entities.size(); ++i) {
-			Entity entity = entities.get(i);
-			Pose pose = pm.get(entity);
-			Gestalt gestalt = gm.get(entity);
-
-			render(pose, gestalt);
-		}*/
-		
-		present(someTexture);
+		present(offscreenColor);
 	}
 
 	private void render(Pose pose, Gestalt gestalt) {

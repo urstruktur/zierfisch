@@ -10,6 +10,9 @@ import static org.lwjgl.opengl.GL33.*;
 import static org.lwjgl.opengl.GL40.*;
 import static org.lwjgl.opengl.GL41.*;
 
+import com.zierfisch.tex.Texture;
+import com.zierfisch.util.GLErrors;
+
 /**
  * <p>
  * Represents a render target that is not directly used for presentation.
@@ -35,14 +38,15 @@ public class OffscreenSurface extends AbstractSurface {
 	 */
 	private int height;
 
-	public OffscreenSurface(int width, int height, int bitsPerColorComponent, int depthBits) {
+	public OffscreenSurface(int width, int height, Texture colorTex, Texture depthTex) {
 		super(glGenFramebuffers());
 		
 		this.width = width;
 		this.height = height;
 
-		initColorAttachment(bitsPerColorComponent);
-		initDepthAttachment(depthBits);
+		bind();
+		initColorAttachment(colorTex);
+		initDepthAttachment(depthTex);
 	}
 	
 	@Override
@@ -55,76 +59,27 @@ public class OffscreenSurface extends AbstractSurface {
 		return height;
 	}
 
-	private void initDepthAttachment(int depthBits) {
-		switch (depthBits) {
-		case 0:
-			return; // no attachment required
-
-		case 8:
-			// The depth buffer
-//			GLuint depthrenderbuffer;
-//			glGenRenderbuffers(1, &depthrenderbuffer);
-//			glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
-//			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1024, 768);
-//			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
-			break;
-
-		case 16:
-			// TODO implement
-			break;
-
-		default:
-			throw new UnsupportedOperationException("Cannot create a depth attachment with " + depthBits + " bits");
-		}
+	private void initColorAttachment(Texture colorTex) {
+		colorTex.bind();
+		glFramebufferTexture2D(
+			GL_FRAMEBUFFER,
+			GL_COLOR_ATTACHMENT0,
+			GL_TEXTURE_2D,
+			colorTex.getName(),
+			0
+		);
+		GLErrors.check();
 	}
 
-	private void initColorAttachment(int colorCompBits) {
-		switch (colorCompBits) {
-		case 0:
-			return; // no attachment required
-
-		case 8:
-			int texture = createTexture(4, colorCompBits, GL_NEAREST, GL_NEAREST);
-
-			// TODO implement
-			break;
-
-		case 16:
-			// TODO implement
-			break;
-
-		default:
-			throw new UnsupportedOperationException(
-					"Cannot create a color attachment with " + colorCompBits + " bits per component");
-		}
+	private void initDepthAttachment(Texture depthTex) {
+		depthTex.bind();
+		glFramebufferTexture2D(
+			GL_FRAMEBUFFER,
+			GL_DEPTH_ATTACHMENT,
+			GL_TEXTURE_2D,
+			depthTex.getName(),
+			0
+		);
+		GLErrors.check();
 	}
-
-	private int createTexture(int componentCount, int bitsPerComponent, int minFilter, int magFilter) {
-		int tex = glGenTextures();
-		glBindTexture(GL_TEXTURE_2D, tex);
-
-//		int internalFormat = texInternalFormatFromComponentCount(componentCount);
-//		int format = texFormatFromComponentCount(componentCount, bitsPerComponent);
-//		int type = texTypeFromComponentCount(componentCount, bitsPerComponent);
-//
-//		// Give an empty image to OpenGL ( the last "0" )
-//		glTexImage2D(GL_TEXTURE_2D,
-//				0, // level, 0 is the base texture level
-//				internalFormat,
-//				width, height,
-//				0, // this parameter is always 0 per documentation (border)
-//				format,
-//				type,
-//				0 // no data, empty image
-//		);
-//
-//		// Poor filtering. Needed !
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-
-		return tex;
-	}
-
-	
-
 }

@@ -60,4 +60,11 @@ public interface Surface {
 	public void clear(int which);
 
 	public void bind();
+	
+	/**
+	 * <p><strong>Note:</strong>Only call this when the surface is currently bound.</p>
+	 * 
+	 * @return
+	 */
+	public boolean isComplete();
 }
