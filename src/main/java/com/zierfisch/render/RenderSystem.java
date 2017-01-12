@@ -10,10 +10,17 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL31.*;
+import static org.lwjgl.opengl.GL32.*;
+import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.opengl.GL40.*;
+import static org.lwjgl.opengl.GL41.*;
 
 import java.io.IOException;
 
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL30;
 
 import xyz.krachzack.gfx.assets.QuadMaker;
 import xyz.krachzack.gfx.mesh.Mesh;
@@ -66,6 +73,8 @@ public class RenderSystem extends EntitySystem {
 	
 	private Texture offscreenColor;
 	private Texture offscreenDepth;
+
+	private Texture offscreenFun;
 	
 	public RenderSystem(Surface surface) {
 		this.surface = surface;
@@ -106,18 +115,25 @@ public class RenderSystem extends EntitySystem {
 				              .build();
 				
 		offscreenColor = new Texture();
+		offscreenFun = new Texture();
 		offscreenDepth = new Texture();
-		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth, true);
+		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), new Texture[] { offscreenColor, offscreenFun }, offscreenDepth, true);
 	}
 	
 	private void present(Texture texture) {
 		presentShader.bind();
 		
-		int loc = presentShader.getUniformLocation("content");
+		int loc = presentShader.getUniformLocation("texture0");
 		presentShader.setUniform(loc, 0);
 		GLErrors.check();
 		glActiveTexture(GL_TEXTURE0);
 		texture.bind();
+		
+		loc = presentShader.getUniformLocation("texture1");
+		presentShader.setUniform(loc, 1);
+		GLErrors.check();
+		glActiveTexture(GL_TEXTURE0 + 1);
+		offscreenFun.bind();
 		
 		presentShader.render(fullscreenQuad);
 		lastShader = presentShader;
@@ -185,6 +201,8 @@ public class RenderSystem extends EntitySystem {
 		setTextureUniforms(shader, gestalt);
 		setMatrixUniforms(shader, pose);
 		setTimeUniform(shader);
+		
+		glDrawBuffers(new int[] { GL30.GL_COLOR_ATTACHMENT0, GL30.GL_COLOR_ATTACHMENT1 });
 		shader.render(gestalt.mesh);
 
 		lastShader = shader;

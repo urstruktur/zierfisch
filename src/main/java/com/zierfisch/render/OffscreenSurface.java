@@ -38,15 +38,19 @@ public class OffscreenSurface extends AbstractSurface {
 	 */
 	private int height;
 
-	public OffscreenSurface(int width, int height, Texture colorTex, Texture depthTex) {
+	public OffscreenSurface(int width, int height, Texture[] colorTexes, Texture depthTex) {
 		super(glGenFramebuffers());
 		
 		this.width = width;
 		this.height = height;
 
 		bind();
-		initColorAttachment(colorTex);
+		initColorAttachments(colorTexes);
 		initDepthAttachment(depthTex);
+	}
+	
+	public OffscreenSurface(int width, int height, Texture colorTex, Texture depthTex) {
+		this(width, height, new Texture[] { colorTex }, depthTex);
 	}
 	
 	@Override
@@ -59,16 +63,22 @@ public class OffscreenSurface extends AbstractSurface {
 		return height;
 	}
 
-	private void initColorAttachment(Texture colorTex) {
-		colorTex.bind();
-		glFramebufferTexture2D(
-			GL_FRAMEBUFFER,
-			GL_COLOR_ATTACHMENT0,
-			GL_TEXTURE_2D,
-			colorTex.getName(),
-			0
-		);
-		GLErrors.check();
+	private void initColorAttachments(Texture[] colorTexes) {
+		int offset = 0;
+		for(Texture tex: colorTexes) {
+			tex.bind();
+			glFramebufferTexture2D(
+				GL_FRAMEBUFFER,
+				GL_COLOR_ATTACHMENT0 + offset,
+				GL_TEXTURE_2D,
+				tex.getName(),
+				0
+			);
+			GLErrors.check();
+			++offset;
+		}
+		
+		
 	}
 
 	private void initDepthAttachment(Texture depthTex) {

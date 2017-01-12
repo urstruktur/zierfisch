@@ -15,6 +15,12 @@ import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.*;
+import static org.lwjgl.opengl.GL32.*;
+import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.opengl.GL40.*;
+import static org.lwjgl.opengl.GL41.*;
 
 import java.nio.FloatBuffer;
 
@@ -189,6 +195,10 @@ public class Shader {
 		
 		glDrawElements(GL_TRIANGLES, mesh.getIndexes().length, GL_UNSIGNED_INT, 0);
 		GLErrors.check("Indexed drawing");
+	}
+
+	public int getName() {
+		return name;
 	}
 
 }

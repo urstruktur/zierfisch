@@ -1,11 +1,12 @@
 #version 330
 
-uniform sampler2D content;
+uniform sampler2D texture0;
+uniform sampler2D texture1;
 
 in vec2 st;
 
 out vec4 color;
 
 void main() {
-    color = fract(texture(content, st));
+    color = fract(texture(texture0, st) + texture(texture1, st));
 }

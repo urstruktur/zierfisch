@@ -4,11 +4,13 @@ uniform sampler2D texture0;
 uniform sampler2D texture4;
 uniform float uvscale;
 
-out vec4 color;
+layout(location = 0) out vec4 color;
+layout(location = 1) out vec4 funOut;
 
 in vec4 viewSpace;
 in vec2 fragTexCoords;
 in vec4 fragPos;
+in vec4 fragPosWorld;
 
 const float FOGDENSITY = 0.15;
 const int FOGSTART = 1;
@@ -39,5 +41,7 @@ void main()
 	fogColor = texture(texture4, vec2(clamp(1.0-fogFactor,0.01,0.99),0.1)); // clamp is a fix for the problem that edge pixels are grey (?)
 	fogFactor = 1.0 - fogColor.a;
 
-    color = mix(fogColor, lightColor, fogFactor) + fragPos;
+    color = mix(fogColor, lightColor, fogFactor);
+
+	funOut = fragPosWorld + 40 * vec4(fogFactor,fogFactor,fogFactor,fogFactor);
 }
