@@ -57,6 +57,10 @@ public class SegmentedMeshBuilder extends AbstractMeshBuilder {
 		super(type);
 	}
 	
+	public SegmentedMeshBuilder() {
+		this(Primitive.TRIANGLES);
+	}
+	
 	/**
 	 * <p>
 	 * Returns the base 2 logarithm for the given number.

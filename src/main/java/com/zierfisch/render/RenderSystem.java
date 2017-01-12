@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import org.joml.Matrix4f;
 
+import xyz.krachzack.gfx.assets.QuadMaker;
 import xyz.krachzack.gfx.mesh.Mesh;
 import xyz.krachzack.gfx.mesh.MeshBuilder;
 import xyz.krachzack.gfx.mesh.Primitive;
@@ -56,6 +57,12 @@ public class RenderSystem extends EntitySystem {
 	private CameraSystem camSys;
 	
 	private Surface surface;
+
+	private Mesh fullscreenQuad;
+
+	private Shader presentShader;
+
+	private Texture someTexture;
 	
 	public RenderSystem(Surface surface) {
 		this.surface = surface;
@@ -72,7 +79,10 @@ public class RenderSystem extends EntitySystem {
 	@Override
 	public void addedToEngine(Engine engine) {
 		super.addedToEngine(engine);
-		
+		initialize(engine);
+	}
+
+	public void initialize(Engine engine) {
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 
@@ -80,9 +90,31 @@ public class RenderSystem extends EntitySystem {
 
 		initDefaultShader();
 
-		//addTestEntities();
-		
 		camSys = engine.getSystem(CameraSystem.class);
+		
+		initFullscreenQuad();
+	}
+
+	private void initFullscreenQuad() {
+		fullscreenQuad = new QuadMaker().make(new SegmentedMeshBuilder());
+		presentShader = new ShaderBuilder()
+				              .setVertexShader("assets/shaders/present/present.vert.glsl")
+				              .setFragmentShader("assets/shaders/present/present.frag.glsl")
+				              .build();
+				
+		someTexture = new TextureLoader().load("assets/textures/fish-diffuse.png");
+	}
+	
+	private void present(Texture texture) {
+		presentShader.bind();
+		
+		int loc = presentShader.getUniformLocation("content");
+		presentShader.setUniform(loc, 0);
+		GLErrors.check();
+		glActiveTexture(GL_TEXTURE0);
+		texture.bind();
+		
+		presentShader.render(fullscreenQuad);
 	}
 
 	private void initDefaultShader() {
@@ -90,11 +122,6 @@ public class RenderSystem extends EntitySystem {
 				.setVertexShader("assets/shaders/cc/depth.vert.glsl")
 				.setFragmentShader("assets/shaders/cc/depth.frag.glsl")
 				.build();
-	}
-
-	private void addTestEntities() {
-		Entity fish = makeFishEntity();
-		getEngine().addEntity(fish);
 	}
 
 	public Entity makeFishEntity() {
@@ -127,13 +154,15 @@ public class RenderSystem extends EntitySystem {
 		
 		//glClear(GL_COLOR_BUFFER_BIT);
 		
-		for (int i = 0; i < entities.size(); ++i) {
+		/*for (int i = 0; i < entities.size(); ++i) {
 			Entity entity = entities.get(i);
 			Pose pose = pm.get(entity);
 			Gestalt gestalt = gm.get(entity);
 
 			render(pose, gestalt);
-		}
+		}*/
+		
+		present(someTexture);
 	}
 
 	private void render(Pose pose, Gestalt gestalt) {
