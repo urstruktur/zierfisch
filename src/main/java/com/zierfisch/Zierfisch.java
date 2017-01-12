@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.zierfisch.app.Application;
 import com.zierfisch.app.ApplicationListener;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
@@ -21,18 +22,18 @@ import com.zierfisch.flocking.FlockingSystem;
 import com.zierfisch.gui.TweakingSystem;
 import com.zierfisch.render.Pose;
 import com.zierfisch.render.RenderSystem;
+import com.zierfisch.util.GLErrors;
 
 public class Zierfisch implements ApplicationListener {
 
+	private Application app;
 	private Engine engine;
 	private Matrix4f scale = new Matrix4f();
 	
 	@Override
-	public void enter() {
-		int vao = glGenVertexArrays();
-		glBindVertexArray(vao);
+	public void enter(Application app) {
+		this.app = app;
 		
-
 		Entity enviroment = new Entity();
 		enviroment.add(RenderSystem.makeEnviromentGestalt());
 		enviroment.add(new Pose());
@@ -65,14 +66,14 @@ public class Zierfisch implements ApplicationListener {
 		 engine = new Engine();
 		 
 		 engine.addSystem(new CameraSystem());
-		 engine.addSystem(new RenderSystem());
+		 engine.addSystem(new RenderSystem(app.getPhysicalSurface()));
 
-		 engine.addSystem(new TweakingSystem());
+		 //engine.addSystem(new TweakingSystem());
 		 engine.addSystem(new FlockingSystem());
 	}
 
 	@Override
-	public void exit() {
+	public void exit(Application app) {
 	}
 	
 	static long startTime = System.currentTimeMillis();

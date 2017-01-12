@@ -34,8 +34,17 @@ public class GLErrors {
 			case GL_OUT_OF_MEMORY:
 				return "GL_OUT_OF_MEMORY";
 				
+			case GL_STACK_OVERFLOW:
+				return "GL_STACK_OVERFLOW";
+				
+			case GL_STACK_UNDERFLOW:
+				return "GL_STACK_UNDERFLOW";
+				
+			case 0x0506:
+				return "GL_INVALID_FRAMEBUFFER_OPERATION";
+				
 			default:
-				return "UNKNOWN ERROR ENUM";
+				return "UNKNOWN ERROR ENUM: " + glEnum;
 		}
 	}
 		

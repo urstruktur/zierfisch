@@ -79,26 +79,15 @@ public class TextureLoader {
 		
 		
 		// You now have a ByteBuffer filled with the color data of each pixel.
-		// Now just create a texture ID and bind it. Then you can load it using
-		// whatever OpenGL method you want, for example:
-
-		int name = glGenTextures(); // Generate texture ID
-		glBindTexture(GL_TEXTURE_2D, name); // Bind texture ID
-
-		// Setup wrap mode
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-
-		// Setup texture scaling filtering
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
-
-		// Send texel data to OpenGL
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-				buffer);
+		
+		Texture tex = new Texture();
+		tex.bind();
+		tex.setWrapping(Texture.WRAPPING_REPEAT);
+		tex.setFiltering(Texture.FILTERING_LINEAR);
+		tex.allocate(TextureUsage.COLOR, width, height, 8, 4, buffer);
 
 		// Return the texture ID so we can bind it later again
-		return name;
+		return tex.getName();
 	}
 	
 	/**

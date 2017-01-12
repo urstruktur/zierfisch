@@ -11,7 +11,7 @@ public interface ApplicationListener {
 	 * opened.
 	 * </p>
 	 */
-	void enter();
+	void enter(Application app);
 
 	/**
 	 * <p>
@@ -24,7 +24,7 @@ public interface ApplicationListener {
 	 * exception.
 	 * </p>
 	 */
-	void exit();
+	void exit(Application app);
 
 	/**
 	 * <p>

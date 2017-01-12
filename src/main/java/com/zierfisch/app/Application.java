@@ -3,13 +3,20 @@ package com.zierfisch.app;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.opengl.GL;
 
+import com.zierfisch.render.PhysicalSurface;
+import com.zierfisch.render.Surface;
 import com.zierfisch.util.Keyboard;
 import com.zierfisch.util.MouseButton;
 import com.zierfisch.util.MousePos;
@@ -38,6 +45,9 @@ public class Application {
 	/** The initial height of the window, may change later */
 	private int windowHeight = 600;
 	
+	private int defaultVao;
+	private PhysicalSurface physicalSurface;
+	
 	public Application(ApplicationListener listener) {
 		this.listener = listener;
 	}
@@ -45,6 +55,10 @@ public class Application {
 	public void setWindowSize(int width, int height) {
 		this.windowWidth = width;
 		this.windowHeight = height;
+	}
+	
+	public Surface getPhysicalSurface() {
+		return physicalSurface;
 	}
 	
 	public void setTitle(String title) {
@@ -87,6 +101,20 @@ public class Application {
 		// bindings available for use.
 		GL.createCapabilities();
 	}
+	
+	private void initDefaultVAO() {
+		defaultVao = glGenVertexArrays();
+		glBindVertexArray(defaultVao);
+	}
+	
+	/**
+	 * Finds the name of the framebuffer object that is used for normal rendering.
+	 * This will most likely but not always on all platforms be zero.
+	 */
+	private void initPhysicalSurface() {
+		int fbo = glGetInteger(GL_FRAMEBUFFER_BINDING);
+		physicalSurface = new PhysicalSurface();
+	}
 
 	/**
 	 * Tells the application to shut down after the current thread.
@@ -101,6 +129,8 @@ public class Application {
 		initWindow();
 		glfwShowWindow(window);
 		initContext();
+		initDefaultVAO();
+		initPhysicalSurface();
 		glfwSetKeyCallback(window, new Keyboard());	
 		MousePos m = new MousePos();
 		glfwSetCursorPosCallback(window, m);
@@ -118,7 +148,18 @@ public class Application {
 			}
 		});
 		
-		listener.enter();
+		glfwSetFramebufferSizeCallback(window, new GLFWFramebufferSizeCallback() {
+			@Override
+			public void invoke(long window, int width, int height) {
+				physicalSurface.resize(width, height);
+			}
+		});
+		int[] width = new int[1];
+		int[] height = new int[1];
+		glfwGetFramebufferSize(window, width, height);
+		physicalSurface.resize(width[0], height[0]);
+		
+		listener.enter(this);
 		while(!glfwWindowShouldClose(window) && !exitScheduled) {
 			glfwPollEvents();
 			
@@ -126,13 +167,11 @@ public class Application {
 			
 			glfwSwapBuffers(window);
 		}
-		listener.exit();
+		listener.exit(this);
 		
 		glfwFreeCallbacks(window);
 		glfwDestroyWindow(window);
 		
-		System.out.println("das ist das letzte");
 		System.exit(0);
 	}
-
 }

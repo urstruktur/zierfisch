@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import org.joml.Matrix4f;
 
+import xyz.krachzack.gfx.assets.QuadMaker;
 import xyz.krachzack.gfx.mesh.Mesh;
 import xyz.krachzack.gfx.mesh.MeshBuilder;
 import xyz.krachzack.gfx.mesh.Primitive;
@@ -33,6 +34,7 @@ import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
 import com.zierfisch.tex.Texture;
 import com.zierfisch.tex.TextureLoader;
+import com.zierfisch.util.GLErrors;
 import com.zierfisch.util.ObjImporter;
 
 public class RenderSystem extends EntitySystem {
@@ -53,11 +55,37 @@ public class RenderSystem extends EntitySystem {
 	private Shader defaultShader;
 	
 	private CameraSystem camSys;
+	
+	private Surface surface;
+
+	private Mesh fullscreenQuad;
+
+	private Shader presentShader;
+
+	private Surface offscreen;
+	
+	private Texture offscreenColor;
+	private Texture offscreenDepth;
+	
+	public RenderSystem(Surface surface) {
+		this.surface = surface;
+	}
+	
+	public Surface getSurface() {
+		return surface;
+	}
+	
+	public void setSurface(Surface surface) {
+		this.surface = surface;
+	}
 
 	@Override
 	public void addedToEngine(Engine engine) {
 		super.addedToEngine(engine);
-		
+		initialize(engine);
+	}
+
+	public void initialize(Engine engine) {
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 
@@ -65,9 +93,34 @@ public class RenderSystem extends EntitySystem {
 
 		initDefaultShader();
 
-		//addTestEntities();
-		
 		camSys = engine.getSystem(CameraSystem.class);
+		
+		initFullscreenQuad();
+	}
+
+	private void initFullscreenQuad() {
+		fullscreenQuad = new QuadMaker().make(new SegmentedMeshBuilder());
+		presentShader = new ShaderBuilder()
+				              .setVertexShader("assets/shaders/present/present.vert.glsl")
+				              .setFragmentShader("assets/shaders/present/present.frag.glsl")
+				              .build();
+				
+		offscreenColor = new Texture();
+		offscreenDepth = new Texture();
+		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth);
+	}
+	
+	private void present(Texture texture) {
+		presentShader.bind();
+		
+		int loc = presentShader.getUniformLocation("content");
+		presentShader.setUniform(loc, 0);
+		GLErrors.check();
+		glActiveTexture(GL_TEXTURE0);
+		texture.bind();
+		
+		presentShader.render(fullscreenQuad);
+		lastShader = presentShader;
 	}
 
 	private void initDefaultShader() {
@@ -75,11 +128,6 @@ public class RenderSystem extends EntitySystem {
 				.setVertexShader("assets/shaders/cc/depth.vert.glsl")
 				.setFragmentShader("assets/shaders/cc/depth.frag.glsl")
 				.build();
-	}
-
-	private void addTestEntities() {
-		Entity fish = makeFishEntity();
-		getEngine().addEntity(fish);
 	}
 
 	public Entity makeFishEntity() {
@@ -102,9 +150,14 @@ public class RenderSystem extends EntitySystem {
 	public void update(float deltaTime) {
 		super.update(deltaTime);
 		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		offscreen.bind();
+		GLErrors.check("Bound offscreen surface");
+		System.out.println("Complete: " + offscreen.isComplete());
+		
+		offscreen.clear();
+		GLErrors.check("Cleared offscreen surface");
+		
 		glEnable(GL_DEPTH_TEST);
-
 		for (int i = 0; i < entities.size(); ++i) {
 			Entity entity = entities.get(i);
 			Pose pose = pm.get(entity);
@@ -112,6 +165,14 @@ public class RenderSystem extends EntitySystem {
 
 			render(pose, gestalt);
 		}
+		
+		GLErrors.check("Before binding physical surface");
+		surface.bind();
+		GLErrors.check("After binding physical surface");
+		surface.clear();
+		GLErrors.check();
+		
+		present(offscreenColor);
 	}
 
 	private void render(Pose pose, Gestalt gestalt) {
@@ -152,6 +213,7 @@ public class RenderSystem extends EntitySystem {
 			int loc = shader.getUniformLocation("texture" + offset);
 			if(loc != -1) {
 				shader.setUniform(loc, offset);
+				GLErrors.check();
 				glActiveTexture(GL_TEXTURE0 + offset);
 				tex.bind();
 			}
