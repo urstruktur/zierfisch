@@ -74,7 +74,7 @@ void main()
 	vec4 emission = texture(texture1, vec2(vec2(fragTexCoords.x, 1.0-fragTexCoords.y)*uvscale));
 	vec4 diffuseColor = texture(texture0, vec2(fragTexCoords.x, 1.0-fragTexCoords.y)*uvscale);
 
-	vec4 materialColor = combinedLightColor * diffuseColor + emission + vec4(0.1,0.2,0.22,1) * diffuseColor;
+	vec4 materialColor = combinedLightColor * diffuseColor + emission + vec4(0.1,0.2,0.22,1.0) * diffuseColor;
 
 	color = mix(fogColor, materialColor, fogFactor);
 }
