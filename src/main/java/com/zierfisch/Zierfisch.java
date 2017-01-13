@@ -24,6 +24,7 @@ import com.zierfisch.flocking.FlockingSystem;
 import com.zierfisch.gui.TweakingSystem;
 import com.zierfisch.maker.Maker;
 import com.zierfisch.render.Gestalt;
+import com.zierfisch.render.Light;
 import com.zierfisch.render.Pose;
 import com.zierfisch.render.RenderSystem;
 import com.zierfisch.tex.TextureLoader;
@@ -69,6 +70,7 @@ public class Zierfisch implements ApplicationListener {
 		Entity cam = new Entity();
 		cam.add(new Camera());
 		cam.add(pose);
+		cam.add(new Light());
 		
 		engine.addEntity(cam);
 	}

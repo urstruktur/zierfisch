@@ -11,6 +11,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
@@ -37,9 +38,11 @@ import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 public class RenderSystem extends EntitySystem {
 
 	private ImmutableArray<Entity> entities;
+	private ImmutableArray<Entity> lights;
 
 	private ComponentMapper<Pose> pm = ComponentMapper.getFor(Pose.class);
 	private ComponentMapper<Gestalt> gm = ComponentMapper.getFor(Gestalt.class);
+	private ComponentMapper<Light> lm = ComponentMapper.getFor(Light.class);
 
 	/**
 	 * Holds the name of a single vertex array object that is used for all
@@ -91,6 +94,7 @@ public class RenderSystem extends EntitySystem {
 		glBindVertexArray(vao);
 
 		entities = engine.getEntitiesFor(Family.all(Pose.class, Gestalt.class).get());
+		lights = engine.getEntitiesFor(Family.all(Pose.class, Light.class).get());
 
 		initDefaultShader();
 
@@ -177,11 +181,40 @@ public class RenderSystem extends EntitySystem {
 		setTextureUniforms(shader, gestalt);
 		setMatrixUniforms(shader, pose);
 		setTimeUniform(shader);
+		setLightUniforms(shader);
 		shader.render(gestalt.mesh);
 
 		lastShader = shader;
 	}
 	
+	private void setLightUniforms(Shader shader) {
+		if(lights.size() == 0) {
+			return;
+		} else if(lights.size() > 1) {
+			throw new RuntimeException("Sorry, only zero or exactly one light is doable right now");
+		} else {
+			Entity ent = lights.get(0);
+			
+			Pose pose = pm.get(ent);
+			Light light = lm.get(ent);
+			
+			Vector4f pos = new Vector4f();
+			pos.x = pose.position.x;
+			pos.y = pose.position.x;
+			pos.z = pose.position.x;
+			pos.w = 1.0f; // Point light, not directional, always
+			
+			Vector4f color = new Vector4f();
+			color.x = light.color.x;
+			color.y = light.color.y;
+			color.z = light.color.z;
+			color.w = light.intensity;
+			
+			shader.setUniform("light.position", pos);
+			shader.setUniform("light.color", color);
+		}
+	}
+
 	private void setTimeUniform(Shader shader){
 		shader.setUniform("time", (float)(System.currentTimeMillis()/1000f));
 	}
