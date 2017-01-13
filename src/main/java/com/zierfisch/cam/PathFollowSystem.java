@@ -44,7 +44,6 @@ public class PathFollowSystem extends IteratingSystem{
 			p.smut();
 			
 			f.position += deltaTime * f.speed * 0.001;
-			System.out.println(f.position);
 		}
 	}
 	
