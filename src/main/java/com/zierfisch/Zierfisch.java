@@ -3,16 +3,11 @@ package com.zierfisch;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
-
-import java.io.IOException;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.zierfisch.app.Application;
@@ -21,20 +16,10 @@ import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
 import com.zierfisch.flocking.Boid;
 import com.zierfisch.flocking.FlockingSystem;
-import com.zierfisch.gui.TweakingSystem;
 import com.zierfisch.maker.Maker;
-import com.zierfisch.render.Gestalt;
 import com.zierfisch.render.Light;
 import com.zierfisch.render.Pose;
 import com.zierfisch.render.RenderSystem;
-import com.zierfisch.tex.TextureLoader;
-import com.zierfisch.util.GLErrors;
-import com.zierfisch.util.ObjImporter;
-
-import xyz.krachzack.gfx.mesh.Mesh;
-import xyz.krachzack.gfx.mesh.MeshBuilder;
-import xyz.krachzack.gfx.mesh.Primitive;
-import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 public class Zierfisch implements ApplicationListener {
 
@@ -54,11 +39,28 @@ public class Zierfisch implements ApplicationListener {
 		
 		engine.addEntity(enviroment);
 		addMainCamera();
+		addAuxiliaryQuantumLightConvolutionAcceleratorBuffer();
 		createFishflock(7, 5, 7, 0.4f);
 		//createFishflock(3, 5, 3, 0.5f);
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
+	}
+
+	private void addAuxiliaryQuantumLightConvolutionAcceleratorBuffer() {
+		Light light = new Light();
+		
+		Maker maker = new Maker().add(light);
+		
+		light.color.set(1.0f, 0.1f, 0.14f);
+		Entity light1 = maker.setPosition(0.0f, 0.5f, -0.4f).build();
+		
+		// Changing the protoype affects the next built light, but not the already built one
+		light.color.set(0.0f, 1.1f, 0.14f);
+		Entity light2 = maker.setPosition(0.0f, -0.5f, 0.4f).build();
+		
+		engine.addEntity(light1);
+		engine.addEntity(light2);
 	}
 
 	private void addMainCamera() {

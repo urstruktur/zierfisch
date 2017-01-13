@@ -10,4 +10,11 @@ public class Light implements Component {
 	
 	public float intensity = 1.0f;
 	
+	public Light() {}
+	
+	public Light(Light other) {
+		color.set(other.color);
+		intensity = other.intensity;
+	}
+	
 }
