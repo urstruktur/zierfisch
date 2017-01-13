@@ -4,6 +4,8 @@ uniform sampler2D texture0;
 uniform sampler2D texture4;
 uniform float uvscale;
 
+// the larger this factor, the faster atttenuation increases with distance from the light
+const float attenuationFactor = 0.8f;
 const int MAX_LIGHTS = 6;
 
 struct Light {
@@ -17,10 +19,10 @@ uniform Light lights[MAX_LIGHTS];
 
 out vec4 color;
 
-in vec4 viewSpace;
 in vec2 fragTexCoords;
 in vec4 fragPos; // view space
 in vec4 fragPosWorld;
+in vec4 fragNormalWorld;
 
 const float FOGDENSITY = 0.15;
 const int FOGSTART = 1;
@@ -29,12 +31,20 @@ const int FOGEND = 60;
 float fogFactor = 0;
 vec4 fogColor = vec4(0.5f,0.5f,0.5f,1.0f);
 
+/** Calculates intensity of diffuse light */
+float diffuse(vec3 fragPosWorld, vec3 normalWorld, vec3 lightPosWorld) {
+	float dist = length(lightPosWorld - fragPosWorld);
+
+	// @see http://www.tomdalling.com/blog/modern-opengl/07-more-lighting-ambient-specular-attenuation-gamma/
+	float att = 1 / (1 + attenuationFactor*dist*dist);
+
+	vec3 lightDirWorld = normalize(lightPosWorld - fragPosWorld);
+	float diffuse = clamp(dot(lightDirWorld, normalWorld), 0.0, 1.0);
+	return att * diffuse;
+}
+
 void main()
 {
-	// light dimmed for testing
-	vec4 lightColor = texture(texture0, vec2(fragTexCoords.x, 1.0-fragTexCoords.y)*uvscale) / 6;
-
-
 	// -- FOG --
 
 	// calculate length from camera to fragment to get range based fog (not plane based)
@@ -51,11 +61,16 @@ void main()
 	fogColor = texture(texture4, vec2(clamp(1.0-fogFactor,0.01,0.99),0.1)); // clamp is a fix for the problem that edge pixels are grey (?)
 	fogFactor = 1.0 - fogColor.a;
 
+	vec4 combinedLightColor = vec4(0.0, 0.0, 0.0, 1.0);
+
 	for(int i = 0; i < MAX_LIGHTS; ++i) {
 		if(lights[i].color.a > 0.0) {
-			color = lights[i].color;
+			combinedLightColor.xyz += lights[i].color.xyz * diffuse(fragPosWorld.xyz, fragNormalWorld.xyz, lights[i].position.xyz);
 		}
 	}
 
-	color = mix(fogColor, lightColor, fogFactor);
+	vec4 materialColor = combinedLightColor * texture(texture0, vec2(fragTexCoords.x, 1.0-fragTexCoords.y)*uvscale);
+
+	color = mix(fogColor, materialColor, fogFactor);
+	color = materialColor;
 }
