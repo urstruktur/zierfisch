@@ -16,7 +16,6 @@ public abstract class AbstractSurface implements Surface {
 	}
 	
 	public boolean isComplete() {
-		System.out.println("Status: " + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
 		return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 	}
 	

@@ -18,10 +18,16 @@ public final class Surfaces {
 	 * @return
 	 */
 	public static Surface createOffscreen(int width, int height, Texture color, Texture depth, boolean unclamped) {
-		color = prepareColorTexture(color, width, height, unclamped);
+		return createOffscreen(width, height, new Texture[] { color }, depth, unclamped);
+	}
+	
+	public static Surface createOffscreen(int width, int height, Texture[] colors, Texture depth, boolean unclamped) {
+		for(int i = 0; i < colors.length; ++i) {
+			colors[i] = prepareColorTexture(colors[i], width, height, unclamped);
+		}
+		
 		depth = prepareDepthTexture(depth, width, height);
-		OffscreenSurface offscreen = new OffscreenSurface(width, height, color, depth);
-		System.out.println(offscreen.isComplete());
+		OffscreenSurface offscreen = new OffscreenSurface(width, height, colors, depth);
 		return offscreen;
 	}
 
