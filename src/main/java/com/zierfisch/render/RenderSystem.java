@@ -202,7 +202,6 @@ public class RenderSystem extends EntitySystem {
 		setMatrixUniforms(shader, pose);
 		setTimeUniform(shader);
 		
-		glDrawBuffers(new int[] { GL30.GL_COLOR_ATTACHMENT0, GL30.GL_COLOR_ATTACHMENT1 });
 		shader.render(gestalt.mesh);
 
 		lastShader = shader;
