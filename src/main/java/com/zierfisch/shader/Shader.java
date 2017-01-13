@@ -51,6 +51,10 @@ public class Shader {
 		glUseProgram(name);
 	}
 	
+	public int getName() {
+		return name;
+	}
+	
 	public void setUniform(int location, int value) {
 		if(location != -1) {
 			glUniform1i(location, value);
