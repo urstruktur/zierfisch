@@ -1,9 +1,6 @@
 package com.zierfisch.render;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
@@ -14,12 +11,6 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
-
-import xyz.krachzack.gfx.assets.QuadMaker;
-import xyz.krachzack.gfx.mesh.Mesh;
-import xyz.krachzack.gfx.mesh.MeshBuilder;
-import xyz.krachzack.gfx.mesh.Primitive;
-import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
@@ -37,6 +28,12 @@ import com.zierfisch.tex.TextureLoader;
 import com.zierfisch.util.GLErrors;
 import com.zierfisch.util.ObjImporter;
 
+import xyz.krachzack.gfx.assets.QuadMaker;
+import xyz.krachzack.gfx.mesh.Mesh;
+import xyz.krachzack.gfx.mesh.MeshBuilder;
+import xyz.krachzack.gfx.mesh.Primitive;
+import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
+
 public class RenderSystem extends EntitySystem {
 
 	private ImmutableArray<Entity> entities;
@@ -49,21 +46,25 @@ public class RenderSystem extends EntitySystem {
 	 * shaders. If uninitialized, holds -1.
 	 */
 	private int vao = -1;
-
 	private Shader lastShader;
-
 	private Shader defaultShader;
-	
 	private CameraSystem camSys;
-	
+	/**
+	 * The surface that the final image is presented to.
+	 */
 	private Surface surface;
-
+	/**
+	 * Used for presenting textures to screen
+	 */
 	private Mesh fullscreenQuad;
-
+	/**
+	 * Used for presenting textures to screen
+	 */
 	private Shader presentShader;
-
+	/**
+	 * Offscreen surface that the content is rendered to first before presenting.
+	 */
 	private Surface offscreen;
-	
 	private Texture offscreenColor;
 	private Texture offscreenDepth;
 	
@@ -130,14 +131,6 @@ public class RenderSystem extends EntitySystem {
 				.build();
 	}
 
-	public Entity makeFishEntity() {
-		Entity ent = new Entity();
-		ent.add(new Pose());
-		ent.getComponent(Pose.class).setScale(1.0f);
-		ent.add(makeDefaultGestalt());
-		return ent;
-	}
-
 	@Override
 	public void removedFromEngine(Engine engine) {
 		super.removedFromEngine(engine);
@@ -152,7 +145,6 @@ public class RenderSystem extends EntitySystem {
 		
 		offscreen.bind();
 		GLErrors.check("Bound offscreen surface");
-		System.out.println("Complete: " + offscreen.isComplete());
 		
 		offscreen.clear();
 		GLErrors.check("Cleared offscreen surface");
@@ -241,31 +233,6 @@ public class RenderSystem extends EntitySystem {
 		return shader;
 	}
 	
-	public static Component makeDefaultGestalt() {
-		ObjImporter importer = new ObjImporter();
-		try {
-			importer.load("assets/models/zierfisch.obj");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		MeshBuilder objBuilder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
-		Mesh mesh = importer.make(objBuilder);
-		
-		//MeshBuilder builder = new SegmentedMeshBuilder(Primitive.TRIANGLES);
-		//CuboidMaker cuboidMaker = new CuboidMaker();
-		//Mesh cuboid = cuboidMaker.make(builder, 0.5);
-
-		Gestalt gestalt = new Gestalt();
-
-		gestalt.mesh = mesh;
-		gestalt.shader = null;
-		gestalt.texture0 = new TextureLoader().load("assets/textures/fish-diffuse.png");
-		gestalt.texture4 = new TextureLoader().load("assets/textures/fog-gradient-03.png");
-
-		return gestalt;
-	}
-
 	public static Component makeEnviromentGestalt() {
 		ObjImporter importer = new ObjImporter();
 		try {

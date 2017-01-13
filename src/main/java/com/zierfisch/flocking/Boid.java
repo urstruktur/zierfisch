@@ -26,4 +26,11 @@ public class Boid implements Component{
 	public float mass = 2f;
 	
 	public Vector3f up = new Vector3f(0,1,0);
+	
+	public Boid() {}
+	
+	public Boid(Boid other) {
+		influence = other.influence;
+		mass = other.mass;
+	}
 }

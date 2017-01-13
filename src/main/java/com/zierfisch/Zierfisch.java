@@ -6,6 +6,8 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
+import java.io.IOException;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -20,9 +22,18 @@ import com.zierfisch.cam.CameraSystem;
 import com.zierfisch.flocking.Boid;
 import com.zierfisch.flocking.FlockingSystem;
 import com.zierfisch.gui.TweakingSystem;
+import com.zierfisch.maker.Maker;
+import com.zierfisch.render.Gestalt;
 import com.zierfisch.render.Pose;
 import com.zierfisch.render.RenderSystem;
+import com.zierfisch.tex.TextureLoader;
 import com.zierfisch.util.GLErrors;
+import com.zierfisch.util.ObjImporter;
+
+import xyz.krachzack.gfx.mesh.Mesh;
+import xyz.krachzack.gfx.mesh.MeshBuilder;
+import xyz.krachzack.gfx.mesh.Primitive;
+import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 public class Zierfisch implements ApplicationListener {
 
@@ -93,26 +104,30 @@ public class Zierfisch implements ApplicationListener {
 		engine.update(dt);
 	}
 	
+	
 	public void createFishflock(int nrX, int nrY, int nrZ, float margin){
-		Component gestalt = RenderSystem.makeDefaultGestalt();
+		Boid protoypeBoid = new Boid();
+		protoypeBoid.influence = 0.3f;
+		
+		Maker maker = new Maker().setMesh("assets/models/zierfisch.obj")
+		                         .setTexture(0, "assets/textures/fish-diffuse.png")
+		                         .setTexture(4, "assets/textures/fog-gradient-03.png")
+		                         .setScale(0.5f)
+		                         .add(protoypeBoid);
+		
 		
 		Vector3f center = new Vector3f(0,0,0);
 		
 		for(int x = 0; x < nrX; x++){
 			for(int y = 0; y < nrY; y++){
 				for(int z = 0; z < nrZ; z++){
-					Entity fish = new Entity();
-					Pose p = new Pose();
-					p.scale = 0.5f;
-					p.position.x = x*margin - (nrX-1)*margin/2 + center.x;
-					p.position.y = y*margin - (nrY-1)*margin/2 + center.y;
-					p.position.z = z*margin - (nrZ-1)*margin/2 + center.z;
 					
-					fish.add(new Boid());
-					fish.getComponent(Boid.class).influence = 0.3f;
-					fish.add(p);
-					fish.add(gestalt);
-					p.smut();
+					Entity fish = maker.setPosition(
+						x*margin - (nrX-1)*margin/2 + center.x,
+						y*margin - (nrY-1)*margin/2 + center.y,
+						z*margin - (nrZ-1)*margin/2 + center.z
+					).build();
+					
 					engine.addEntity(fish);
 				}
 			}

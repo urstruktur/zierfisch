@@ -69,6 +69,17 @@ public class Pose implements Component {
 	public Vector3f velocity = new Vector3f();
 	public Vector3f acceleration = new Vector3f();
 	
+	public Pose() {}
+	
+	public Pose(Pose pose) {
+		position.set(pose.position);
+		scale = pose.scale;
+		orientation.set(pose.orientation);
+		dirty = true;
+		velocity.set(pose.velocity);
+		acceleration.set(pose.acceleration);
+	}
+
 	public void setScale(float scale) {
 		this.scale = scale;
 		smut();
