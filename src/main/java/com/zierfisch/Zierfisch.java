@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.zierfisch.app.Application;
 import com.zierfisch.app.ApplicationListener;
 import com.zierfisch.cam.Camera;
@@ -59,10 +60,10 @@ public class Zierfisch implements ApplicationListener {
 		
 		// Changing the protoype affects the next built light, but not the already built one
 		light.color.set(0.0f, 1.1f, 0.14f);
-		Entity light2 = maker.setPosition(0.0f, -0.5f, 0.4f).build();
+		Entity light2 = maker.setPosition(0.0f, -0.5f, 10.4f).build();
 		
-		engine.addEntity(light1);
-		engine.addEntity(light2);
+//		engine.addEntity(light1);
+//		engine.addEntity(light2);
 	}
 
 	private void addMainCamera() {
@@ -75,7 +76,6 @@ public class Zierfisch implements ApplicationListener {
 		cam.add(new Camera());
 		cam.add(new PathFollower());
 		cam.add(pose);
-		cam.add(new Light());
 		
 		engine.addEntity(cam);
 	}
@@ -140,5 +140,22 @@ public class Zierfisch implements ApplicationListener {
 				}
 			}
 		}
+		
+		ImmutableArray<Entity> allEnts = engine.getEntities();
+		
+		Entity randomEnt1 = allEnts.get((int) (Math.random() * allEnts.size()));
+		Light light1 = new Light();
+		light1.color.set(1.0f, 0.1f, 0.16f);
+		randomEnt1.add(light1);
+		
+		Entity randomEnt2 = allEnts.get((int) (Math.random() * allEnts.size()));
+		Light light2 = new Light();
+		light2.color.set(0.2f, 1.0f, 0.16f);
+		randomEnt2.add(light2);
+		
+		Entity randomEnt3 = allEnts.get((int) (Math.random() * allEnts.size()));
+		Light light3 = new Light();
+		light3.color.set(0.2f, 0.0f, 0.9f);
+		randomEnt3.add(light3);
 	}
 }

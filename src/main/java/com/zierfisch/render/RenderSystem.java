@@ -214,8 +214,8 @@ public class RenderSystem extends EntitySystem {
 			
 			Vector4f pos = new Vector4f();
 			pos.x = pose.position.x;
-			pos.y = pose.position.x;
-			pos.z = pose.position.x;
+			pos.y = pose.position.y;
+			pos.z = pose.position.z;
 			pos.w = 1.0f; // Point light, not directional, always
 			
 			Vector4f color = new Vector4f();
