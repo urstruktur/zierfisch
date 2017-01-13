@@ -1,14 +1,13 @@
 package com.zierfisch.render;
 
-import java.awt.Color;
+import org.joml.Vector3f;
+
 import com.badlogic.ashley.core.Component;
 
 public class Light implements Component {
-	float intensity;
-	Color color;
 	
-	public Light(){
-		color = new Color(1,1,1);
-		intensity = 1f;
-	}
+	public Vector3f color = new Vector3f(1.0f, 1.0f, 1.0f);
+	
+	public float intensity = 1.0f;
+	
 }

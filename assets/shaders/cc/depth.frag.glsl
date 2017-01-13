@@ -4,11 +4,19 @@ uniform sampler2D texture0;
 uniform sampler2D texture4;
 uniform float uvscale;
 
+uniform struct {
+	/** Light position in world space */
+	vec4 position;
+	/** rgb is color, a is intensity */
+	vec4 color;
+} light;
+
 out vec4 color;
 
 in vec4 viewSpace;
 in vec2 fragTexCoords;
-in vec4 fragPos;
+in vec4 fragPos; // view space
+in vec4 fragPosWorld;
 
 const float FOGDENSITY = 0.15;
 const int FOGSTART = 1;

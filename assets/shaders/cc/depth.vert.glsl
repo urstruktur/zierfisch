@@ -9,6 +9,7 @@ in vec2 texCoords;
 
 out vec2 fragTexCoords;
 out vec4 fragPos;
+out vec4 fragPosWorld;
 out vec4 viewSpace;
 
 void main()
@@ -18,6 +19,7 @@ void main()
 
     fragTexCoords = texCoords;
     fragPos = mv * vec4(position, 1.0);
+	fragPosWorld = u_model * vec4(position, 1.0);
     normalize(fragPos);
     gl_Position = mvp * vec4(position, 1.0);
 }
