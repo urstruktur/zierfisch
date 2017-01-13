@@ -41,11 +41,28 @@ public class Zierfisch implements ApplicationListener {
 		
 		engine.addEntity(enviroment);
 		addMainCamera();
+		addAuxiliaryQuantumLightConvolutionAcceleratorBuffer();
 		createFishflock(7, 5, 7, 0.4f);
 		//createFishflock(3, 5, 3, 0.5f);
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
+	}
+
+	private void addAuxiliaryQuantumLightConvolutionAcceleratorBuffer() {
+		Light light = new Light();
+		
+		Maker maker = new Maker().add(light);
+		
+		light.color.set(1.0f, 0.1f, 0.14f);
+		Entity light1 = maker.setPosition(0.0f, 0.5f, -0.4f).build();
+		
+		// Changing the protoype affects the next built light, but not the already built one
+		light.color.set(0.0f, 1.1f, 0.14f);
+		Entity light2 = maker.setPosition(0.0f, -0.5f, 0.4f).build();
+		
+		engine.addEntity(light1);
+		engine.addEntity(light2);
 	}
 
 	private void addMainCamera() {

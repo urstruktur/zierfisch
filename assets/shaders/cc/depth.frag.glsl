@@ -4,12 +4,16 @@ uniform sampler2D texture0;
 uniform sampler2D texture4;
 uniform float uvscale;
 
-uniform struct {
+const int MAX_LIGHTS = 6;
+
+struct Light {
 	/** Light position in world space */
 	vec4 position;
-	/** rgb is color, a is intensity */
+	/** rgb is color, a is intensity, if intensity 0.0, light has no effect */
 	vec4 color;
-} light;
+};
+
+uniform Light lights[MAX_LIGHTS];
 
 out vec4 color;
 
@@ -47,5 +51,11 @@ void main()
 	fogColor = texture(texture4, vec2(clamp(1.0-fogFactor,0.01,0.99),0.1)); // clamp is a fix for the problem that edge pixels are grey (?)
 	fogFactor = 1.0 - fogColor.a;
 
-    color = mix(fogColor, lightColor, fogFactor);
+	for(int i = 0; i < MAX_LIGHTS; ++i) {
+		if(lights[i].color.a > 0.0) {
+			color = lights[i].color;
+		}
+	}
+
+	color = mix(fogColor, lightColor, fogFactor);
 }

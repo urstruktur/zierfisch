@@ -7,6 +7,12 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.*;
+import static org.lwjgl.opengl.GL32.*;
+import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.opengl.GL40.*;
+import static org.lwjgl.opengl.GL41.*;
 
 import java.io.IOException;
 
@@ -37,6 +43,8 @@ import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 public class RenderSystem extends EntitySystem {
 
+	public static final int MAX_LIGHTS = 6;
+	
 	private ImmutableArray<Entity> entities;
 	private ImmutableArray<Entity> lights;
 
@@ -172,28 +180,34 @@ public class RenderSystem extends EntitySystem {
 	}
 
 	private void render(Pose pose, Gestalt gestalt) {
-		Shader shader = selectShader(gestalt);
-
-		if (shader != lastShader) {
-			shader.bind();
+		if(gestalt.mesh != null) {
+			Shader shader = selectShader(gestalt);
+	
+			if (shader != lastShader) {
+				shader.bind();
+			}
+	
+			setTextureUniforms(shader, gestalt);
+			setMatrixUniforms(shader, pose);
+			setTimeUniform(shader);
+			setLightUniforms(shader);
+			
+			shader.render(gestalt.mesh);
+	
+			lastShader = shader;
 		}
-
-		setTextureUniforms(shader, gestalt);
-		setMatrixUniforms(shader, pose);
-		setTimeUniform(shader);
-		setLightUniforms(shader);
-		shader.render(gestalt.mesh);
-
-		lastShader = shader;
 	}
 	
 	private void setLightUniforms(Shader shader) {
-		if(lights.size() == 0) {
-			return;
-		} else if(lights.size() > 1) {
-			throw new RuntimeException("Sorry, only zero or exactly one light is doable right now");
-		} else {
-			Entity ent = lights.get(0);
+		
+		int count = lights.size();
+		
+		if(count > MAX_LIGHTS) {
+			throw new RuntimeException(count + " lights exceed maximum light count of " + MAX_LIGHTS);
+		}
+		
+		for(int i = 0; i < count; ++i) {
+			Entity ent = lights.get(i);
 			
 			Pose pose = pm.get(ent);
 			Light light = lm.get(ent);
@@ -210,8 +224,8 @@ public class RenderSystem extends EntitySystem {
 			color.z = light.color.z;
 			color.w = light.intensity;
 			
-			shader.setUniform("light.position", pos);
-			shader.setUniform("light.color", color);
+			shader.setUniform("lights["+i+"].position", pos);
+			shader.setUniform("lights["+i+"].color", color);
 		}
 	}
 
