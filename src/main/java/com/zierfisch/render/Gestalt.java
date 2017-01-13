@@ -8,6 +8,21 @@ import xyz.krachzack.gfx.mesh.Mesh;
 
 public class Gestalt implements Component {
 
+	public Gestalt() {
+		// Leave everything at null
+	}
+	
+	public Gestalt(Gestalt other) {
+		shader = other.shader;
+		mesh = other.mesh;
+		texture0 = other.texture0;
+		texture1 = other.texture1;
+		texture2 = other.texture2;
+		texture3 = other.texture3;
+		texture4 = other.texture4;
+		uvscale = other.uvscale;
+	}
+
 	/**
 	 * Holds the shader that is bound when rendering.
 	 */
