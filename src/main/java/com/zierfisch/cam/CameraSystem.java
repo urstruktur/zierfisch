@@ -61,8 +61,7 @@ public class CameraSystem extends IteratingSystem {
 		Pose pose = pm.get(entity);
 
 		// - CAMERA CONTROLS -
-		pose.orientation.rotateXYZ(0, (float)MousePos.getXDelta() * ROTATION_SPEED , 0);
-		pose.orientation.rotateXYZ(-(float)MousePos.getYDelta() * ROTATION_SPEED, 0 , 0);
+		pose.orientation.rotateXYZ((float)MousePos.getYDelta() * ROTATION_SPEED, -(float)MousePos.getXDelta() * ROTATION_SPEED , 0);
 		pose.orientation.x = 0;
 		
 		float speed = MOVEMENT_SPEED;
