@@ -1,11 +1,13 @@
 #version 330
 
 uniform sampler2D texture0;	// diffuse
+uniform sampler2D texture1;	// emission
 uniform sampler2D texture4; // depth gradient
 uniform float uvscale;
+uniform bool emissionActive;
 
 // the larger this factor, the faster atttenuation increases with distance from the light
-const float attenuationFactor = 0.95f;
+const float attenuationFactor = 0.3f;
 const int MAX_LIGHTS = 6;
 
 struct Light {
@@ -68,8 +70,11 @@ void main()
 			combinedLightColor.xyz += lights[i].color.xyz * diffuse(fragPosWorld.xyz, fragNormalWorld.xyz, lights[i].position.xyz);
 		}
 	}
+	
+	vec4 emission = texture(texture1, vec2(vec2(fragTexCoords.x, 1.0-fragTexCoords.y)*uvscale));
+	vec4 diffuseColor = texture(texture0, vec2(fragTexCoords.x, 1.0-fragTexCoords.y)*uvscale);
 
-	vec4 materialColor = combinedLightColor * texture(texture0, vec2(fragTexCoords.x, 1.0-fragTexCoords.y)*uvscale);
+	vec4 materialColor = combinedLightColor * diffuseColor + emission + vec4(0.1,0.2,0.22,1) * diffuseColor;
 
 	color = mix(fogColor, materialColor, fogFactor);
 }

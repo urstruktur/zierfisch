@@ -107,7 +107,7 @@ public class Zierfisch implements ApplicationListener {
 		scale.identity();
 		scale.scale((sine + 1) / 2.0f);
 		
-		GL11.glClearColor(0.0f, 0.2f, 0.3f, 1.0f);
+		GL11.glClearColor(0.0f, 0.17f, 0.27f, 1.0f);
 		
 		engine.update(dt);
 	}
@@ -118,7 +118,9 @@ public class Zierfisch implements ApplicationListener {
 		protoypeBoid.influence = 0.3f;
 		
 		Maker maker = new Maker().setMesh("assets/models/zierfisch.obj")
+								 .setShader("assets/shaders/cc/fish.vert.glsl", "assets/shaders/cc/fish.frag.glsl")
 		                         .setTexture(0, "assets/textures/fish-diffuse.png")
+		                         .setTexture(1, "assets/textures/fish-emission.png")
 		                         .setTexture(4, "assets/textures/fog-gradient-03.png")
 		                         .setScale(0.5f)
 		                         .add(protoypeBoid);
@@ -145,17 +147,17 @@ public class Zierfisch implements ApplicationListener {
 		
 		Entity randomEnt1 = allEnts.get((int) (Math.random() * allEnts.size()));
 		Light light1 = new Light();
-		light1.color.set(1.0f, 0.1f, 0.16f);
+		light1.color.set(.8f, 1f, 1f);
 		randomEnt1.add(light1);
 		
 		Entity randomEnt2 = allEnts.get((int) (Math.random() * allEnts.size()));
 		Light light2 = new Light();
-		light2.color.set(0.2f, 1.0f, 0.16f);
+		light2.color.set(.6f, 1f, 1f);
 		randomEnt2.add(light2);
 		
 		Entity randomEnt3 = allEnts.get((int) (Math.random() * allEnts.size()));
 		Light light3 = new Light();
-		light3.color.set(0.2f, 0.0f, 0.9f);
+		light3.color.set(.7f, 1f, 1f);
 		randomEnt3.add(light3);
 	}
 }
