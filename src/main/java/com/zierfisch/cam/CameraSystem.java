@@ -18,7 +18,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class CameraSystem extends IteratingSystem {
 
 	private static final float ROTATION_SPEED = 0.001f;
-	private static final float MOVEMENT_SPEED = 0.001f;
+	private static final float MOVEMENT_SPEED = 1f;
 	
 	private static final Family CAM_FAMILY = Family.all(Camera.class, Pose.class).get();
 	private ComponentMapper<Camera> cm = ComponentMapper.getFor(Camera.class);

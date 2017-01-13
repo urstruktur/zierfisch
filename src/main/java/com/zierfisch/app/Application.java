@@ -205,7 +205,7 @@ public class Application {
 			deltaTime = timer.getDelta();
 			timer.setReference();
 			
-			if(deltaTime > (1/50f)) {
+			if(deltaTime > (1/30f)) {
 				System.err.println("SHEESH that last frame was insanely long: " + secondsFormat.format(deltaTime) + "s");
 			}
 			
