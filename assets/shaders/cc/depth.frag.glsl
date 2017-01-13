@@ -65,7 +65,7 @@ void main()
 
 	for(int i = 0; i < MAX_LIGHTS; ++i) {
 		if(lights[i].color.a > 0.0) {
-			combinedLightColor.xyz += lights[i].color.xyz * diffuse(fragPosWorld.xyz, fragNormalWorld.xyz, lights[i].position.xyz);
+			combinedLightColor.xyz += lights[i].color.a * (lights[i].color.xyz * diffuse(fragPosWorld.xyz, fragNormalWorld.xyz, lights[i].position.xyz));
 		}
 	}
 
