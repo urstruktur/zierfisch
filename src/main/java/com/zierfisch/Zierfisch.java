@@ -3,38 +3,25 @@ package com.zierfisch;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
-
-import java.io.IOException;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.zierfisch.app.Application;
 import com.zierfisch.app.ApplicationListener;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
+import com.zierfisch.cam.PathFollowSystem;
+import com.zierfisch.cam.PathFollower;
 import com.zierfisch.flocking.Boid;
 import com.zierfisch.flocking.FlockingSystem;
-import com.zierfisch.gui.TweakingSystem;
 import com.zierfisch.maker.Maker;
-import com.zierfisch.render.Gestalt;
 import com.zierfisch.render.Light;
 import com.zierfisch.render.Pose;
 import com.zierfisch.render.RenderSystem;
-import com.zierfisch.tex.TextureLoader;
-import com.zierfisch.util.GLErrors;
-import com.zierfisch.util.ObjImporter;
-
-import xyz.krachzack.gfx.mesh.Mesh;
-import xyz.krachzack.gfx.mesh.MeshBuilder;
-import xyz.krachzack.gfx.mesh.Primitive;
-import xyz.krachzack.gfx.mesh.SegmentedMeshBuilder;
 
 public class Zierfisch implements ApplicationListener {
 
@@ -69,6 +56,7 @@ public class Zierfisch implements ApplicationListener {
 		
 		Entity cam = new Entity();
 		cam.add(new Camera());
+		cam.add(new PathFollower());
 		cam.add(pose);
 		cam.add(new Light());
 		
@@ -80,6 +68,7 @@ public class Zierfisch implements ApplicationListener {
 		 
 		 engine.addSystem(new CameraSystem());
 		 engine.addSystem(new RenderSystem(app.getPhysicalSurface()));
+		 //engine.addSystem(new PathFollowSystem());
 
 		 //engine.addSystem(new TweakingSystem());
 		 engine.addSystem(new FlockingSystem());
