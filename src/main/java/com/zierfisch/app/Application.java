@@ -1,22 +1,50 @@
 package com.zierfisch.app;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
+import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
+import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
+import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
+import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.*;
 
-import org.lwjgl.glfw.GLFWCursorPosCallback;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.concurrent.TimeUnit;
+
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.opengl.GL;
 
 import com.zierfisch.render.PhysicalSurface;
 import com.zierfisch.render.Surface;
+import com.zierfisch.time.DeltaTimer;
 import com.zierfisch.util.Keyboard;
 import com.zierfisch.util.MouseButton;
 import com.zierfisch.util.MousePos;
@@ -47,6 +75,9 @@ public class Application {
 	
 	private int defaultVao;
 	private PhysicalSurface physicalSurface;
+	private DeltaTimer timer;
+	private float deltaTime;
+	private NumberFormat secondsFormat = new DecimalFormat("###.###");
 	
 	public Application(ApplicationListener listener) {
 		this.listener = listener;
@@ -67,6 +98,15 @@ public class Application {
 	
 	public String getTitle() {
 		return title;
+	}
+	
+	/**
+	 * Gets the delta time since the last iteration of the main loop.
+	 * 
+	 * @return the delta time
+	 */
+	public float getDeltaTime() {
+		return deltaTime;
 	}
 	
 	public boolean isExitScheduled() {
@@ -112,7 +152,7 @@ public class Application {
 	 * This will most likely but not always on all platforms be zero.
 	 */
 	private void initPhysicalSurface() {
-		int fbo = glGetInteger(GL_FRAMEBUFFER_BINDING);
+		// int fbo = glGetInteger(GL_FRAMEBUFFER_BINDING);
 		physicalSurface = new PhysicalSurface();
 	}
 
@@ -160,10 +200,17 @@ public class Application {
 		physicalSurface.resize(width[0], height[0]);
 		
 		listener.enter(this);
+		timer = new DeltaTimer();
 		while(!glfwWindowShouldClose(window) && !exitScheduled) {
-			glfwPollEvents();
+			deltaTime = timer.getDelta();
+			timer.setReference();
 			
-			listener.update(16.0f);
+			if(deltaTime > (1/50f)) {
+				System.err.println("SHEESH that last frame was insanely long: " + secondsFormat.format(deltaTime) + "s");
+			}
+			
+			glfwPollEvents();
+			listener.update(deltaTime * 1000);
 			
 			glfwSwapBuffers(window);
 		}
