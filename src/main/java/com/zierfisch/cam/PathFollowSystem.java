@@ -15,13 +15,12 @@ public class PathFollowSystem extends IteratingSystem{
 	
 	public PathFollowSystem(){
 		super(Family.all(PathFollower.class, Pose.class).get());
-		Vector3[] controlPoints = new Vector3[]{new Vector3(0,0,1),
+		Vector3[] controlPoints = new Vector3[]{
 												new Vector3(0,0,1),
 												new Vector3(2,-2.6f,-7.6f),
 												new Vector3(3.1f,-1.8f,-15.4f),
 												new Vector3(4.2f,-1.3f,-23.8f),
 												new Vector3(4.6f,-0.4f,-29.8f),
-												new Vector3(4.7f,-0.4f,-31f),
 												new Vector3(4.7f,-0.4f,-31f)};
 		spline = new CatmullRomSpline<Vector3>(controlPoints, false);
 	}

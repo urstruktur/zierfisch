@@ -9,6 +9,8 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.math.CatmullRomSpline;
+import com.badlogic.gdx.math.Vector3;
 import com.zierfisch.gui.PropertyAccessor;
 import com.zierfisch.gui.TweakingSystem;
 import com.zierfisch.render.Pose;
@@ -33,7 +35,20 @@ public class FlockingSystem extends IteratingSystem {
 		RuleCohesion rc = new RuleCohesion();
 		RuleSeperation rs = new RuleSeperation();
 		RuleAlign ra = new RuleAlign();
-		RuleFollowPath rf = new RuleFollowPath(null);
+		
+		Vector3[] controlPoints = new Vector3[]{
+				new Vector3(0,0,1),
+				new Vector3(2,-2.6f,-7.6f),
+				new Vector3(3.1f,-1.8f,-15.4f),
+				new Vector3(4.2f,-1.3f,-23.8f),
+				new Vector3(4.6f,-0.4f,-29.8f),
+				new Vector3(4.7f,-0.4f,-31f), // höhlenausgang
+				new Vector3(4.8f,0.7f,-37f),
+				new Vector3(11.1f,0.5f,-33f), // schiffsbug
+				new Vector3(12.8f,-0.4f,-42.4f), // behind ship
+				new Vector3(12.8f,-0.7f,-44f),};
+		PreciseCatmullRomSpline<Vector3> spline = new PreciseCatmullRomSpline<Vector3>(Vector3.class, controlPoints, false, 0.1f);
+		RulePathFollow rf = new RulePathFollow(spline,0.2f);
 		
 		// add tweaking sliders
 		TweakingSystem ts = getEngine().getSystem(TweakingSystem.class);
