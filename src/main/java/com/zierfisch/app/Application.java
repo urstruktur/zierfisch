@@ -210,7 +210,7 @@ public class Application {
 			}
 			
 			glfwPollEvents();
-			listener.update(deltaTime * 1000);
+			listener.update(deltaTime);
 			
 			glfwSwapBuffers(window);
 		}
