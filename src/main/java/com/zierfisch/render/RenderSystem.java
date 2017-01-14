@@ -30,7 +30,7 @@ import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
 import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
-import com.zierfisch.tex.LuminosityAverager;
+import com.zierfisch.tex.SurfaceAverager;
 import com.zierfisch.tex.Texture;
 import com.zierfisch.tex.TextureLoader;
 import com.zierfisch.util.GLErrors;
@@ -81,7 +81,7 @@ public class RenderSystem extends EntitySystem {
 	private Texture offscreenDepth;
 	private Vector4f offscreenAvgColor;
 	
-	private LuminosityAverager averager;
+	private SurfaceAverager averager;
 	
 	public RenderSystem(Surface surface) {
 		this.surface = surface;
@@ -122,7 +122,7 @@ public class RenderSystem extends EntitySystem {
 		offscreenDepth = new Texture();
 		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth);
 		
-		averager = new LuminosityAverager(offscreen);
+		averager = new SurfaceAverager(offscreen);
 		offscreenAvgColor = averager.getAverageColor();
 	}
 	
@@ -173,7 +173,7 @@ public class RenderSystem extends EntitySystem {
 			render(pose, gestalt);
 		}
 		
-		averager.calculateAverage();
+		averager.update();
 		
 		GLErrors.check("Before binding physical surface");
 		surface.bind();

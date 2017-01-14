@@ -25,7 +25,7 @@ import com.zierfisch.util.GLErrors;
  * 
  * @author phil
  */
-public class LuminosityAverager {
+public class SurfaceAverager {
 	/**
 	 * Contains the source framebuffer to calculate the average from.
 	 */
@@ -36,7 +36,7 @@ public class LuminosityAverager {
 	private Vector4f averageColor = new Vector4f();
 	private Texture averageColorTexture = new Texture();
 
-	public LuminosityAverager(Surface sourceSurface) {
+	public SurfaceAverager(Surface sourceSurface) {
 		this.sourceSurface = sourceSurface;
 		// 1x1 pixel floating point texture, do not expose depth texture
 		this.targetSurface = Surfaces.createOffscreen(1, 1, averageColorTexture, null, true);
@@ -49,7 +49,7 @@ public class LuminosityAverager {
 	 * 
 	 * @return
 	 */
-	public void calculateAverage() {
+	public void update() {
 		// Save last bound FBOs
 		int drawFboName = glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING);
 		int readFboName = glGetInteger(GL_READ_FRAMEBUFFER_BINDING);
@@ -77,6 +77,10 @@ public class LuminosityAverager {
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, readFboName);
 	}
 
+	public float getAverageLuminosity() {
+		return 0.2126f * averageColor.x + 0.7152f * averageColor.y + 0.0722f * averageColor.z;
+	}
+
 	/**
 	 * <p>
 	 * Gets the average calculated on the last call to
@@ -96,6 +100,12 @@ public class LuminosityAverager {
 		return averageColor;
 	}
 
+	/**
+	 * Returns a 1x1 pixel float texture holding the average color at the last
+	 * call to <code>update()</code>.
+	 * 
+	 * @return texture name
+	 */
 	public Texture getAverageColorTexture() {
 		return averageColorTexture;
 	}
