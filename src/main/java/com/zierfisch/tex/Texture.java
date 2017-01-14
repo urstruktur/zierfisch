@@ -108,7 +108,7 @@ public class Texture {
 			allocate(usage, width, height, componentBits, 1, null);
 			break;
 		case VECTOR:
-			allocate(usage, width, height, componentBits, 3, null);
+			allocate(usage, width, height, componentBits, 4, null);
 			break;
 		default:
 			throw new UnsupportedOperationException();

@@ -15,6 +15,11 @@ public abstract class AbstractSurface implements Surface {
 		this.fbo = fbo;
 	}
 	
+	@Override
+	public int getName() {
+		return fbo;
+	}
+	
 	public boolean isComplete() {
 		return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 	}
