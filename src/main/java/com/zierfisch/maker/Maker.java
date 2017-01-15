@@ -185,7 +185,7 @@ public class Maker {
 		ObjImporter importer = new ObjImporter();
 		
 		try {
-			importer.load("assets/models/zierfisch.obj");
+			importer.load(objFilePath);
 		} catch (IOException e) {
 			throw new RuntimeException("Maker could not read OBJ file", e);
 		}
