@@ -58,23 +58,23 @@ vec3 caustic(vec2 uv)
 	float c = 1.0;
 	float inten = .005;
 
-	for (int n = 0; n < MAX_ITER; n++) 
+	for (int n = 0; n < MAX_ITER; n++)
 	{
 		float t = offset * (1.0 - (3.5 / float(n+1)));
 		i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
 		c += 1.0/length(vec2(p.x / (sin(i.x+t)/inten),p.y / (cos(i.y+t)/inten)));
 	}
-    
+
 	c /= float(MAX_ITER);
 	c = 1.17-pow(c, 1.4);
 	vec3 color = vec3(pow(abs(c), 8.0));
     color = clamp(color + vec3(0.0, 0.35, 0.5), 0.0, 1.0);
     //color = mix(color, vec3(1.0,1.0,1.0),0.3);
-    
+
     return color;
 }
 
-/** 
+/**
 * calculates to the relationship between normal and up vector
 * 1 if perpendicular
 **/
@@ -103,7 +103,7 @@ void main()
 	fogFactor = 1.0 - fogColor.a;
 
 	// -- LIGHT --
-	
+
 	vec4 combinedLightColor = vec4(0.0, 0.0, 0.0, 1.0);
 
 	for(int i = 0; i < MAX_LIGHTS; ++i) {
@@ -111,22 +111,23 @@ void main()
 			combinedLightColor.xyz += lights[i].color.a * (lights[i].color.xyz * diffuse(fragPosWorld.xyz, fragNormalWorld.xyz, lights[i].position.xyz));
 		}
 	}
-	
-	float causticIntensity = upness(vec3(fragNormalWorld.x,fragNormalWorld.y,fragNormalWorld.z)); 
-	
+
+	float causticIntensity = upness(vec3(fragNormalWorld.x,fragNormalWorld.y,fragNormalWorld.z));
+
 	// fake chromatic aberration
 	float offset = 0.0005;
 	float r = vec3(caustic(vec2(fragTexCoords.x-offset,1.0-fragTexCoords.y+offset)*uvscale)).x;
 	float g = vec3(caustic(vec2(fragTexCoords.x,1.0-fragTexCoords.y)*uvscale)).y;
 	float b = vec3(caustic(vec2(fragTexCoords.x+offset,1.0-fragTexCoords.y-offset)*uvscale)).z;
 	vec3 causticColor = vec3(r,g,b) * causticIntensity;
-	
+
 	combinedLightColor += vec4(causticColor,1.0);
-	
+
 	vec4 materialColor = combinedLightColor * texture(texture0, vec2(fragTexCoords.x, 1.0-fragTexCoords.y)*uvscale);
-	
+
 	// using photoshop screen formula (negativ multiplizieren): 1-(1-A)*(1-B)
 	//materialColor = vec4(vec3(1.0) - (vec3(1.0) - vec3(materialColor)) * (vec3(1.0) - causticColor),1.0);
 
 	color = mix(fogColor, materialColor, fogFactor);
+	color.a = 1.0;
 }

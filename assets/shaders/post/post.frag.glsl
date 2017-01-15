@@ -39,11 +39,10 @@ vec4 hdrToClampedRgb() {
     float avgL = rollingAvgLuminosity;
     float scaledL = (exposure * thisL) / avgL;
 
-    float lightness = scaledL * (1.0 + (scaledL / (thisL*thisL))) / (1.0 + scaledL);
+    float scaleFactor =  scaledL * (1.0 + (scaledL / (thisL*thisL))) / (1.0 + scaledL);
+    //scaledL * (1 + (scaledL / (thisL*thisL))) / (1 + scaledL);
 
-    //vec4 color = (scaledL * (1 + (scaledL / (thisL*thisL))) / (1 + scaledL)) * hdrColor;
-
-    return clamp(lightness * hdrColor, 0.0, 1.0);
+    return vec4(clamp(scaleFactor * hdrColor.rgb, 0.0, 1.0), 1.0);
 }
 
 void main() {
@@ -64,6 +63,6 @@ void main() {
             color = rollingAvgColor;
         }
     } else {
-        color = fract(texture(hdr, st));
+        //color = fract(texture(hdr, st));
     }
 }

@@ -77,4 +77,5 @@ void main()
 	vec4 materialColor = combinedLightColor * diffuseColor + emission + vec4(0.1,0.2,0.22,1.0) * diffuseColor;
 
 	color = mix(fogColor, materialColor, fogFactor);
+	color.a = 1.0;
 }

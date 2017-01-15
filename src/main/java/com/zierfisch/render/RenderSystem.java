@@ -2,6 +2,7 @@ package com.zierfisch.render;
 
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -163,7 +164,6 @@ public class RenderSystem extends EntitySystem {
 		postShader.setUniform("avgColor", averager.getAverageColor());
 		postShader.setUniform("rollingAvgLuminosity", averager.getRollingAverageLuminosity());
 		postShader.setUniform("rollingAvgColor", averager.getRollingAverageColor());
-		System.out.println(averager.getAverageColor());
 		
 		postShader.render(fullscreenQuad);
 		lastShader = postShader;
@@ -195,7 +195,7 @@ public class RenderSystem extends EntitySystem {
 		GLErrors.check("Cleared offscreen surface");
 		
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_FRAMEBUFFER_SRGB); 
+		glDisable(GL_FRAMEBUFFER_SRGB);
 		
 		for (int i = 0; i < entities.size(); ++i) {
 			Entity entity = entities.get(i);
@@ -212,6 +212,9 @@ public class RenderSystem extends EntitySystem {
 		GLErrors.check("After binding physical surface");
 		surface.clear();
 		GLErrors.check();
+		
+		
+		glEnable(GL_FRAMEBUFFER_SRGB);
 		
 		//present(offscreenColor);
 		presentPostprocessed(offscreenColor);
