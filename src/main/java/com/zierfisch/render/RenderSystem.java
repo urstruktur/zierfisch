@@ -30,7 +30,6 @@ import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
 import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
-import com.zierfisch.tex.SurfaceAverager;
 import com.zierfisch.tex.Texture;
 import com.zierfisch.tex.TextureLoader;
 import com.zierfisch.util.GLErrors;
@@ -81,7 +80,6 @@ public class RenderSystem extends EntitySystem {
 	private Surface offscreen;
 	private Texture offscreenColor;
 	private Texture offscreenDepth;
-	private Vector4f offscreenAvgColor;
 	
 	private SurfaceAverager averager;
 	
@@ -133,10 +131,9 @@ public class RenderSystem extends EntitySystem {
 				
 		offscreenColor = new Texture();
 		offscreenDepth = new Texture();
-		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth);
+		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth, true);
 		
 		averager = new SurfaceAverager(offscreen);
-		offscreenAvgColor = averager.getAverageColor();
 	}
 	
 	private void present(Texture texture) {
@@ -161,6 +158,10 @@ public class RenderSystem extends EntitySystem {
 		tex.bind();
 		
 		postShader.setUniform("avgLuminosity", averager.getRollingAverageLuminosity());
+		postShader.setUniform("avgColor", averager.getAverageColor());
+		postShader.setUniform("rollingAvgLuminosity", averager.getRollingAverageLuminosity());
+		postShader.setUniform("rollingAvgColor", averager.getRollingAverageColor());
+		System.out.println(averager.getAverageColor());
 		
 		postShader.render(fullscreenQuad);
 		lastShader = postShader;
@@ -256,10 +257,10 @@ public class RenderSystem extends EntitySystem {
 			pos.w = 1.0f; // Point light, not directional, always
 			
 			Vector4f color = new Vector4f();
-			color.x = light.color.x;
-			color.y = light.color.y;
-			color.z = light.color.z;
-			color.w = light.intensity;
+			color.x = light.color.x * light.intensity;
+			color.y = light.color.y * light.intensity;
+			color.z = light.color.z * light.intensity;
+			color.w = 1.0f;
 			
 			shader.setUniform("lights["+i+"].position", pos);
 			shader.setUniform("lights["+i+"].color", color);

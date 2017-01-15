@@ -70,7 +70,7 @@ void main()
 			combinedLightColor.xyz += lights[i].color.xyz * diffuse(fragPosWorld.xyz, fragNormalWorld.xyz, lights[i].position.xyz);
 		}
 	}
-	
+
 	vec4 emission = texture(texture1, vec2(vec2(fragTexCoords.x, 1.0-fragTexCoords.y)*uvscale));
 	vec4 diffuseColor = texture(texture0, vec2(fragTexCoords.x, 1.0-fragTexCoords.y)*uvscale);
 

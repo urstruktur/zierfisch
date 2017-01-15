@@ -151,12 +151,13 @@ public class Zierfisch implements ApplicationListener {
 		randomEnt1.add(light1);
 		
 		
-		Entity startLight = new Entity();
+		/*Entity startLight = new Entity();
 		startLight.add(new Light());
 		startLight.add(new Pose());
-		startLight.getComponent(Light.class).color.set(1.0f, 0.15f, 0.15f);
-		startLight.getComponent(Light.class).intensity = 0.1f;
+		startLight.getComponent(Light.class).color.set(1.0f, 0.7f, 0.94f);
+		startLight.getComponent(Light.class).intensity = 0.01f;
 		startLight.getComponent(Pose.class).position.y = 1.0f;
+		engine.addEntity(startLight);*/
 		
 		/*
 		

@@ -1,4 +1,4 @@
-package com.zierfisch.tex;
+package com.zierfisch.render;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30.glBlitFramebuffer;
 
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -24,11 +25,11 @@ import static org.lwjgl.opengl.GL14.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL21.*;
 
+import org.joml.Vector4d;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
-import com.zierfisch.render.Surface;
-import com.zierfisch.render.Surfaces;
+import com.zierfisch.tex.Texture;
 import com.zierfisch.util.GLErrors;
 
 /**
@@ -38,6 +39,7 @@ import com.zierfisch.util.GLErrors;
  * @author phil
  */
 public class SurfaceAverager {
+	
 	/**
 	 * Contains the source framebuffer to calculate the average from.
 	 */
@@ -45,24 +47,39 @@ public class SurfaceAverager {
 	private Surface targetSurface;
 	// can hold 4 colors as four-byte floating point numbers
 	private Vector4f averageColor = new Vector4f();
-	private Texture averageColorTexture = new Texture();
-	private float[] luminosityHistory = new float[32];
-	private int luminosityHistoryInsertionIdx = 0;
-	private int luminosityHistoryCount = 0;
-	private float rollingAverageLuminosity;
+	private Texture averageColorTexture;
+	private FloatBuffer averageColorHistory;
+	private int averageColorHistoryInsertionIdx = 0;
 	private FloatBuffer pixelBuf;
+	/**
+	 * Used for temporary results in <code>calculateAverageColor()</code>.
+	 * Double for extra precision.
+	 */
+	private Vector4d colorSum = new Vector4d();
+	/**
+	 * Used for temporary results in <code>calculateAverageColor()</code>.
+	 */
+	private Vector4f aColor = new Vector4f();
+	private Vector4f rollingAverageColor = new Vector4f();
 
-	public SurfaceAverager(Surface sourceSurface) {
+	public SurfaceAverager(Surface sourceSurface, int rollingAverageColorCount) {
 		this.sourceSurface = sourceSurface;
-		// 1x1 pixel floating point texture, do not expose depth texture
-		int w = sourceSurface.getWidth()/4;
-		int h = sourceSurface.getHeight()/4;
+		
+		// targetSurface is smaller version where average is calculated on CPU
+		int w = sourceSurface.getWidth() / 4;
+		int h = sourceSurface.getHeight() / 4;
+		this.averageColorTexture = new Texture();
 		this.targetSurface = Surfaces.createOffscreen(w, h, averageColorTexture, null, true);
 		
+		averageColorHistory = BufferUtils.createFloatBuffer(rollingAverageColorCount * 4);
 		pixelBuf = BufferUtils.createFloatBuffer(w*h * 4);
 	}
 	
-	private void pushLuminosity(float luminosity) {
+	public SurfaceAverager(Surface sourceSurface) {
+		this(sourceSurface, 256);
+	}
+	
+	/*private void pushLuminosity(float luminosity) {
 		luminosityHistory[luminosityHistoryInsertionIdx++ % luminosityHistory.length] = luminosity;
 		
 		if(luminosityHistoryCount < luminosityHistory.length) {
@@ -75,7 +92,7 @@ public class SurfaceAverager {
 		}
 		
 		rollingAverageLuminosity = (float) (sum / luminosityHistoryCount);
-	}
+	}*/
 
 	/**
 	 * <p>
@@ -94,6 +111,27 @@ public class SurfaceAverager {
 		int drawFboName = glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING);
 		int readFboName = glGetInteger(GL_READ_FRAMEBUFFER_BINDING);
 
+		downscaleToTargetSurface();
+		downloadPixelBuf();
+		calculateAverageColor(pixelBuf, averageColor);
+		pushAverageColorToHistory();
+		calculateAverageColor(averageColorHistory, rollingAverageColor);
+		
+		//pixelBuf.flip();
+		
+		//float avgLuminosity = calculateAvgLuminosityInPixelBuf();
+		
+		//glReadPixels(0, 0, 1, 1, GL_RGBA, GL_FLOAT, pixelBuffer);
+		GLErrors.check();
+		//averageColor.set(pixelBuf);
+		pixelBuf.clear();
+		
+		// Restore last bound FBO
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFboName);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, readFboName);
+	}
+
+	public void downscaleToTargetSurface() {
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceSurface.getName());
 		GLErrors.check();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, targetSurface.getName());
@@ -105,48 +143,59 @@ public class SurfaceAverager {
 				// target framebuffer dimensions, will be downscaled
 				0, 0, targetSurface.getWidth(), targetSurface.getHeight(),
 				GL_COLOR_BUFFER_BIT, GL_LINEAR);
-		
 		GLErrors.check();
-
-		targetSurface.bind();
-
-		averageColorTexture.bind();
-		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixelBuf);
-		//pixelBuf.flip();
-		
-		float avgLuminosity = calculateAvgLuminosityInPixelBuf();
-		
-		//glReadPixels(0, 0, 1, 1, GL_RGBA, GL_FLOAT, pixelBuffer);
-		GLErrors.check();
-		//averageColor.set(pixelBuf);
-		pixelBuf.clear();
-		
-		// Restore last bound FBO
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFboName);
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, readFboName);
-		
-		pushLuminosity(avgLuminosity);
 	}
 
-	private float calculateAvgLuminosityInPixelBuf() {
-		double[] factors = { 0.2126, 0.7152, 0.0722, 0.0 };
-		int offset = 0;
+	public void downloadPixelBuf() {
+		averageColorTexture.bind();
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixelBuf);
+		GLErrors.check();
+	}
+
+	private void calculateAverageColor(FloatBuffer buf, Vector4f result) {
+		int floatCount = buf.limit() / 4;
+		int colorCount = floatCount / 4;
 		
-		double combinedLuminosity = 0.0;
+		colorSum.zero();
 		
-		while(offset < (targetSurface.getWidth() * targetSurface.getHeight() * 4)) {
-			combinedLuminosity += pixelBuf.get(offset) * factors[offset % factors.length];
-			++offset;
+		for(int i = 0; i < buf.limit(); i += 4*4) {
+			aColor.set(i, buf);
+			colorSum.add(aColor);
 		}
 		
-		return (float) (combinedLuminosity / (pixelBuf.capacity() / 4));
+		result.set(colorSum.div(colorCount));
+	}
+	
+	private void pushAverageColorToHistory() {
+		int position = averageColorHistoryInsertionIdx % averageColorHistory.capacity();
+		
+		averageColorHistoryInsertionIdx += 4 * 4;
+		int limit = (averageColorHistoryInsertionIdx > averageColorHistory.capacity())
+                ? averageColorHistory.capacity()
+                : averageColorHistoryInsertionIdx;
+                
+        averageColorHistory.limit(limit);
+		//averageColorHistory.position(position);
+		
+		//System.out.println(averageColor.x + "/" + averageColor.y + "/" + averageColor.z);
+		
+		averageColor.get(position, averageColorHistory);
+		
+		/*averageColorHistory.put(averageColor.x);
+		averageColorHistory.put(averageColor.y);
+		averageColorHistory.put(averageColor.z);
+		averageColorHistory.put(averageColor.w);*/
+	}
+
+	private static final float luminosity(Vector4f color) {
+		return color.w * (0.2126f * color.x + 0.7152f * color.y + 0.0722f * color.z);
 	}
 
 	public float getAverageLuminosity() {
-		return 0.2126f * averageColor.x + 0.7152f * averageColor.y + 0.0722f * averageColor.z;
+		return luminosity(averageColor);
 	}
 	public float getRollingAverageLuminosity() {
-		return rollingAverageLuminosity;
+		return luminosity(rollingAverageColor);
 	}
 
 	/**
@@ -166,6 +215,10 @@ public class SurfaceAverager {
 	 */
 	public Vector4f getAverageColor() {
 		return averageColor;
+	}
+	
+	public Vector4f getRollingAverageColor() {
+		return rollingAverageColor;
 	}
 
 	/**

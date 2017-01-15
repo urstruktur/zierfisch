@@ -2,10 +2,14 @@
 
 /** Rendered image in (unclamped) HDR */
 uniform sampler2D hdr;
-/** Rolling average luminosity */
 uniform float avgLuminosity;
+uniform float rollingAvgLuminosity;
+/** Rolling average color */
+uniform vec4 avgColor;
+uniform vec4 rollingAvgColor;
+
 /** Kalled key in slides, scaling factor for brightness */
-const float exposure = 0.08;
+const float exposure = 0.02;
 
 in vec2 st;
 
@@ -32,13 +36,14 @@ float luminosity(vec3 color) {
 vec4 hdrToClampedRgb() {
     vec4 hdrColor = texture(hdr, st);
     float thisL = luminosity(hdrColor.rgb);
-    float avgL = avgLuminosity;
+    float avgL = rollingAvgLuminosity;
     float scaledL = (exposure * thisL) / avgL;
 
-    //vec4 color = scaledL * (1 + (scaledL / (thisL*thisL))) / (1 + scaledL);
-    vec4 color = (scaledL * (1 + (scaledL / (luminosity(hdrColor.rgb)*luminosity(hdrColor.rgb)))) / (1 + scaledL)) * hdrColor;
-    color = clamp(color, 0.0, 1.0);
-    return color;
+    float lightness = scaledL * (1.0 + (scaledL / (thisL*thisL))) / (1.0 + scaledL);
+
+    //vec4 color = (scaledL * (1 + (scaledL / (thisL*thisL))) / (1 + scaledL)) * hdrColor;
+
+    return clamp(lightness * hdrColor, 0.0, 1.0);
 }
 
 void main() {
@@ -49,4 +54,16 @@ void main() {
 
     //float gamma = 1.0/2.2;
     //color.rgb = pow(color.rgb, vec3(1.0/gamma, 1.0/gamma, 1.0/gamma));
+
+    //color = vec4(avgColor.rgb, 1.0);
+
+    if(st.s < 0.05 && st.t < 0.03) {
+        color = avgColor;
+
+        if(st.s > 0.025) {
+            color = rollingAvgColor;
+        }
+    } else {
+        color = fract(texture(hdr, st));
+    }
 }

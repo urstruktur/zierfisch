@@ -50,6 +50,8 @@ import com.zierfisch.util.MouseButton;
 import com.zierfisch.util.MousePos;
 
 public class Application {
+	
+	public static final float DELTA_TIME_WARNING_THRESHOLD = 0.060f;
 
 	private static boolean glfwLoaded = false;
 	
@@ -205,7 +207,7 @@ public class Application {
 			deltaTime = timer.getDelta();
 			timer.setReference();
 			
-			if(deltaTime > (1/30f)) {
+			if(deltaTime > DELTA_TIME_WARNING_THRESHOLD) {
 				System.err.println("SHEESH that last frame was insanely long: " + secondsFormat.format(deltaTime) + "s");
 			}
 			
