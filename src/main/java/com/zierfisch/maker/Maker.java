@@ -72,6 +72,11 @@ public class Maker {
 		return this;
 	}
 	
+	public Maker setTextureScale(float scale){
+		gestalt.uvscale = scale;
+		return this;
+	}
+	
 	/**
 	 * <p>Saves a component to later add a copy to each built entity.</p>
 	 * 

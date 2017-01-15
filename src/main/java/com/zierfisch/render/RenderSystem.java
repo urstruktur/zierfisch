@@ -79,6 +79,8 @@ public class RenderSystem extends EntitySystem {
 	private Texture offscreenColor;
 	private Texture offscreenDepth;
 	
+	private long startTime;
+	
 	public RenderSystem(Surface surface) {
 		this.surface = surface;
 	}
@@ -94,6 +96,7 @@ public class RenderSystem extends EntitySystem {
 	@Override
 	public void addedToEngine(Engine engine) {
 		super.addedToEngine(engine);
+		startTime = System.currentTimeMillis();
 		initialize(engine);
 	}
 
@@ -230,7 +233,7 @@ public class RenderSystem extends EntitySystem {
 	}
 
 	private void setTimeUniform(Shader shader){
-		shader.setUniform("time", (float)(System.currentTimeMillis()/1000f));
+		shader.setUniform("time", (float)((System.currentTimeMillis()-startTime)/1000f));
 	}
 
 	private void setTextureUniforms(Shader shader, Gestalt gestalt) {
@@ -283,7 +286,7 @@ public class RenderSystem extends EntitySystem {
 	public static Component makeEnviromentGestalt() {
 		ObjImporter importer = new ObjImporter();
 		try {
-			importer.load("assets/models/enviroment.obj");
+			importer.load("assets/models/cave.obj");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

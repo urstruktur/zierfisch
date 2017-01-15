@@ -34,16 +34,24 @@ public class Zierfisch implements ApplicationListener {
 	public void enter(Application app) {
 		this.app = app;
 		
-		Entity enviroment = new Entity();
-		enviroment.add(RenderSystem.makeEnviromentGestalt());
-		enviroment.add(new Pose());
-		
 		initEngine();
 		
-		engine.addEntity(enviroment);
+		// build cave
+		Maker maker = new Maker().setMesh("assets/models/cave.obj")
+				.setShader("assets/shaders/cc/depth.vert.glsl", "assets/shaders/cc/depth.frag.glsl")
+                .setTexture(0, "assets/textures/RockPerforated0029_1_seamless_S.png")
+                .setTexture(4, "assets/textures/fog-gradient-03.png")
+                .setTextureScale(12f);
+		engine.addEntity(maker.build());
+		
+		// build seafloor
+		maker.setMesh("assets/models/seafloor.obj")
+			 .setShader("assets/shaders/cc/caustic.vert.glsl", "assets/shaders/cc/caustic.frag.glsl");
+		engine.addEntity(maker.build());
+		
 		addMainCamera();
 		addAuxiliaryQuantumLightConvolutionAcceleratorBuffer();
-		createFishflock(7, 5, 7, 0.4f);
+		createFishflock(7, 7, 7, 0.4f);
 		//createFishflock(3, 5, 3, 0.5f);
 		
 		glEnable(GL_DEPTH_TEST);
@@ -88,7 +96,7 @@ public class Zierfisch implements ApplicationListener {
 		 //engine.addSystem(new PathFollowSystem());
 
 		 //engine.addSystem(new TweakingSystem());
-		 engine.addSystem(new FlockingSystem());
+		engine.addSystem(new FlockingSystem());
 	}
 
 	@Override
