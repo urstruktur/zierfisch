@@ -40,6 +40,21 @@ public interface Surface {
 	 */
 	public static final int ALL = COLOR | DEPTH;
 
+	/**
+	 * <p>
+	 * Returns the OpenGL name associated with the framebuffer object used by this
+	 * surface.
+	 * </p>
+	 * 
+	 * <p>
+	 * This will always be zeo for the physical surface and always be non-zero for
+	 * offscreen surfaces.
+	 * </p>
+	 * 
+	 * @return the fbo name
+	 */
+	public int getName();
+
 	public int getWidth();
 
 	public int getHeight();
@@ -56,13 +71,15 @@ public interface Surface {
 	 * </p>
 	 */
 	public void clear();
-	
+
 	public void clear(int which);
 
 	public void bind();
-	
+
 	/**
-	 * <p><strong>Note:</strong>Only call this when the surface is currently bound.</p>
+	 * <p>
+	 * <strong>Note:</strong>Only call this when the surface is currently bound.
+	 * </p>
 	 * 
 	 * @return
 	 */

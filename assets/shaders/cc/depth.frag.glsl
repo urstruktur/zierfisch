@@ -25,8 +25,8 @@ in vec4 fragPosWorld;
 in vec4 fragNormalWorld;
 
 const float FOGDENSITY = 0.15;
-const int FOGSTART = 1;
-const int FOGEND = 60;
+const int FOGSTART = 2;
+const int FOGEND = 80;
 
 float fogFactor = 0;
 vec4 fogColor = vec4(0.5f,0.5f,0.5f,1.0f);
@@ -59,15 +59,15 @@ void main()
 
 	// texture gradient fog
 	fogColor = texture(texture4, vec2(clamp(1.0-fogFactor,0.01,0.99),0.1)); // clamp is a fix for the problem that edge pixels are grey (?)
-	fogFactor = 1.0 - fogColor.a;
+	fogFactor = 1.0 - (fogColor.a * fogColor.a);
 
 	// -- LIGHT --
-	
+
 	vec4 combinedLightColor = vec4(0.0, 0.0, 0.0, 1.0);
 
 	for(int i = 0; i < MAX_LIGHTS; ++i) {
 		if(lights[i].color.a > 0.0) {
-			combinedLightColor.xyz += lights[i].color.a * (lights[i].color.xyz * diffuse(fragPosWorld.xyz, fragNormalWorld.xyz, lights[i].position.xyz));
+			combinedLightColor.xyz += lights[i].color.xyz * diffuse(fragPosWorld.xyz, fragNormalWorld.xyz, lights[i].position.xyz);
 		}
 	}
 

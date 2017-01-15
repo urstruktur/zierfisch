@@ -7,7 +7,6 @@ import com.badlogic.ashley.core.Component;
 public class Light implements Component {
 	
 	public Vector3f color = new Vector3f(1.0f, 1.0f, 1.0f);
-	
 	public float intensity = 1.0f;
 	
 	public Light() {}

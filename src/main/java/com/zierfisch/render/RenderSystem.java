@@ -2,6 +2,7 @@ package com.zierfisch.render;
 
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -72,6 +73,8 @@ public class RenderSystem extends EntitySystem {
 	 * Used for presenting textures to screen
 	 */
 	private Shader presentShader;
+	
+	private Shader postShader;
 	/**
 	 * Offscreen surface that the content is rendered to first before presenting.
 	 */
@@ -79,6 +82,7 @@ public class RenderSystem extends EntitySystem {
 	private Texture offscreenColor;
 	private Texture offscreenDepth;
 	
+	private SurfaceAverager averager;
 	private long startTime;
 	
 	public RenderSystem(Surface surface) {
@@ -89,10 +93,6 @@ public class RenderSystem extends EntitySystem {
 		return surface;
 	}
 	
-	public void setSurface(Surface surface) {
-		this.surface = surface;
-	}
-
 	@Override
 	public void addedToEngine(Engine engine) {
 		super.addedToEngine(engine);
@@ -108,10 +108,21 @@ public class RenderSystem extends EntitySystem {
 		lights = engine.getEntitiesFor(Family.all(Pose.class, Light.class).get());
 
 		initDefaultShader();
+		initPostShader();
 
 		camSys = engine.getSystem(CameraSystem.class);
 		
 		initFullscreenQuad();
+	}
+
+	/**
+	 * Intitializes the postprocessing shader used for hdr and bloom.
+	 */
+	private void initPostShader() {
+		postShader = new ShaderBuilder().setVertexShader("assets/shaders/post/post.vert.glsl")
+		                                .setFragmentShader("assets/shaders/post/post.frag.glsl")
+		                                .build();
+		
 	}
 
 	private void initFullscreenQuad() {
@@ -123,7 +134,9 @@ public class RenderSystem extends EntitySystem {
 				
 		offscreenColor = new Texture();
 		offscreenDepth = new Texture();
-		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth);
+		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth, true);
+		
+		averager = new SurfaceAverager(offscreen);
 	}
 	
 	private void present(Texture texture) {
@@ -137,6 +150,23 @@ public class RenderSystem extends EntitySystem {
 		
 		presentShader.render(fullscreenQuad);
 		lastShader = presentShader;
+	}
+	
+	private void presentPostprocessed(Texture tex) {
+		postShader.bind();
+		
+		postShader.setUniform("hdr", 0);
+		GLErrors.check();
+		glActiveTexture(GL_TEXTURE0);
+		tex.bind();
+		
+		postShader.setUniform("avgLuminosity", averager.getRollingAverageLuminosity());
+		postShader.setUniform("avgColor", averager.getAverageColor());
+		postShader.setUniform("rollingAvgLuminosity", averager.getRollingAverageLuminosity());
+		postShader.setUniform("rollingAvgColor", averager.getRollingAverageColor());
+		
+		postShader.render(fullscreenQuad);
+		lastShader = postShader;
 	}
 
 	private void initDefaultShader() {
@@ -165,6 +195,8 @@ public class RenderSystem extends EntitySystem {
 		GLErrors.check("Cleared offscreen surface");
 		
 		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_FRAMEBUFFER_SRGB);
+		
 		for (int i = 0; i < entities.size(); ++i) {
 			Entity entity = entities.get(i);
 			Pose pose = pm.get(entity);
@@ -173,13 +205,21 @@ public class RenderSystem extends EntitySystem {
 			render(pose, gestalt);
 		}
 		
+		averager.update();
+		
 		GLErrors.check("Before binding physical surface");
 		surface.bind();
 		GLErrors.check("After binding physical surface");
 		surface.clear();
 		GLErrors.check();
 		
-		present(offscreenColor);
+		
+		glEnable(GL_FRAMEBUFFER_SRGB);
+		
+		//present(offscreenColor);
+		presentPostprocessed(offscreenColor);
+		//present(offscreenDepth);
+		//present(averager.getAverageColorTexture());
 	}
 
 	private void render(Pose pose, Gestalt gestalt) {
@@ -222,10 +262,10 @@ public class RenderSystem extends EntitySystem {
 			pos.w = 1.0f; // Point light, not directional, always
 			
 			Vector4f color = new Vector4f();
-			color.x = light.color.x;
-			color.y = light.color.y;
-			color.z = light.color.z;
-			color.w = light.intensity;
+			color.x = light.color.x * light.intensity;
+			color.y = light.color.y * light.intensity;
+			color.z = light.color.z * light.intensity;
+			color.w = 1.0f;
 			
 			shader.setUniform("lights["+i+"].position", pos);
 			shader.setUniform("lights["+i+"].color", color);

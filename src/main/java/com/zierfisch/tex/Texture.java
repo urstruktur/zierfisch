@@ -86,7 +86,7 @@ public class Texture {
 	public void allocate(TextureUsage usage, int width, int height) {
 		switch(usage) {
 		case COLOR:
-			allocate(usage, width, height, 8);
+			allocate(usage, width, height, 16);
 			break;
 		case DEPTH:
 			allocate(usage, width, height, 24);
@@ -108,7 +108,7 @@ public class Texture {
 			allocate(usage, width, height, componentBits, 1, null);
 			break;
 		case VECTOR:
-			allocate(usage, width, height, componentBits, 3, null);
+			allocate(usage, width, height, componentBits, 4, null);
 			break;
 		default:
 			throw new UnsupportedOperationException();
