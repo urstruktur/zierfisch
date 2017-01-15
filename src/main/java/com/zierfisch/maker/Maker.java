@@ -72,6 +72,11 @@ public class Maker {
 		return this;
 	}
 	
+	public Maker setTextureScale(float scale){
+		gestalt.uvscale = scale;
+		return this;
+	}
+	
 	/**
 	 * <p>Saves a component to later add a copy to each built entity.</p>
 	 * 
@@ -185,7 +190,7 @@ public class Maker {
 		ObjImporter importer = new ObjImporter();
 		
 		try {
-			importer.load("assets/models/zierfisch.obj");
+			importer.load(objFilePath);
 		} catch (IOException e) {
 			throw new RuntimeException("Maker could not read OBJ file", e);
 		}
