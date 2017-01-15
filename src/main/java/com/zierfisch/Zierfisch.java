@@ -55,15 +55,14 @@ public class Zierfisch implements ApplicationListener {
 		
 		Maker maker = new Maker().add(light);
 		
-		light.color.set(1.0f, 0.1f, 0.14f);
-		Entity light1 = maker.setPosition(0.0f, 0.5f, -0.4f).build();
+		/*light.color.set(1.0f, 0.1f, 0.14f);
+		Entity light1 = maker.setPosition(0.0f, 0.5f, -0.4f).build();*/
 		
 		// Changing the protoype affects the next built light, but not the already built one
-		light.color.set(0.0f, 1.1f, 0.14f);
-		Entity light2 = maker.setPosition(0.0f, -0.5f, 10.4f).build();
+		//light.color.set(0.0f, 1.1f, 0.14f);
+		//Entity light2 = maker.setPosition(10.0f, 10.5f, 10.4f).add(light).build();
 		
-//		engine.addEntity(light1);
-//		engine.addEntity(light2);
+		//engine.addEntity(light2);
 	}
 
 	private void addMainCamera() {
@@ -145,19 +144,32 @@ public class Zierfisch implements ApplicationListener {
 		
 		ImmutableArray<Entity> allEnts = engine.getEntities();
 		
-		Entity randomEnt1 = allEnts.get((int) (Math.random() * allEnts.size()));
+		Entity randomEnt1 = allEnts.get(allEnts.size() - 1);
 		Light light1 = new Light();
 		light1.color.set(.8f, 1f, 1f);
+		light1.intensity = 1.0f;
 		randomEnt1.add(light1);
+		
+		
+		Entity startLight = new Entity();
+		startLight.add(new Light());
+		startLight.add(new Pose());
+		startLight.getComponent(Light.class).color.set(1.0f, 0.15f, 0.15f);
+		startLight.getComponent(Light.class).intensity = 0.1f;
+		startLight.getComponent(Pose.class).position.y = 1.0f;
+		
+		/*
 		
 		Entity randomEnt2 = allEnts.get((int) (Math.random() * allEnts.size()));
 		Light light2 = new Light();
 		light2.color.set(.6f, 1f, 1f);
+		light2.intensity = 1.0f;
 		randomEnt2.add(light2);
 		
 		Entity randomEnt3 = allEnts.get((int) (Math.random() * allEnts.size()));
 		Light light3 = new Light();
 		light3.color.set(.7f, 1f, 1f);
-		randomEnt3.add(light3);
+		light3.intensity = 10.0f;
+		randomEnt3.add(light3);*/
 	}
 }

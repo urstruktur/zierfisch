@@ -73,6 +73,8 @@ public class RenderSystem extends EntitySystem {
 	 * Used for presenting textures to screen
 	 */
 	private Shader presentShader;
+	
+	private Shader postShader;
 	/**
 	 * Offscreen surface that the content is rendered to first before presenting.
 	 */
@@ -105,10 +107,21 @@ public class RenderSystem extends EntitySystem {
 		lights = engine.getEntitiesFor(Family.all(Pose.class, Light.class).get());
 
 		initDefaultShader();
+		initPostShader();
 
 		camSys = engine.getSystem(CameraSystem.class);
 		
 		initFullscreenQuad();
+	}
+
+	/**
+	 * Intitializes the postprocessing shader used for hdr and bloom.
+	 */
+	private void initPostShader() {
+		postShader = new ShaderBuilder().setVertexShader("assets/shaders/post/post.vert.glsl")
+		                                .setFragmentShader("assets/shaders/post/post.frag.glsl")
+		                                .build();
+		
 	}
 
 	private void initFullscreenQuad() {
@@ -138,6 +151,20 @@ public class RenderSystem extends EntitySystem {
 		presentShader.render(fullscreenQuad);
 		lastShader = presentShader;
 	}
+	
+	private void presentPostprocessed(Texture tex) {
+		postShader.bind();
+		
+		postShader.setUniform("hdr", 0);
+		GLErrors.check();
+		glActiveTexture(GL_TEXTURE0);
+		tex.bind();
+		
+		postShader.setUniform("avgLuminosity", averager.getRollingAverageLuminosity());
+		
+		postShader.render(fullscreenQuad);
+		lastShader = postShader;
+	}
 
 	private void initDefaultShader() {
 		defaultShader = new ShaderBuilder()
@@ -165,6 +192,8 @@ public class RenderSystem extends EntitySystem {
 		GLErrors.check("Cleared offscreen surface");
 		
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_FRAMEBUFFER_SRGB); 
+		
 		for (int i = 0; i < entities.size(); ++i) {
 			Entity entity = entities.get(i);
 			Pose pose = pm.get(entity);
@@ -181,7 +210,8 @@ public class RenderSystem extends EntitySystem {
 		surface.clear();
 		GLErrors.check();
 		
-		present(offscreenColor);
+		//present(offscreenColor);
+		presentPostprocessed(offscreenColor);
 		//present(offscreenDepth);
 		//present(averager.getAverageColorTexture());
 	}

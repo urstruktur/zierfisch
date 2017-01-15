@@ -86,7 +86,7 @@ public class Texture {
 	public void allocate(TextureUsage usage, int width, int height) {
 		switch(usage) {
 		case COLOR:
-			allocate(usage, width, height, 8);
+			allocate(usage, width, height, 16);
 			break;
 		case DEPTH:
 			allocate(usage, width, height, 24);
