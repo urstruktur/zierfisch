@@ -12,10 +12,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
 import static org.lwjgl.glfw.GLFW.GLFW_SRGB_CAPABLE;
-import static org.lwjgl.glfw.GLFW.GLFW_RED_BITS;
-import static org.lwjgl.glfw.GLFW.GLFW_GREEN_BITS;
-import static org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS;
-import static org.lwjgl.glfw.GLFW.GLFW_ALPHA_BITS;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
@@ -40,19 +36,18 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.concurrent.TimeUnit;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.opengl.GL;
 
-import com.zierfisch.render.PhysicalSurface;
-import com.zierfisch.render.Surface;
+import com.zierfisch.gfx.surf.PhysicalSurface;
+import com.zierfisch.gfx.surf.Surface;
+import com.zierfisch.input.Keyboard;
+import com.zierfisch.input.MouseButton;
+import com.zierfisch.input.MousePos;
 import com.zierfisch.time.DeltaTimer;
-import com.zierfisch.util.Keyboard;
-import com.zierfisch.util.MouseButton;
-import com.zierfisch.util.MousePos;
 
 public class Application {
 	
@@ -131,10 +126,10 @@ public class Application {
         glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
         
         // Sets the bit depth of the default framebufffer to 32 per channel
-//        glfwWindowHint(GLFW_RED_BITS, 32);
-//        glfwWindowHint(GLFW_GREEN_BITS, 32);
-//        glfwWindowHint(GLFW_BLUE_BITS, 32);
-//        glfwWindowHint(GLFW_ALPHA_BITS, 32);
+		//        glfwWindowHint(GLFW_RED_BITS, 32);
+		//        glfwWindowHint(GLFW_GREEN_BITS, 32);
+		//        glfwWindowHint(GLFW_BLUE_BITS, 32);
+		//        glfwWindowHint(GLFW_ALPHA_BITS, 32);
 	}
 	
 	private void initWindow() {

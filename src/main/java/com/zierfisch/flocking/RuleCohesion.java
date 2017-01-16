@@ -4,7 +4,7 @@ import org.joml.Vector3f;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.zierfisch.render.Pose;
+import com.zierfisch.gfx.ecs.Pose;
 
 /**
  * The cohesion rule calculates the mean position of all adjacent boids and subsequently calculates the force vector towards that position.

@@ -6,7 +6,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Bezier;
 import com.badlogic.gdx.math.Path;
 import com.badlogic.gdx.math.Vector3;
-import com.zierfisch.render.Pose;
+import com.zierfisch.gfx.ecs.Pose;
 
 
 /**

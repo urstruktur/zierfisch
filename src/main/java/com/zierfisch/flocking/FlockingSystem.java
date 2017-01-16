@@ -11,9 +11,9 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector3;
+import com.zierfisch.gfx.ecs.Pose;
 import com.zierfisch.gui.PropertyAccessor;
 import com.zierfisch.gui.TweakingSystem;
-import com.zierfisch.render.Pose;
 
 
 /**

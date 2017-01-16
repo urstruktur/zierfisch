@@ -2,6 +2,8 @@ package com.zierfisch;
 
 public class ResourceException extends RuntimeException {
 
+	private static final long serialVersionUID = 2054547249477934318L;
+
 	public ResourceException() {
 	}
 
