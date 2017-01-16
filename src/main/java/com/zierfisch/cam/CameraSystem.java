@@ -25,7 +25,6 @@ public class CameraSystem extends IteratingSystem {
 	private ComponentMapper<Pose> pm = ComponentMapper.getFor(Pose.class);
 	
 	private Camera mainCam;
-	private Vector3f forward = new Vector3f();
 	private Vector3f up = new Vector3f();
 	private Vector3f focus = new Vector3f();
 

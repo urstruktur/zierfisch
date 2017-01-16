@@ -1,13 +1,5 @@
 package com.zierfisch.gfx.surf;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
-import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER_HEIGHT;
-import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER_WIDTH;
-import static org.lwjgl.opengl.GL30.glGetRenderbufferParameteri;
-
-import org.lwjgl.glfw.GLFWFramebufferSizeCallbackI;
-
 public class PhysicalSurface extends AbstractSurface {
 	
 	private int width;
@@ -22,6 +14,13 @@ public class PhysicalSurface extends AbstractSurface {
 		super(0);
 	}
 	
+	/**
+	 * PhysicalSurface depends on something regularly calling this. This is done
+	 * by the Application for now.
+	 * 
+	 * @param width
+	 * @param height
+	 */
 	public void resize(int width, int height) {
 		this.width = width;
 		this.height = height;

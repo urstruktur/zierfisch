@@ -2,8 +2,6 @@ package com.zierfisch.assets.geom;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 import com.owens.oobjloader.builder.Build;
 import com.owens.oobjloader.builder.Face;
@@ -22,7 +20,7 @@ public class ObjImporter {
 	 * @param path path to obj model 
 	 */
 	public void load(String path) throws FileNotFoundException, IOException {
-		Parse parse = new Parse(objBuilder, path);
+		new Parse(objBuilder, path);
 	}
 
 	public Mesh make(MeshBuilder meshBuilder) {

@@ -4,7 +4,6 @@ import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glEnable;
 
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
@@ -16,7 +15,6 @@ import com.zierfisch.app.ApplicationListener;
 import com.zierfisch.assets.Maker;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
-import com.zierfisch.cam.PathFollowSystem;
 import com.zierfisch.cam.PathFollower;
 import com.zierfisch.flocking.Boid;
 import com.zierfisch.flocking.FlockingSystem;
@@ -28,7 +26,6 @@ public class Zierfisch implements ApplicationListener {
 
 	private Application app;
 	private Engine engine;
-	private Matrix4f scale = new Matrix4f();
 	
 	@Override
 	public void enter(Application app) {
@@ -59,11 +56,11 @@ public class Zierfisch implements ApplicationListener {
 	}
 
 	private void addAuxiliaryQuantumLightConvolutionAcceleratorBuffer() {
-		Light light = new Light();
+		/*Light light = new Light();
 		
 		Maker maker = new Maker().add(light);
 		
-		/*light.color.set(1.0f, 0.1f, 0.14f);
+		light.color.set(1.0f, 0.1f, 0.14f);
 		Entity light1 = maker.setPosition(0.0f, 0.5f, -0.4f).build();*/
 		
 		// Changing the protoype affects the next built light, but not the already built one
@@ -106,16 +103,7 @@ public class Zierfisch implements ApplicationListener {
 
 	@Override
 	public void update(float dt) {
-		float secs = (System.currentTimeMillis() - startTime) / 1000.0f;
-		float sine = (float) Math.sin(secs);
-		float rotation = (float) (sine * Math.PI);
-		
-		//scale.rotateY(rotation);
-		scale.identity();
-		scale.scale((sine + 1) / 2.0f);
-		
 		GL11.glClearColor(0.0f, 0.17f, 0.27f, 1.0f);
-		
 		engine.update(dt);
 	}
 	
