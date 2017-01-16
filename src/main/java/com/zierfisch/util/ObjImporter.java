@@ -24,7 +24,6 @@ public class ObjImporter {
 	 */
 	public void load(String path) throws FileNotFoundException, IOException {
 		Parse parse = new Parse(objBuilder, path);
-		System.out.println("Loaded " + objBuilder.objectName);
 	}
 
 	public Mesh make(MeshBuilder meshBuilder) {

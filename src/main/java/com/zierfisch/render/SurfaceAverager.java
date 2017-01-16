@@ -175,16 +175,7 @@ public class SurfaceAverager {
                 : averageColorHistoryInsertionIdx;
                 
         averageColorHistory.limit(limit);
-		//averageColorHistory.position(position);
-		
-		//System.out.println(averageColor.x + "/" + averageColor.y + "/" + averageColor.z);
-		
 		averageColor.get(position, averageColorHistory);
-		
-		/*averageColorHistory.put(averageColor.x);
-		averageColorHistory.put(averageColor.y);
-		averageColorHistory.put(averageColor.z);
-		averageColorHistory.put(averageColor.w);*/
 	}
 
 	private static final float luminosity(Vector4f color) {

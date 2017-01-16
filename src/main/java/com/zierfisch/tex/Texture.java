@@ -108,14 +108,6 @@ public class Texture {
 	 */
 	public void allocate(TextureUsage usage, int width, int height, int componentBits, int componentCount, ByteBuffer contents) {
 		
-		System.out.println("ALLOCATING");
-		System.out.println("USage: " + usage);
-		System.out.println("width: " + width);
-		System.out.println("height: " + height);
-		System.out.println("componentBits: " + componentBits);
-		System.out.println("componentCount: " + componentCount);
-		System.out.println("==========\n");
-		
 		int target = GL_TEXTURE_2D;
 		int level = 0; // no mipmapping, always 0
 		int internalFormat = internalFormat(usage, componentBits, componentCount);
