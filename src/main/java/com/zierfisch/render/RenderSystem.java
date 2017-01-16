@@ -32,7 +32,7 @@ import com.zierfisch.cam.CameraSystem;
 import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
 import com.zierfisch.tex.Texture;
-import com.zierfisch.tex.TextureLoader;
+import com.zierfisch.tex.TextureBuilder;
 import com.zierfisch.util.GLErrors;
 import com.zierfisch.util.ObjImporter;
 
@@ -339,8 +339,8 @@ public class RenderSystem extends EntitySystem {
 				.setVertexShader("assets/shaders/cc/depth.vert.glsl")
 				.setFragmentShader("assets/shaders/cc/depth.frag.glsl")
 				.build();
-		g.texture0 = new TextureLoader().load("assets/textures/RockPerforated0029_1_seamless_S.png");
-		g.texture4 = new TextureLoader().load("assets/textures/fog-gradient-03.png"); // texture4 is used for fog texture gradient
+		g.texture0 = new TextureBuilder().setContents("assets/textures/RockPerforated0029_1_seamless_S.png").build();
+		g.texture4 = new TextureBuilder().setContents("assets/textures/fog-gradient-03.png").build(); // texture4 is used for fog texture gradient
 		g.uvscale = 12f;
 		return g;
 	}

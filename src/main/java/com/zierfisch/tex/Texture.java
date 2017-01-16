@@ -1,24 +1,40 @@
 package com.zierfisch.tex;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL14.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL21.*;
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL31.*;
-import static org.lwjgl.opengl.GL32.*;
-import static org.lwjgl.opengl.GL33.*;
-import static org.lwjgl.opengl.GL40.*;
-import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.opengl.GL11.GL_CLAMP;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL11.GL_RED;
+import static org.lwjgl.opengl.GL11.GL_REPEAT;
+import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGB8;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA16;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_SHORT;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT16;
+import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
+import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
+import static org.lwjgl.opengl.GL14.GL_MIRRORED_REPEAT;
+import static org.lwjgl.opengl.GL30.GL_R16;
+import static org.lwjgl.opengl.GL30.GL_R8;
+import static org.lwjgl.opengl.GL30.GL_RGBA16F;
+import static org.lwjgl.opengl.GL30.GL_RGBA32F;
 
 import java.nio.ByteBuffer;
 
-import org.lwjgl.opengl.GL11;
-
-import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 import com.zierfisch.util.GLErrors;
 
 public class Texture {
@@ -83,38 +99,13 @@ public class Texture {
 		return name;
 	}
 	
-	public void allocate(TextureUsage usage, int width, int height) {
-		switch(usage) {
-		case COLOR:
-			allocate(usage, width, height, 16);
-			break;
-		case DEPTH:
-			allocate(usage, width, height, 24);
-			break;
-		case VECTOR:
-			allocate(usage, width, height, 32);
-			break;
-		default:
-			throw new UnsupportedOperationException();
-		}
-	}
-	
-	public void allocate(TextureUsage usage, int width, int height, int componentBits) {
-		switch(usage) {
-		case COLOR:
-			allocate(usage, width, height, componentBits, 4, null);
-			break;
-		case DEPTH:
-			allocate(usage, width, height, componentBits, 1, null);
-			break;
-		case VECTOR:
-			allocate(usage, width, height, componentBits, 4, null);
-			break;
-		default:
-			throw new UnsupportedOperationException();
-		}
-	}
-	
+	/**
+	 * Internally used for texture allocation, purposely package visible.
+	 * 
+	 * @param usage
+	 * @param width
+	 * @param height
+	 */
 	public void allocate(TextureUsage usage, int width, int height, int componentBits, int componentCount, ByteBuffer contents) {
 		int target = GL_TEXTURE_2D;
 		int level = 0; // no mipmapping, always 0
@@ -135,10 +126,6 @@ public class Texture {
 			break;
 		}
 		GLErrors.check();
-		
-//		System.out.println("Internal: " + Integer.toHexString(internalFormat));
-//		System.out.println("Format: " + Integer.toHexString(format));
-//		System.out.println("Type: " + Integer.toHexString(type));
 		
 		glTexImage2D(target, level, internalFormat, width, height, border, format, type, contents);
 		GLErrors.check();

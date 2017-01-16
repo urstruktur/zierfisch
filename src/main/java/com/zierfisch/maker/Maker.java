@@ -15,7 +15,7 @@ import com.zierfisch.render.Pose;
 import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
 import com.zierfisch.tex.Texture;
-import com.zierfisch.tex.TextureLoader;
+import com.zierfisch.tex.TextureBuilder;
 import com.zierfisch.util.ObjImporter;
 
 import xyz.krachzack.gfx.mesh.Mesh;
@@ -147,7 +147,7 @@ public class Maker {
 	}
 	
 	public Maker setTexture(int idx, String texturePath) {
-		 Texture tex = new TextureLoader().load(texturePath);
+		 Texture tex = new TextureBuilder().setContents(texturePath).build();
 		 return setTexture(idx, tex);
 	}
 	
