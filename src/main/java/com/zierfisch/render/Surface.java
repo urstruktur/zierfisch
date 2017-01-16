@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
  * </p>
  * 
  * <p>
- * The default is the physical surface <code>{@link Surfaces}.physical()</code>,
+ * The default is the physical surface <code>{@link SurfaceBuilder}.physical()</code>,
  * which draws into a back buffer of the swap chain used for presentation on the
  * window surface.
  * </p>

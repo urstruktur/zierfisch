@@ -30,6 +30,7 @@ import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
 import com.zierfisch.tex.Texture;
+import com.zierfisch.tex.TextureUsage;
 import com.zierfisch.util.GLErrors;
 
 /**
@@ -69,8 +70,10 @@ public class SurfaceAverager {
 		int w = sourceSurface.getWidth() / 4;
 		int h = sourceSurface.getHeight() / 4;
 		this.averageColorTexture = new Texture();
-		this.targetSurface = Surfaces.createOffscreen(w, h, averageColorTexture, null, true);
-		
+		this.targetSurface = new SurfaceBuilder().setSize(w, h)
+		                                         .attach(TextureUsage.VECTOR)
+		                                         .build(averageColorTexture);
+				
 		averageColorHistory = BufferUtils.createFloatBuffer(rollingAverageColorCount * 4);
 		pixelBuf = BufferUtils.createFloatBuffer(w*h * 4);
 	}
