@@ -238,7 +238,7 @@ public class TextureBuilder {
 		} else {
 			switch(usage) {
 			case COLOR:
-				return 16;
+				return 8;
 				
 			case VECTOR:
 				return 32;

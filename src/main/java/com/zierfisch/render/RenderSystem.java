@@ -165,7 +165,13 @@ public class RenderSystem extends EntitySystem {
 		postShader.setUniform("rollingAvgLuminosity", averager.getRollingAverageLuminosity());
 		postShader.setUniform("rollingAvgColor", averager.getRollingAverageColor());
 		
+		// Apply gamma correction exactly once at this point.
+		// Do not do this again in a shader!
+		// GL_FRAMEBUFFER_SRGB knows what it is doing
+		glEnable(GL_FRAMEBUFFER_SRGB);
 		postShader.render(fullscreenQuad);
+		glDisable(GL_FRAMEBUFFER_SRGB);
+		
 		lastShader = postShader;
 	}
 
@@ -195,7 +201,6 @@ public class RenderSystem extends EntitySystem {
 		GLErrors.check("Cleared offscreen surface");
 		
 		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_FRAMEBUFFER_SRGB);
 		
 		for (int i = 0; i < entities.size(); ++i) {
 			Entity entity = entities.get(i);
@@ -213,8 +218,6 @@ public class RenderSystem extends EntitySystem {
 		surface.clear();
 		GLErrors.check();
 		
-		
-		glEnable(GL_FRAMEBUFFER_SRGB);
 		
 		//present(offscreenColor);
 		presentPostprocessed(offscreenColor);
