@@ -8,22 +8,6 @@ sourceCompatibility = 1.8
 mainClassName = "com.zierfisch.Main"
 applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
 
-// Defines application and source dependency source files and resources
-sourceSets {
-    main {
-        java {
-            srcDirs = [
-				"src/main/java",
-				"src/deps/oObjLoader/java",
-				"src/deps/PNGDecoder/java"
-			]
-        }
-        resources {
-            srcDirs = ["src/main/resources"]
-        }
-    }
-}
-
 switch ( OperatingSystem.current() ) {
 	case OperatingSystem.WINDOWS:
 		project.ext.lwjglNatives = "natives-windows"
@@ -70,6 +54,6 @@ dependencies {
 	// Ashley Entity Component System
 	compile "com.badlogicgames.ashley:ashley:1.7.3"
 
-	// Compile in source dependencies
-	//compile fileTree(dir: "src/deps", include: ["*.java"])
+	// Compile in JAR dependencies
+	compile fileTree(dir: "libs", include: ["*.jar"])
 }
