@@ -1,13 +1,28 @@
 import org.gradle.internal.os.OperatingSystem
 
-apply plugin: 'application'
-apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: "application"
+apply plugin: "java"
+apply plugin: "eclipse"
 
 sourceCompatibility = 1.8
-
 mainClassName = "com.zierfisch.Main"
 applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
+
+// Defines application and source dependency source files and resources
+sourceSets {
+    main {
+        java {
+            srcDirs = [
+				"src/main/java",
+				"src/deps/oObjLoader/java",
+				"src/deps/PNGDecoder/java"
+			]
+        }
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
+    }
+}
 
 switch ( OperatingSystem.current() ) {
 	case OperatingSystem.WINDOWS:
@@ -48,10 +63,13 @@ dependencies {
 	runtime "org.lwjgl:lwjgl-nuklear:${lwjglVersion}:${lwjglNatives}"
 	runtime "org.lwjgl:lwjgl-openal:${lwjglVersion}:${lwjglNatives}"
 	runtime "org.lwjgl:lwjgl-stb:${lwjglVersion}:${lwjglNatives}"
-	// Math:
+	// Math
 	compile "org.joml:joml:${jomlVersion}"
-	// High performance primitive collections:
-	compile group: 'com.carrotsearch', name: 'hppc', version: '0.3.4'
+	// High performance primitive collections
+	compile group: "com.carrotsearch", name: "hppc", version: "0.3.4"
 	// Ashley Entity Component System
 	compile "com.badlogicgames.ashley:ashley:1.7.3"
+
+	// Compile in source dependencies
+	//compile fileTree(dir: "src/deps", include: ["*.java"])
 }
