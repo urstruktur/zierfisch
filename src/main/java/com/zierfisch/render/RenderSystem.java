@@ -33,6 +33,7 @@ import com.zierfisch.shader.Shader;
 import com.zierfisch.shader.ShaderBuilder;
 import com.zierfisch.tex.Texture;
 import com.zierfisch.tex.TextureBuilder;
+import com.zierfisch.tex.TextureUsage;
 import com.zierfisch.util.GLErrors;
 import com.zierfisch.util.ObjImporter;
 
@@ -134,7 +135,9 @@ public class RenderSystem extends EntitySystem {
 				
 		offscreenColor = new Texture();
 		offscreenDepth = new Texture();
-		offscreen = Surfaces.createOffscreen(surface.getWidth(), surface.getHeight(), offscreenColor, offscreenDepth, true);
+		offscreen = new SurfaceBuilder().setSize(surface)
+		                                .attach(TextureUsage.VECTOR)
+		                                .build(offscreenColor, offscreenDepth);
 		
 		averager = new SurfaceAverager(offscreen);
 	}

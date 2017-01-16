@@ -61,10 +61,6 @@ public class OffscreenSurface extends AbstractSurface {
 		initDepthAttachment(depthTex);
 	}
 	
-	public OffscreenSurface(int width, int height, Texture colorTex, Texture depthTex) {
-		this(width, height, new Texture[] { colorTex }, depthTex);
-	}
-	
 	@Override
 	public void bind() {
 		super.bind();
@@ -89,6 +85,12 @@ public class OffscreenSurface extends AbstractSurface {
 		return height;
 	}
 	
+	/**
+	 * Ensures output framebuffer can be specified in the framebuffer with
+	 * location using 0-based indexes in the order they were added.
+	 * 
+	 * @param colorAttachmentCount
+	 */
 	private void initDrawBuffers(int colorAttachmentCount) {
 		drawBuffers =  new int[colorAttachmentCount];
 		
