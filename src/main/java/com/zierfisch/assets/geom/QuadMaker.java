@@ -1,4 +1,4 @@
-package xyz.krachzack.gfx.assets;
+package com.zierfisch.assets.geom;
 
 import xyz.krachzack.gfx.mesh.Mesh;
 import xyz.krachzack.gfx.mesh.MeshBuilder;

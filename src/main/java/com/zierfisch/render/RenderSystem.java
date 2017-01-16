@@ -27,6 +27,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.zierfisch.assets.geom.QuadMaker;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
 import com.zierfisch.shader.Shader;
@@ -37,7 +38,6 @@ import com.zierfisch.tex.TextureUsage;
 import com.zierfisch.util.GLErrors;
 import com.zierfisch.util.ObjImporter;
 
-import xyz.krachzack.gfx.assets.QuadMaker;
 import xyz.krachzack.gfx.mesh.Mesh;
 import xyz.krachzack.gfx.mesh.MeshBuilder;
 import xyz.krachzack.gfx.mesh.Primitive;
