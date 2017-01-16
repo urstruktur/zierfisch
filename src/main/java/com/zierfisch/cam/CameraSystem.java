@@ -8,9 +8,9 @@ import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.zierfisch.Main;
-import com.zierfisch.render.Pose;
-import com.zierfisch.util.Keyboard;
-import com.zierfisch.util.MousePos;
+import com.zierfisch.gfx.ecs.Pose;
+import com.zierfisch.input.Keyboard;
+import com.zierfisch.input.MousePos;
 
 import static org.lwjgl.glfw.GLFW.*;
 

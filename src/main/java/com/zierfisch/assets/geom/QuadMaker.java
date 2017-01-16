@@ -1,7 +1,7 @@
 package com.zierfisch.assets.geom;
 
-import xyz.krachzack.gfx.mesh.Mesh;
-import xyz.krachzack.gfx.mesh.MeshBuilder;
+import com.zierfisch.gfx.mesh.Mesh;
+import com.zierfisch.gfx.mesh.MeshBuilder;
 
 public class QuadMaker {
 

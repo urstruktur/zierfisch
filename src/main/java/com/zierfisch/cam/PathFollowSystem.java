@@ -7,7 +7,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector3;
-import com.zierfisch.render.Pose;
+import com.zierfisch.gfx.ecs.Pose;
 
 public class PathFollowSystem extends IteratingSystem{
 	

@@ -13,16 +13,16 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.zierfisch.app.Application;
 import com.zierfisch.app.ApplicationListener;
+import com.zierfisch.assets.Maker;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
 import com.zierfisch.cam.PathFollowSystem;
 import com.zierfisch.cam.PathFollower;
 import com.zierfisch.flocking.Boid;
 import com.zierfisch.flocking.FlockingSystem;
-import com.zierfisch.maker.Maker;
-import com.zierfisch.render.Light;
-import com.zierfisch.render.Pose;
-import com.zierfisch.render.RenderSystem;
+import com.zierfisch.gfx.ecs.Light;
+import com.zierfisch.gfx.ecs.Pose;
+import com.zierfisch.gfx.ecs.RenderSystem;
 
 public class Zierfisch implements ApplicationListener {
 

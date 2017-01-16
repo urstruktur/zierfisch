@@ -47,12 +47,12 @@ import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.opengl.GL;
 
-import com.zierfisch.render.PhysicalSurface;
-import com.zierfisch.render.Surface;
+import com.zierfisch.gfx.surf.PhysicalSurface;
+import com.zierfisch.gfx.surf.Surface;
+import com.zierfisch.input.Keyboard;
+import com.zierfisch.input.MouseButton;
+import com.zierfisch.input.MousePos;
 import com.zierfisch.time.DeltaTimer;
-import com.zierfisch.util.Keyboard;
-import com.zierfisch.util.MouseButton;
-import com.zierfisch.util.MousePos;
 
 public class Application {
 	
