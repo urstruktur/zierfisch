@@ -97,8 +97,8 @@ float exposureFromColorDeviation(vec4 avgColor, vec4 rollingAvgColor) {
 void main() {
     vec4 hdrColor = texture(hdr, st);
 
-    float stepX = 0.001;
-    float stepY = 0.001;
+    float stepX = 0.002;
+    float stepY = 0.005;
 
     vec4 neighbourHoodColorSum = vec4(0.0, 0.0, 0.0, 0.0);
 
@@ -114,14 +114,15 @@ void main() {
 
     float neighbourHoodLuminosity = luminosity(neighbourHoodColorSum / 8);
     float fragLuminosity = luminosity(hdrColor);
-    const float bloominess = 1000.0;
+    const float bloominess = 40.0;
     float bloomFactor = 1.0;
 
     if(neighbourHoodLuminosity > fragLuminosity) {
-        bloomFactor += (neighbourHoodLuminosity - fragLuminosity) * bloominess;
+        bloomFactor = (neighbourHoodLuminosity - fragLuminosity) * (neighbourHoodLuminosity - fragLuminosity) * bloominess;
+        bloomFactor = 1.0 / (10.0 * (bloomFactor + 0.39) * (bloomFactor + 0.39));
     }
 
-    hdrColor *= bloomFactor;
+    hdrColor.rgb *= bloomFactor;
 
     color = hdrToClampedSRGB(
         keyBase,
