@@ -11,6 +11,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
+import static org.lwjgl.glfw.GLFW.GLFW_SRGB_CAPABLE;
+import static org.lwjgl.glfw.GLFW.GLFW_RED_BITS;
+import static org.lwjgl.glfw.GLFW.GLFW_GREEN_BITS;
+import static org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS;
+import static org.lwjgl.glfw.GLFW.GLFW_ALPHA_BITS;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
@@ -122,6 +127,14 @@ public class Application {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+        // Allows for hardware accelerated gamma correction using glEnable(GL_FRAMEBUFFER_SRGB)
+        glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+        
+        // Sets the bit depth of the default framebufffer to 32 per channel
+//        glfwWindowHint(GLFW_RED_BITS, 32);
+//        glfwWindowHint(GLFW_GREEN_BITS, 32);
+//        glfwWindowHint(GLFW_BLUE_BITS, 32);
+//        glfwWindowHint(GLFW_ALPHA_BITS, 32);
 	}
 	
 	private void initWindow() {
