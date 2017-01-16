@@ -72,7 +72,7 @@ public class SurfaceAverager {
 	}
 	
 	public SurfaceAverager(Surface sourceSurface) {
-		this(sourceSurface, 256);
+		this(sourceSurface, 64);
 	}
 	
 	/**
