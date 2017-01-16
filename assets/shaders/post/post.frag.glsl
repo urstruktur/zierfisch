@@ -95,10 +95,38 @@ float exposureFromColorDeviation(vec4 avgColor, vec4 rollingAvgColor) {
 }
 
 void main() {
+    vec4 hdrColor = texture(hdr, st);
+
+    float stepX = 0.001;
+    float stepY = 0.001;
+
+    vec4 neighbourHoodColorSum = vec4(0.0, 0.0, 0.0, 0.0);
+
+    neighbourHoodColorSum += texture(hdr, st + vec2(stepX, 0));
+    neighbourHoodColorSum += texture(hdr, st + vec2(-stepX, 0));
+    neighbourHoodColorSum += texture(hdr, st + vec2(0, stepY));
+    neighbourHoodColorSum += texture(hdr, st + vec2(0, -stepY));
+
+    neighbourHoodColorSum += texture(hdr, st + vec2(-stepX, -stepY));
+    neighbourHoodColorSum += texture(hdr, st + vec2(stepX, -stepY));
+    neighbourHoodColorSum += texture(hdr, st + vec2(stepX, stepY));
+    neighbourHoodColorSum += texture(hdr, st + vec2(-stepX, stepY));
+
+    float neighbourHoodLuminosity = luminosity(neighbourHoodColorSum / 8);
+    float fragLuminosity = luminosity(hdrColor);
+    const float bloominess = 1000.0;
+    float bloomFactor = 1.0;
+
+    if(neighbourHoodLuminosity > fragLuminosity) {
+        bloomFactor += (neighbourHoodLuminosity - fragLuminosity) * bloominess;
+    }
+
+    hdrColor *= bloomFactor;
+
     color = hdrToClampedSRGB(
         keyBase,
         exposureFromColorDeviation(mix(rollingAvgColor, avgColor, 0.1), rollingAvgColor),
-        texture(hdr, st),
+        hdrColor,
         rollingAvgColor
     );
     color.a = 1.0;
@@ -119,4 +147,6 @@ void main() {
     } else {
         //color = fract(texture(hdr, st));
     }
+
+
 }

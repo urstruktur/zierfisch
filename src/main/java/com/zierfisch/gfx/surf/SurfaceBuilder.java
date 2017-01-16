@@ -69,7 +69,7 @@ public class SurfaceBuilder {
 	}
 	
 	/**
-	 * Sets the size of the built surface to be equal to the given surface.
+	 * Sets the size of the built surface to be equal to the size of the given surface.
 	 * 
 	 * @param likeThis Surface from which to use the size as reference
 	 * @return the called surface builder, easy going method chaining

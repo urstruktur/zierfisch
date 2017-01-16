@@ -210,6 +210,8 @@ public class RenderSystem extends EntitySystem {
 			render(pose, gestalt);
 		}
 		
+		
+		
 		averager.update();
 		
 		GLErrors.check("Before binding physical surface");
