@@ -117,9 +117,7 @@ void main() {
     const float bloominess = 1000.0;
     float bloomFactor = 1.0;
 
-    if(neighbourHoodLuminosity > fragLuminosity) {
         bloomFactor += (neighbourHoodLuminosity - fragLuminosity) * bloominess;
-    }
 
     hdrColor *= bloomFactor;
 
