@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL11;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
@@ -212,6 +213,8 @@ public class RenderSystem extends EntitySystem {
 		offscreen.bind();
 		GLErrors.check("Bound offscreen surface");
 		
+		final float skyBrightness = 1.2f;
+		GL11.glClearColor(0.0f, 0.2f*skyBrightness, 0.298f*skyBrightness, 1.0f);
 		offscreen.clear();
 		GLErrors.check("Cleared offscreen surface");
 		
