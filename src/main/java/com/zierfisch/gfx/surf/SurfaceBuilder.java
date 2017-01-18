@@ -19,6 +19,10 @@ public class SurfaceBuilder {
 		attach(TextureUsage.DEPTH, -1, -1);
 	}
 	
+	public int getColorAttachmentCount() {
+		return colorAttachmentBuilders.size();
+	}
+	
 	public Surface build(Texture[] colorTexes, Texture depthTex) {
 		if(width == -1 || height == -1) {
 			throw new RuntimeException("When building, size of the surface needs to be fully set");
@@ -61,7 +65,7 @@ public class SurfaceBuilder {
 	public Surface build() {
 		return build((Texture[]) null, (Texture) null);
 	}
-
+	
 	public SurfaceBuilder setSize(int width, int height) {
 		this.width = width;
 		this.height = height;
