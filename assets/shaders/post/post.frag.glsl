@@ -115,10 +115,11 @@ vec4 vignettize(vec4 unvignetted, vec2 uv, float blackness) {
 }
 
 void main() {
+
     color = hdrToClampedSRGB(
         keyBase,
         exposureFromColorDeviation(mix(rollingAvgColor, avgColor, 0.1), rollingAvgColor),
-        texture(hdr, st),
+        texture(hdr, st) + texture(texture1, st),
         rollingAvgColor
     );
     color.a = 1.0;
@@ -139,10 +140,6 @@ void main() {
     } else {
         //color = fract(texture(hdr, st));
     }
-
-	vec3 bloomColor = texture(texture1, st).rgb;
-	color += vec4(bloomColor,1.0);
-	//color = vec4(bloomColor,1.0);
 	
     color = vignettize(color, st, 0.8);
 
