@@ -198,8 +198,8 @@ public class RenderSystem extends EntitySystem {
 		offscreen.bind();
 		GLErrors.check("Bound offscreen surface");
 		
-		final float skyBrightness = 6.8f;
-		GL11.glClearColor(0.0f, 0.17f*skyBrightness, 0.27f*skyBrightness, 1.0f);
+		final float skyBrightness = 1.2f;
+		GL11.glClearColor(0.0f, 0.2f*skyBrightness, 0.298f*skyBrightness, 1.0f);
 		offscreen.clear();
 		GLErrors.check("Cleared offscreen surface");
 		
