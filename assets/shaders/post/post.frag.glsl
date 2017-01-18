@@ -96,18 +96,21 @@ float exposureFromColorDeviation(vec4 avgColor, vec4 rollingAvgColor) {
 
 
 // The higher this value the more the vignette extends to the middle of the screen
-const float vignetteExtent = 20.0;
+const float vignetteExtent = 1.0;
 // How black does it get? More intensity, more blackness
-const float vignetteIntensity = 0.09;
+const float vignetteIntensity = 0.07;
 
-vec4 vignette(vec2 uv, float ratio) {
+vec4 vignettize(vec4 unvignetted, vec2 uv, float blackness) {
     uv *=  vec2(1.0, 1.0) - uv.yx;   //vec2(1.0)- uv.yx; -> 1.-u.yx; Thanks FabriceNeyret !
 
     float vig = uv.x*uv.y * 1.0; // multiply with sth for intensity
 
     vig = pow(vig, vignetteIntensity); // change pow for modifying the extend of the  vignette
 
-    return vec4(vig);
+    vec4 vignetteFactor = clamp(vec4(vig), 0.0, 1.0);
+    vec4 vignetteColor = mix(rollingAvgColor, vec4(0.0, 0.0, 0.0, 1.0), blackness);
+
+    return mix(vignetteColor, unvignetted, vignetteFactor);
 }
 
 void main() {
@@ -136,10 +139,8 @@ void main() {
         //color = fract(texture(hdr, st));
     }
 
-    /*vec2 hdrSize = textureSize(hdr);
-    float ratio = float(hdrSize.x) / float(drSize.y);*/
-    vec4 vignetteFactor = vignette(st, 1.0);
-    //vignetteFactor = vec4(1.0);
+    color = vignettize(color, st, 0.8);
 
-    color *= vignetteFactor;
+    //color = mix(mix(rollingAvgColor, vec4(0.0, 0.0, 0.0, 1.0), 0.8) , color, clamp(vignetteFactor, 0.0, 1.0));
+    //color *= vignetteFactor;
 }
