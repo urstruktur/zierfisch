@@ -13,6 +13,8 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.zierfisch.app.Application;
 import com.zierfisch.app.ApplicationListener;
 import com.zierfisch.assets.Maker;
+import com.zierfisch.audio.GhettoBlaster;
+import com.zierfisch.audio.MusicSystem;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
 import com.zierfisch.cam.PathFollower;
@@ -89,6 +91,7 @@ public class Zierfisch implements ApplicationListener {
 		 
 		 engine.addSystem(new CameraSystem());
 		 engine.addSystem(new RenderSystem(app.getPhysicalSurface()));
+		 engine.addSystem(new MusicSystem());
 		 //engine.addSystem(new PathFollowSystem());
 
 		 //engine.addSystem(new TweakingSystem());
