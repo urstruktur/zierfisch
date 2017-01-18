@@ -6,9 +6,7 @@ uniform sampler2D texture0;
 
 uniform int horizontal;
 
-//const float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
-const float weight[8] = float[] (0.5,0.4,0.3,0.227027, 0.1945946, 0.1216216, 0.154054, 0.116216);
-
+const float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
 // source: https://learnopengl.com/#!Advanced-Lighting/Bloom
 void main()
 {             
@@ -16,7 +14,7 @@ void main()
     vec3 result = texture(texture0, TexCoords).rgb * weight[0]; // current fragment's contribution
     if(horizontal == 1)
     {
-        for(int i = 1; i < 8; ++i)
+        for(int i = 1; i < 5; ++i)
         {
             result += texture(texture0, TexCoords + vec2(tex_offset.x * i, 0.0)).rgb * weight[i];
             result += texture(texture0, TexCoords - vec2(tex_offset.x * i, 0.0)).rgb * weight[i];
@@ -24,7 +22,7 @@ void main()
     }
     else
     {
-        for(int i = 1; i < 8; ++i)
+        for(int i = 1; i < 5; ++i)
         {
             result += texture(texture0, TexCoords + vec2(0.0, tex_offset.y * i)).rgb * weight[i];
             result += texture(texture0, TexCoords - vec2(0.0, tex_offset.y * i)).rgb * weight[i];

@@ -4,8 +4,10 @@ import com.badlogic.ashley.core.Engine;
 import com.zierfisch.app.Application;
 import com.zierfisch.audio.MusicSystem;
 import com.zierfisch.cam.CameraSystem;
+import com.zierfisch.cam.PathFollowSystem;
 import com.zierfisch.flocking.FlockingSystem;
 import com.zierfisch.gfx.ecs.RenderSystem;
+import com.zierfisch.gui.TweakingSystem;
 
 public final class Systems {
 
@@ -19,7 +21,7 @@ public final class Systems {
 		engine.addSystem(new RenderSystem(app.getPhysicalSurface()));
 		engine.addSystem(new MusicSystem());
 		//engine.addSystem(new PathFollowSystem());
-
+		
 		//engine.addSystem(new TweakingSystem());
 		engine.addSystem(new FlockingSystem());
 	}

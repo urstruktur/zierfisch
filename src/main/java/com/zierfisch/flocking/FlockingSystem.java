@@ -117,7 +117,7 @@ public class FlockingSystem extends IteratingSystem {
 		
 		// calculate and apply forces
 		for(Rule rule : rulez){
-			entity.getComponent(Pose.class).acceleration.add(rule.calcForce(entity, getEntities()).mul(deltaTime));
+			entity.getComponent(Pose.class).acceleration.add(rule.calcForce(entity, getEntities()).mul(deltaTime/2));
 		}
 
 		// move boid according to velocity & acceleration

@@ -3,6 +3,7 @@
 uniform sampler2D texture0;	// diffuse
 uniform sampler2D texture4; // depth gradient
 uniform float uvscale;
+uniform float averageLuminosity;
 
 // the larger this factor, the faster atttenuation increases with distance from the light
 const float attenuationFactor = 0.95f;
@@ -29,7 +30,7 @@ const int FOGEND = 80;
 float fogFactor = 0;
 vec4 fogColor = vec4(0.5f,0.5f,0.5f,1.0f);
 
-float bloomThreshold = 0.5;
+float bloomThreshold = 2.5;
 
 layout (location = 0) out vec4 color;
 layout (location = 1) out vec4 BrightColor;  
@@ -82,6 +83,6 @@ void main()
 	
 	// calculate brigthness by applying luminosity contribution of rgb colors (see https://en.wikipedia.org/wiki/Relative_luminance)
 	float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
-	if(brightness > bloomThreshold)
+	if(brightness/averageLuminosity > bloomThreshold)
         BrightColor = vec4(color.rgb, 1.0);
 }

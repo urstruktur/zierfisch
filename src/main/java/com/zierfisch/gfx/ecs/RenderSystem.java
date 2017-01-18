@@ -178,6 +178,7 @@ public class RenderSystem extends EntitySystem {
 		postShader.setUniform("avgColor", averager.getAverageColor());
 		postShader.setUniform("rollingAvgLuminosity", averager.getRollingAverageLuminosity());
 		postShader.setUniform("rollingAvgColor", averager.getRollingAverageColor());
+		setTextureUniform(postShader, pingPong.getColorTex(), 1);
 		
 		// Apply gamma correction exactly once at this point.
 		// Do not do this again in a shader!
@@ -231,20 +232,28 @@ public class RenderSystem extends EntitySystem {
 		pingPong.bind();
 		pingPong.clear();
 		
-		// step 1: draw horizontal
-		blurShader.bind();
-		blurShader.setUniform("horizontal", 0);
-		setTextureUniform(blurShader, offscreenBrightColor, 0);
-		blurShader.render(fullscreenQuad);
-		
-		pingPong.flip();
-		pingPong.bind();
-		
-		// step 2: draw vertically
-		blurShader.setUniform("horizontal", 1);
-		setTextureUniform(blurShader, pingPong.getColorTex(), 0);
-		blurShader.render(fullscreenQuad);
-		
+		// BLUR THE SHIT OF IT
+		boolean first_iteration = true;
+		boolean horizontal = true;
+		for(int i = 0; i < 6; i++){
+			// step 1: draw horizontal
+			blurShader.bind();
+			blurShader.setUniform("horizontal", horizontal?1:0);
+			if(first_iteration){
+				setTextureUniform(blurShader, offscreenBrightColor, 0);
+				first_iteration = false;
+			}else{
+				setTextureUniform(blurShader, pingPong.getColorTex(), 0);
+			}
+			
+			blurShader.render(fullscreenQuad);
+			
+			pingPong.flip();
+			pingPong.bind();
+			
+			horizontal = !horizontal;
+		}
+
 		GLErrors.check("Before binding physical surface");
 		surface.bind();
 		GLErrors.check("After binding physical surface");
@@ -253,8 +262,10 @@ public class RenderSystem extends EntitySystem {
 		
 		
 		//present(offscreenColor);
-		//presentPostprocessed(offscreenColor);
-		present(pingPong.getColorTex());
+		presentPostprocessed(offscreenColor);
+		
+		//present(pingPong.getColorTex());
+		
 		//present(offscreenDepth);
 		//present(averager.getAverageColorTexture());
 	}
@@ -271,6 +282,7 @@ public class RenderSystem extends EntitySystem {
 			setMatrixUniforms(shader, pose);
 			setTimeUniform(shader);
 			setLightUniforms(shader);
+			shader.setUniform("averageLuminosity", averager.getRollingAverageLuminosity());
 			
 			shader.render(gestalt.mesh);
 	

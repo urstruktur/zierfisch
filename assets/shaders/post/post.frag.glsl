@@ -2,6 +2,7 @@
 
 /** Rendered image in (unclamped) HDR */
 uniform sampler2D hdr;
+uniform sampler2D texture1;
 uniform float avgLuminosity;
 uniform float rollingAvgLuminosity;
 /** Rolling average color */
@@ -139,6 +140,10 @@ void main() {
         //color = fract(texture(hdr, st));
     }
 
+	vec3 bloomColor = texture(texture1, st).rgb;
+	color += vec4(bloomColor,1.0);
+	//color = vec4(bloomColor,1.0);
+	
     color = vignettize(color, st, 0.8);
 
     //color = mix(mix(rollingAvgColor, vec4(0.0, 0.0, 0.0, 1.0), 0.8) , color, clamp(vignetteFactor, 0.0, 1.0));

@@ -8,6 +8,7 @@ uniform float time;
 uniform sampler2D texture0;	// diffuse
 uniform sampler2D texture4; // depth gradient
 uniform float uvscale;
+uniform float averageLuminosity;
 
 // the larger this factor, the faster atttenuation increases with distance from the light
 const float attenuationFactor = 0.95f;
@@ -37,7 +38,7 @@ const int FOGEND = 60;
 float fogFactor = 0;
 vec4 fogColor = vec4(0.5f,0.5f,0.5f,1.0f);
 
-float bloomThreshold = 0.5;
+float bloomThreshold = 2.5;
 
 /** Calculates intensity of diffuse light */
 float diffuse(vec3 fragPosWorld, vec3 normalWorld, vec3 lightPosWorld) {
@@ -138,6 +139,6 @@ void main()
 	
 	// calculate brigthness by applying luminosity contribution of rgb colors (see https://en.wikipedia.org/wiki/Relative_luminance)
 	float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
-	if(brightness > bloomThreshold)
-        BrightColor = vec4(color.rgb, 1.0);
+	if(brightness/averageLuminosity > bloomThreshold)
+        BrightColor = vec4(color.rgb/averageLuminosity, 1.0);
 }

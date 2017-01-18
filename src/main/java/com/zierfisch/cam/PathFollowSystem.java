@@ -42,7 +42,7 @@ public class PathFollowSystem extends IteratingSystem{
 			p.position = convert(newPos);
 			p.smut();
 			
-			f.position += deltaTime * f.speed * 0.001;
+			f.position += deltaTime * f.speed ;
 		}
 	}
 	
