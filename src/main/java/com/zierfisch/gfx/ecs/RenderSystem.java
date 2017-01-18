@@ -33,6 +33,7 @@ import com.zierfisch.gfx.mesh.Primitive;
 import com.zierfisch.gfx.mesh.SegmentedMeshBuilder;
 import com.zierfisch.gfx.shader.Shader;
 import com.zierfisch.gfx.shader.ShaderBuilder;
+import com.zierfisch.gfx.surf.PingPong;
 import com.zierfisch.gfx.surf.Surface;
 import com.zierfisch.gfx.surf.SurfaceBuilder;
 import com.zierfisch.gfx.tex.Texture;
@@ -73,12 +74,16 @@ public class RenderSystem extends EntitySystem {
 	private Shader presentShader;
 	
 	private Shader postShader;
+	private Shader blurShader;
 	/**
 	 * Offscreen surface that the content is rendered to first before presenting.
 	 */
 	private Surface offscreen;
 	private Texture offscreenColor;
+	private Texture offscreenBrightColor;
 	private Texture offscreenDepth;
+	
+	private PingPong pingPong;
 	
 	private SurfaceAverager averager;
 	private long startTime;
@@ -106,7 +111,7 @@ public class RenderSystem extends EntitySystem {
 		lights = engine.getEntitiesFor(Family.all(Pose.class, Light.class).get());
 
 		initDefaultShader();
-		initPostShader();
+		initPostShaders();
 
 		camSys = engine.getSystem(CameraSystem.class);
 		
@@ -116,11 +121,13 @@ public class RenderSystem extends EntitySystem {
 	/**
 	 * Intitializes the postprocessing shader used for hdr and bloom.
 	 */
-	private void initPostShader() {
+	private void initPostShaders() {
 		postShader = new ShaderBuilder().setVertexShader("assets/shaders/post/post.vert.glsl")
 		                                .setFragmentShader("assets/shaders/post/post.frag.glsl")
 		                                .build();
-		
+		blurShader = new ShaderBuilder().setVertexShader("assets/shaders/post/blur.vert.glsl")
+								        .setFragmentShader("assets/shaders/post/blur.frag.glsl")
+								        .build();
 	}
 
 	private void initFullscreenQuad() {
@@ -131,10 +138,17 @@ public class RenderSystem extends EntitySystem {
 				              .build();
 				
 		offscreenColor = new Texture();
+		offscreenBrightColor = new Texture();
 		offscreenDepth = new Texture();
 		offscreen = new SurfaceBuilder().setSize(surface)
 		                                .attach(TextureUsage.VECTOR)
-		                                .build(offscreenColor, offscreenDepth);
+		                                .attach(TextureUsage.VECTOR)
+		                                .build(new Texture[]{offscreenColor,offscreenBrightColor}, offscreenDepth);
+		
+		SurfaceBuilder blurSurfaceBuilder = new SurfaceBuilder().setSize(surface)
+									      .attach(TextureUsage.VECTOR);
+		pingPong = new PingPong(blurSurfaceBuilder);
+		
 		
 		averager = new SurfaceAverager(offscreen);
 	}
@@ -212,6 +226,25 @@ public class RenderSystem extends EntitySystem {
 		
 		averager.update();
 		
+		glDisable(GL_DEPTH_TEST); // disable for two-pass gaussian blur shader
+		
+		pingPong.bind();
+		pingPong.clear();
+		
+		// step 1: draw horizontal
+		blurShader.bind();
+		blurShader.setUniform("horizontal", 0);
+		setTextureUniform(blurShader, offscreenBrightColor, 0);
+		blurShader.render(fullscreenQuad);
+		
+		pingPong.flip();
+		pingPong.bind();
+		
+		// step 2: draw vertically
+		blurShader.setUniform("horizontal", 1);
+		setTextureUniform(blurShader, pingPong.getColorTex(), 0);
+		blurShader.render(fullscreenQuad);
+		
 		GLErrors.check("Before binding physical surface");
 		surface.bind();
 		GLErrors.check("After binding physical surface");
@@ -220,7 +253,8 @@ public class RenderSystem extends EntitySystem {
 		
 		
 		//present(offscreenColor);
-		presentPostprocessed(offscreenColor);
+		//presentPostprocessed(offscreenColor);
+		present(pingPong.getColorTex());
 		//present(offscreenDepth);
 		//present(averager.getAverageColorTexture());
 	}

@@ -19,8 +19,6 @@ struct Light {
 
 uniform Light lights[MAX_LIGHTS];
 
-out vec4 color;
-
 in vec2 fragTexCoords;
 in vec4 fragPos; // view space
 in vec4 fragPosWorld;
@@ -32,6 +30,11 @@ const int FOGEND = 60;
 
 float fogFactor = 0;
 vec4 fogColor = vec4(0.5f,0.5f,0.5f,1.0f);
+
+float bloomThreshold = 0.5;
+
+layout (location = 0) out vec4 color;
+layout (location = 1) out vec4 BrightColor;  
 
 /** Calculates intensity of diffuse light */
 float diffuse(vec3 fragPosWorld, vec3 normalWorld, vec3 lightPosWorld) {
@@ -78,4 +81,11 @@ void main()
 
 	color = mix(fogColor, materialColor, fogFactor);
 	color.a = 1.0;
+	
+	// -- EXTRACT BRIGHT PIXELS --
+	
+	// calculate brigthness by applying luminosity contribution of rgb colors (see https://en.wikipedia.org/wiki/Relative_luminance)
+	float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+	if(brightness > bloomThreshold)
+        BrightColor = vec4(color.rgb, 1.0);
 }
