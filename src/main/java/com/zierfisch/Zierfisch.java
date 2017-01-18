@@ -43,7 +43,6 @@ public class Zierfisch implements ApplicationListener {
 	
 	@Override
 	public void update(float dt) {
-		GL11.glClearColor(0.0f, 0.17f, 0.27f, 1.0f);
 		engine.update(dt);
 	}
 }
