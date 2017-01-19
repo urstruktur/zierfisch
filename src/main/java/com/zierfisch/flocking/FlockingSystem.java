@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -17,12 +18,13 @@ import com.zierfisch.gui.TweakingSystem;
 
 
 /**
- * A system applying flocking behaviour rules.
+ * A system applying flocking behaviour rules. Manipulates entitys with Boid & Pose components.
  * Based on an Processing example by Daniel Shiffman which implements the flocking rules of Craig Reynold.
  */
 public class FlockingSystem extends IteratingSystem {
 	
 	List<Rule> rulez;
+	private Vector3f averagePosition;
 
 	public FlockingSystem() {
 		super(Family.all(Boid.class, Pose.class).get());
@@ -108,7 +110,19 @@ public class FlockingSystem extends IteratingSystem {
 		rulez.add(ra);
 		rulez.add(rf);
 		
+		averagePosition = new Vector3f();
+		
 		super.addedToEngine(engine);
+	}
+	
+	private int count;
+	
+	@Override
+	public void update (float deltaTime) {
+		count = 0;
+		averagePosition.zero();
+		super.update(deltaTime);
+		averagePosition.div(count);
 	}
 	
 	
@@ -124,6 +138,9 @@ public class FlockingSystem extends IteratingSystem {
 		Pose p = entity.getComponent(Pose.class);
 		Boid b = entity.getComponent(Boid.class);
 		p.velocity.add(p.acceleration);
+		
+		averagePosition.add(p.position);
+		count++;
 		
 		// clamp to maxSpeed
 		if(p.velocity.lengthSquared() > Boid.maxSpeed*Boid.maxSpeed){
@@ -159,5 +176,9 @@ public class FlockingSystem extends IteratingSystem {
 	 */
 	public void applySteeringForce(Vector3f force){
 		
+	}
+
+	public Vector3fc getAverage() {
+		return averagePosition;
 	}
 }

@@ -8,6 +8,8 @@ import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.zierfisch.Main;
+import com.zierfisch.flocking.Boid;
+import com.zierfisch.flocking.FlockingSystem;
 import com.zierfisch.gfx.ecs.Pose;
 import com.zierfisch.input.Keyboard;
 import com.zierfisch.input.MousePos;
@@ -23,6 +25,8 @@ public class CameraSystem extends IteratingSystem {
 	private static final Family CAM_FAMILY = Family.all(Camera.class, Pose.class).get();
 	private ComponentMapper<Camera> cm = ComponentMapper.getFor(Camera.class);
 	private ComponentMapper<Pose> pm = ComponentMapper.getFor(Pose.class);
+
+	private FlockingSystem fs;
 	
 	private Camera mainCam;
 	private Vector3f up = new Vector3f();
@@ -108,9 +112,14 @@ public class CameraSystem extends IteratingSystem {
 	}
 	
 	public void recalculateView(Camera cam, Pose pose) {
-		focus.set(0, 0, 1);
-		pose.orientation.transform(focus);
-		focus.add(pose.position);
+		// set focus to fishie average
+		if(fs != null){
+			focus.set(fs.getAverage());
+		}else{
+			focus.set(0, 0, 1);
+			pose.orientation.transform(focus);
+			focus.add(pose.position);
+		}
 		
 		up.set(0, 1, 0);
 		pose.orientation.transform(up);
@@ -135,6 +144,7 @@ public class CameraSystem extends IteratingSystem {
 	public void addedToEngine(Engine engine) {
 		super.addedToEngine(engine);
 		engine.addEntityListener(CAM_FAMILY, mainCamSetter);
+		fs = engine.getSystem(FlockingSystem.class);
 	}
 	
 	@Override

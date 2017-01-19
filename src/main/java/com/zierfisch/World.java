@@ -16,7 +16,7 @@ public final class World {
 
 	public static void add(Engine engine) {
 		// build cave
-		Maker maker = new Maker().setMesh("assets/models/cave.obj")
+		Maker maker = new Maker().setMesh("assets/models/cave_old.obj")
 				.setShader("assets/shaders/cc/depth.vert.glsl", "assets/shaders/cc/depth.frag.glsl")
                 .setTexture(0, "assets/textures/RockPerforated0029_1_seamless_S.png")
                 .setTexture(4, "assets/textures/fog-gradient-03.png")
@@ -76,7 +76,7 @@ public final class World {
 		                         .add(protoypeBoid);
 		
 		
-		Vector3f center = new Vector3f(0,0,0);
+		Vector3f center = new Vector3f(0,0,-5);
 		
 		for(int x = 0; x < nrX; x++){
 			for(int y = 0; y < nrY; y++){
@@ -97,8 +97,8 @@ public final class World {
 		
 		Entity randomEnt1 = allEnts.get(allEnts.size() - 1);
 		Light light1 = new Light();
-		light1.color.set(.8f, 1f, 1f);
-		light1.intensity = 1.0f;
+		light1.color.set(.3f, 0.9f, 1f);
+		light1.intensity = 0.9f;
 		randomEnt1.add(light1);
 		
 		
