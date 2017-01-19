@@ -6,11 +6,20 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.zierfisch.assets.Maker;
+import com.zierfisch.assets.geom.CuboidMaker;
+import com.zierfisch.assets.geom.SkyboxMaker;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.PathFollower;
 import com.zierfisch.flocking.Boid;
+import com.zierfisch.gfx.ecs.Gestalt;
 import com.zierfisch.gfx.ecs.Light;
 import com.zierfisch.gfx.ecs.Pose;
+import com.zierfisch.gfx.mesh.Mesh;
+import com.zierfisch.gfx.mesh.MeshBuilder;
+import com.zierfisch.gfx.mesh.Primitive;
+import com.zierfisch.gfx.mesh.SegmentedMeshBuilder;
+import com.zierfisch.gfx.shader.ShaderBuilder;
+import com.zierfisch.gfx.tex.TextureBuilder;
 
 public final class World {
 
@@ -27,6 +36,7 @@ public final class World {
 		maker.setMesh("assets/models/seafloor.obj")
 			 .setShader("assets/shaders/cc/caustic.vert.glsl", "assets/shaders/cc/caustic.frag.glsl");
 		engine.addEntity(maker.build());
+	
 		
 		addMainCamera(engine);
 		addAuxiliaryQuantumLightConvolutionAcceleratorBuffer();
@@ -57,8 +67,17 @@ public final class World {
 		
 		Entity cam = new Entity();
 		cam.add(new Camera());
-		cam.add(new PathFollower());
+		//cam.add(new PathFollower(0.01f));
 		cam.add(pose);
+		
+		// make skybox
+		Gestalt gestalt = new Gestalt();
+		gestalt.mesh = new SkyboxMaker().make(new SegmentedMeshBuilder(Primitive.TRIANGLES),200);
+		gestalt.texture4 = new TextureBuilder().setContents("assets/textures/fog-gradient-03.png").build();
+		gestalt.shader = new ShaderBuilder().setVertexShader("assets/shaders/cc/depth.vert.glsl")
+                							.setFragmentShader("assets/shaders/cc/depth.frag.glsl").build();
+		
+		//cam.add(gestalt);
 		
 		engine.addEntity(cam);
 	}
@@ -76,7 +95,7 @@ public final class World {
 		                         .add(protoypeBoid);
 		
 		
-		Vector3f center = new Vector3f(0,0,0);
+		Vector3f center = new Vector3f(0,0,-5);
 		
 		for(int x = 0; x < nrX; x++){
 			for(int y = 0; y < nrY; y++){
@@ -97,8 +116,8 @@ public final class World {
 		
 		Entity randomEnt1 = allEnts.get(allEnts.size() - 1);
 		Light light1 = new Light();
-		light1.color.set(.8f, 1f, 1f);
-		light1.intensity = 1.0f;
+		light1.color.set(.3f, 0.9f, 1f);
+		light1.intensity = 0.9f;
 		randomEnt1.add(light1);
 		
 		
