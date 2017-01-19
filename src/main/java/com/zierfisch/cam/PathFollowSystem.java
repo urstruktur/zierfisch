@@ -20,9 +20,9 @@ public class PathFollowSystem extends IteratingSystem{
 												new Vector3(2,-2.6f,-7.6f),
 												new Vector3(3.1f,-1.8f,-15.4f),
 												new Vector3(4.2f,-1.3f,-23.8f),
-												new Vector3(4.6f,-0.4f,-29.8f),
-												new Vector3(4.7f,-0.4f,-29.8f),
-												new Vector3(4.7f,-0.4f,-30f)};
+												new Vector3(4.6f,-0.4f,-29.4f),
+												new Vector3(4.7f,-0.4f,-29.6f),
+												new Vector3(4.7f,-0.4f,-29.7f)};
 		spline = new CatmullRomSpline<Vector3>(controlPoints, false);
 	}
 
