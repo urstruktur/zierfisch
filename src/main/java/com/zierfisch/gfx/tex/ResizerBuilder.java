@@ -86,14 +86,17 @@ public class ResizerBuilder {
 		
 		ResizerBuilder resizerBuilder = new ResizerBuilder();
 		resizerBuilder.setFrom(sourceWidth, sourceHeight);
+		//System.out.println(sourceWidth + "/" + sourceHeight);
 		
 		// Leave the last resizer in the array at null
 		for(int i = 0; i < (iterations-1); ++i) {
 			target = new Texture();
 			
 			double alpha = (double) (i+1) / (double) iterations;
-			int middleWidth = (int) (alpha * sourceWidth + (1-alpha) * targetWidth);
-			int middleHeight = (int) (alpha * sourceHeight + (1-alpha) * targetHeight);
+			int middleWidth = (int) Math.round((1-alpha) * sourceWidth + alpha * targetWidth);
+			int middleHeight = (int) Math.round((1-alpha) * sourceHeight + alpha * targetHeight);
+			
+			//System.out.println(middleWidth + "/" + middleHeight);
 			
 			resizerBuilder.setTo(middleWidth, middleHeight);
 			
@@ -104,7 +107,8 @@ public class ResizerBuilder {
 		}
 		
 		// And set it to resize into the final target texture 
-		resizers[iterations-1] = buildeOneOffResizer(source, finalTargetTexture, usage);
+		resizerBuilder.setTo(targetWidth, targetHeight);
+		resizers[iterations-1] = resizerBuilder.build(source, finalTargetTexture, usage);
 		
 		return new ResizerChain(resizers);
 	}
