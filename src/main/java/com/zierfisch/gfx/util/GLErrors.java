@@ -3,20 +3,26 @@ package com.zierfisch.gfx.util;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GLErrors {
+	
+	private static final boolean ERROR_CHECKING_ENABLED = true;
 
 	public static void check() {
-		int err = glGetError();
-		if(err != GL_NO_ERROR) {
-			String errStr = errorEnumToString(err);
-			throw new RuntimeException("OpenGL signalled an error: " + errStr);
+		if(ERROR_CHECKING_ENABLED) {
+			int err = glGetError();
+			if(err != GL_NO_ERROR) {
+				String errStr = errorEnumToString(err);
+				throw new RuntimeException("OpenGL signalled an error: " + errStr);
+			}
 		}
 	}
 	
 	public static void check(String contextInfo) {
-		int err = glGetError();
-		if(err != GL_NO_ERROR) {
-			String errStr = errorEnumToString(err);
-			throw new RuntimeException("OpenGL signalled an error: " + errStr + "\n" + contextInfo);
+		if(ERROR_CHECKING_ENABLED) {
+			int err = glGetError();
+			if(err != GL_NO_ERROR) {
+				String errStr = errorEnumToString(err);
+				throw new RuntimeException("OpenGL signalled an error: " + errStr + "\n" + contextInfo);
+			}
 		}
 	}
 	
