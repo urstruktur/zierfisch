@@ -164,7 +164,6 @@ public class ShaderBuilder {
         int shader = glCreateShader(shaderType);
         GLErrors.check();
         glShaderSource(shader, shaderSource);
-        System.out.println(shader);
         GLErrors.check();
         
         glCompileShader(shader);
