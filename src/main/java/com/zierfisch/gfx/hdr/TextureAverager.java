@@ -22,6 +22,8 @@ import org.lwjgl.BufferUtils;
 
 import com.zierfisch.gfx.surf.Surface;
 import com.zierfisch.gfx.surf.SurfaceBuilder;
+import com.zierfisch.gfx.tex.Resizer;
+import com.zierfisch.gfx.tex.ResizerBuilder;
 import com.zierfisch.gfx.tex.Texture;
 import com.zierfisch.gfx.tex.TextureUsage;
 import com.zierfisch.gfx.util.GLErrors;
@@ -32,13 +34,8 @@ import com.zierfisch.gfx.util.GLErrors;
  * 
  * @author phil
  */
-public class SurfaceAverager {
-	
-	/**
-	 * Contains the source framebuffer to calculate the average from.
-	 */
-	private Surface sourceSurface;
-	private Surface targetSurface;
+public class TextureAverager {
+
 	// can hold 4 colors as four-byte floating point numbers
 	private Vector4f averageColor = new Vector4f();
 	private Texture averageColorTexture;
@@ -55,76 +52,56 @@ public class SurfaceAverager {
 	 */
 	private Vector4f aColor = new Vector4f();
 	private Vector4f rollingAverageColor = new Vector4f();
+	
+	private Resizer resizer;
+	
+	public TextureAverager(Texture sourceTexture, int sourceWidth, int sourceHeight) {
+		this(sourceTexture, sourceWidth, sourceHeight, 64);
+	}
 
-	public SurfaceAverager(Surface sourceSurface, int rollingAverageColorCount) {
-		this.sourceSurface = sourceSurface;
-		
-		// targetSurface is smaller version where average is calculated on CPU
-		int w = sourceSurface.getWidth() / 4;
-		int h = sourceSurface.getHeight() / 4;
+	public TextureAverager(Texture sourceTexture, int sourceWidth, int sourceHeight, int rollingAverageColorCount) {
+		int targetW = sourceWidth / 4;
+		int targetH = sourceHeight / 4;
 		this.averageColorTexture = new Texture();
-		this.targetSurface = new SurfaceBuilder().setSize(w, h)
-		                                         .attach(TextureUsage.VECTOR)
-		                                         .build(averageColorTexture);
-				
+		
+		this.resizer = buildResizer(sourceTexture, sourceWidth, sourceHeight, targetW, targetH);
+		
 		averageColorHistory = BufferUtils.createFloatBuffer(rollingAverageColorCount * 4);
-		pixelBuf = BufferUtils.createFloatBuffer(w*h * 4);
+		pixelBuf = BufferUtils.createFloatBuffer(targetW * targetH * 4);
 	}
-	
-	public SurfaceAverager(Surface sourceSurface) {
-		this(sourceSurface, 64);
+
+	private Resizer buildResizer(Texture sourceTexture, int sourceWidth, int sourceHeight, int targetW, int targetH) {
+		ResizerBuilder resizerBuilder = new ResizerBuilder();
+		
+		resizerBuilder.setFrom(sourceWidth, sourceHeight)
+		              .setTo(targetH, targetW);
+
+		return resizerBuilder.build(sourceTexture, averageColorTexture, TextureUsage.VECTOR);
 	}
-	
+
 	/**
 	 * <p>
 	 * Calculates the average of the current content of the source surface.
 	 * </p>
 	 * 
 	 * <p>
-	 * <strong>A FAIR WARNING</strong>: this seems to work for a while but randomly crashes
-	 * the app. Directly sample the 1x1 pixel texture instead.
+	 * <strong>A FAIR WARNING</strong>: this seems to work for a while but
+	 * randomly crashes the app. Directly sample the 1x1 pixel texture instead.
 	 * </p>
 	 * 
 	 * @return
 	 */
 	public void update() {
-		// Save last bound FBOs
-		int drawFboName = glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING);
-		int readFboName = glGetInteger(GL_READ_FRAMEBUFFER_BINDING);
-
-		downscaleToTargetSurface();
+		resizer.resize();
+		
 		downloadPixelBuf();
 		calculateAverageColor(pixelBuf, averageColor);
 		pushAverageColorToHistory();
 		calculateAverageColor(averageColorHistory, rollingAverageColor);
-		
-		//pixelBuf.flip();
-		
-		//float avgLuminosity = calculateAvgLuminosityInPixelBuf();
-		
-		//glReadPixels(0, 0, 1, 1, GL_RGBA, GL_FLOAT, pixelBuffer);
+
 		GLErrors.check();
-		//averageColor.set(pixelBuf);
+		// averageColor.set(pixelBuf);
 		pixelBuf.clear();
-		
-		// Restore last bound FBO
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFboName);
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, readFboName);
-	}
-
-	public void downscaleToTargetSurface() {
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceSurface.getName());
-		GLErrors.check();
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, targetSurface.getName());
-		GLErrors.check();
-
-		glBlitFramebuffer(
-				// source framebuffer dimensions
-				0, 0, sourceSurface.getWidth(), sourceSurface.getHeight(),
-				// target framebuffer dimensions, will be downscaled
-				0, 0, targetSurface.getWidth(), targetSurface.getHeight(),
-				GL_COLOR_BUFFER_BIT, GL_LINEAR);
-		GLErrors.check();
 	}
 
 	public void downloadPixelBuf() {
@@ -136,26 +113,25 @@ public class SurfaceAverager {
 	private void calculateAverageColor(FloatBuffer buf, Vector4f result) {
 		int floatCount = buf.limit() / 4;
 		int colorCount = floatCount / 4;
-		
+
 		colorSum.zero();
-		
-		for(int i = 0; i < buf.limit(); i += 4*4) {
+
+		for (int i = 0; i < buf.limit(); i += 4 * 4) {
 			aColor.set(i, buf);
 			colorSum.add(aColor);
 		}
-		
+
 		result.set(colorSum.div(colorCount));
 	}
-	
+
 	private void pushAverageColorToHistory() {
 		int position = averageColorHistoryInsertionIdx % averageColorHistory.capacity();
-		
+
 		averageColorHistoryInsertionIdx += 4 * 4;
-		int limit = (averageColorHistoryInsertionIdx > averageColorHistory.capacity())
-                ? averageColorHistory.capacity()
-                : averageColorHistoryInsertionIdx;
-                
-        averageColorHistory.limit(limit);
+		int limit = (averageColorHistoryInsertionIdx > averageColorHistory.capacity()) ? averageColorHistory.capacity()
+				: averageColorHistoryInsertionIdx;
+
+		averageColorHistory.limit(limit);
 		averageColor.get(position, averageColorHistory);
 	}
 
@@ -166,6 +142,7 @@ public class SurfaceAverager {
 	public float getAverageLuminosity() {
 		return luminosity(averageColor);
 	}
+
 	public float getRollingAverageLuminosity() {
 		return luminosity(rollingAverageColor);
 	}
@@ -188,7 +165,7 @@ public class SurfaceAverager {
 	public Vector4f getAverageColor() {
 		return averageColor;
 	}
-	
+
 	public Vector4f getRollingAverageColor() {
 		return rollingAverageColor;
 	}
