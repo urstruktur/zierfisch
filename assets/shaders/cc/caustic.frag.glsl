@@ -38,7 +38,6 @@ const int FOGEND = 60;
 float fogFactor = 0;
 vec4 fogColor = vec4(0.5f,0.5f,0.5f,1.0f);
 
-float bloomThreshold = 2.5;
 
 /** Calculates intensity of diffuse light */
 float diffuse(vec3 fragPosWorld, vec3 normalWorld, vec3 lightPosWorld) {
@@ -137,8 +136,10 @@ void main()
 	
 	// -- EXTRACT BRIGHT PIXELS --
 	
+	float bloomThreshold = averageLuminosity * 20;  // factor seems a bit arbitrary, comes from the low life of averageLuminosity
+	
 	// calculate brigthness by applying luminosity contribution of rgb colors (see https://en.wikipedia.org/wiki/Relative_luminance)
 	float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
-	if(brightness/averageLuminosity > bloomThreshold)
-        BrightColor = vec4(color.rgb/averageLuminosity, 1.0);
+	if(brightness > bloomThreshold)
+        BrightColor = vec4(color.rgb, 1.0);
 }

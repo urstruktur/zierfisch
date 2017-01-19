@@ -177,7 +177,8 @@ public class RenderSystem extends EntitySystem {
 		
 		postShader.setUniform("avgLuminosity", averager.getRollingAverageLuminosity());
 		postShader.setUniform("avgColor", averager.getAverageColor());
-		postShader.setUniform("rollingAvgLuminosity", averager.getRollingAverageLuminosity());
+		postShader.setUniform("rollingAvgLuminosity", averager.getRollingAverageLuminosity()); 
+		//System.out.println(averager.getRollingAverageLuminosity());
 		postShader.setUniform("rollingAvgColor", averager.getRollingAverageColor());
 		setTextureUniform(postShader, pingPong.getColorTex(), 1);
 		
@@ -232,16 +233,21 @@ public class RenderSystem extends EntitySystem {
 		
 		glDisable(GL_DEPTH_TEST); // disable for two-pass gaussian blur shader
 		
+		
+		// BLUR THE SHIT OF IT
+		
 		pingPong.bind();
 		pingPong.clear();
 		
-		// BLUR THE SHIT OF IT
+		// here i want to scale pingpong down
+		
 		boolean first_iteration = true;
 		boolean horizontal = true;
 		for(int i = 0; i < 6; i++){
 			// step 1: draw horizontal
 			blurShader.bind();
 			blurShader.setUniform("horizontal", horizontal?1:0);
+			
 			if(first_iteration){
 				setTextureUniform(blurShader, offscreenBrightColor, 0);
 				first_iteration = false;
@@ -256,6 +262,10 @@ public class RenderSystem extends EntitySystem {
 			
 			horizontal = !horizontal;
 		}
+		
+		// here i want to scale pingpong up
+		
+		//pingPong.getColorTex()
 
 		GLErrors.check("Before binding physical surface");
 		surface.bind();
