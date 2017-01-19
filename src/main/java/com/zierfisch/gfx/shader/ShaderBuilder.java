@@ -22,24 +22,51 @@ public class ShaderBuilder {
 	private int fragmentShader = NO_SHADER;
 	private int geometryShader = NO_SHADER;
 	
+	/**
+	 * Caches the last built shader in case nothing changed.
+	 * This way, multiple build calls return the same shader.
+	 */
+	private Shader shader;
+	
 	public ShaderBuilder setVertexShader(String srcFilePath) {
 		vertexShaderSource = srcFilePath;
 		vertexShader = NO_SHADER;
+		shader = null;
 		return this;
 	}
 	
 	public ShaderBuilder setFragmentShader(String srcFilePath) {
 		fragmentShaderSource = srcFilePath;
 		fragmentShader = NO_SHADER;
+		shader = null;
 		return this;
 	}
 	
 	public ShaderBuilder setGeometryShader(String srcFilePath) {
 		geometryShaderSource = srcFilePath;
 		geometryShader = NO_SHADER;
+		shader = null;
 		return this;
 	}
 	
+	public Shader build() {
+		// Be lazy if no build parameters changed since last the last build
+		if(shader == null) {
+			buildVertexShader();
+			buildGeometryShader();
+			buildFragmentShader();
+			
+			int shaderProgram = compileAndLinkProgram();
+		    checkLinkStatus(shaderProgram);
+		    
+		    cleanupShaders(shaderProgram);
+			
+			shader =  new Shader(shaderProgram);
+		}
+		
+	    return shader;
+	}
+
 	private void buildVertexShader() {
 		if(vertexShaderSource == null) {
 			throw new IllegalStateException("Trying to build Shader but no vertex shader source file was specified");
@@ -66,19 +93,6 @@ public class ShaderBuilder {
 		}
 	}
 	
-	public Shader build() {
-		buildVertexShader();
-		buildGeometryShader();
-		buildFragmentShader();
-		
-		int shaderProgram = compileAndLinkProgram();
-        checkLinkStatus(shaderProgram);
-        
-        cleanupShaders(shaderProgram);
-        
-        return new Shader(shaderProgram);
-	}
-
 	private int compileAndLinkProgram() {
 		int shaderProgram = glCreateProgram();
 		
