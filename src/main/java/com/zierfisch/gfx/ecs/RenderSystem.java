@@ -27,7 +27,7 @@ import com.zierfisch.assets.geom.ObjImporter;
 import com.zierfisch.assets.geom.QuadMaker;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.CameraSystem;
-import com.zierfisch.gfx.hdr.SurfaceAverager;
+import com.zierfisch.gfx.hdr.TextureAverager;
 import com.zierfisch.gfx.mesh.Mesh;
 import com.zierfisch.gfx.mesh.MeshBuilder;
 import com.zierfisch.gfx.mesh.Primitive;
@@ -86,7 +86,8 @@ public class RenderSystem extends EntitySystem {
 	
 	private PingPong pingPong;
 	
-	private SurfaceAverager averager;
+	
+	private TextureAverager averager;
 	private long startTime;
 	
 	public RenderSystem(Surface surface) {
@@ -151,7 +152,7 @@ public class RenderSystem extends EntitySystem {
 		pingPong = new PingPong(blurSurfaceBuilder);
 		
 		
-		averager = new SurfaceAverager(offscreen);
+		averager = new TextureAverager(offscreenColor, surface.getWidth(), surface.getHeight());
 	}
 	
 	private void present(Texture texture) {
