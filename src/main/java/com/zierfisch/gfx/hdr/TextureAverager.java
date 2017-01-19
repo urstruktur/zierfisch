@@ -60,8 +60,8 @@ public class TextureAverager {
 	}
 
 	public TextureAverager(Texture sourceTexture, int sourceWidth, int sourceHeight, int rollingAverageColorCount) {
-		int targetW = sourceWidth / 4;
-		int targetH = sourceHeight / 4;
+		int targetW = 2;
+		int targetH = 2;
 		this.averageColorTexture = new Texture();
 		
 		this.resizer = buildResizer(sourceTexture, sourceWidth, sourceHeight, targetW, targetH);
@@ -92,12 +92,19 @@ public class TextureAverager {
 	 * @return
 	 */
 	public void update() {
+		long start = System.currentTimeMillis();
 		resizer.resize();
+		GLErrors.check();
+		System.out.println("Resizing took " + (System.currentTimeMillis() - start));
 		
-		downloadPixelBuf();
+		start = System.currentTimeMillis();
+		//downloadPixelBuf();
+		long downloadFinishTime = System.currentTimeMillis();
+		System.out.println("Downloading the resized image took " + (downloadFinishTime - start) + "ms");
 		calculateAverageColor(pixelBuf, averageColor);
 		pushAverageColorToHistory();
 		calculateAverageColor(averageColorHistory, rollingAverageColor);
+		System.out.println("Average color calculatations took" + (System.currentTimeMillis() - downloadFinishTime));
 
 		GLErrors.check();
 		// averageColor.set(pixelBuf);

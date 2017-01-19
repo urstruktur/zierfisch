@@ -2,11 +2,14 @@
 
 /** Rendered image in (unclamped) HDR */
 uniform sampler2D hdr;
-uniform float avgLuminosity;
-uniform float rollingAvgLuminosity;
+/////uniform float avgLuminosity;
+/////uniform float rollingAvgLuminosity;
 /** Rolling average color */
-uniform vec4 avgColor;
-uniform vec4 rollingAvgColor;
+/////uniform vec4 avgColor;
+/////uniform vec4 rollingAvgColor;
+
+// 2x2 HDR image
+uniform sampler2D downscaledHdr;
 
 /** HDR key for scaled luminance */
 const float keyBase = 0.03;
@@ -26,6 +29,22 @@ out vec4 color;
 
 float luminosity(vec4 color) {
     return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+}
+
+vec4 avgColor() {
+    return texture(downscaledHdr, vec2(0.5, 0.5));
+}
+
+vec4 rollingAvgColor() {
+    return avgColor();
+}
+
+float avgLuminosity() {
+    return luminosity(avgColor());
+}
+
+float rollingAvgLuminosity() {
+    return luminosity(rollingAvgColor());
 }
 
 ///
@@ -108,7 +127,7 @@ vec4 vignettize(vec4 unvignetted, vec2 uv, float blackness) {
     vig = pow(vig, vignetteIntensity); // change pow for modifying the extend of the  vignette
 
     vec4 vignetteFactor = clamp(vec4(vig), 0.0, 1.0);
-    vec4 vignetteColor = mix(rollingAvgColor, vec4(0.0, 0.0, 0.0, 1.0), blackness);
+    vec4 vignetteColor = mix(rollingAvgColor(), vec4(0.0, 0.0, 0.0, 1.0), blackness);
 
     return mix(vignetteColor, unvignetted, vignetteFactor);
 }
@@ -116,9 +135,9 @@ vec4 vignettize(vec4 unvignetted, vec2 uv, float blackness) {
 void main() {
     color = hdrToClampedSRGB(
         keyBase,
-        exposureFromColorDeviation(mix(rollingAvgColor, avgColor, 0.1), rollingAvgColor),
+        exposureFromColorDeviation(mix(rollingAvgColor(), avgColor(), 0.1), rollingAvgColor()),
         texture(hdr, st),
-        rollingAvgColor
+        rollingAvgColor()
     );
     color.a = 1.0;
 
@@ -130,10 +149,10 @@ void main() {
     //color = vec4(avgColor.rgb, 1.0);
 
     if(st.s < 0.05 && st.t < 0.03) {
-        color = avgColor;
+        color = avgColor();
 
         if(st.s > 0.025) {
-            color = rollingAvgColor;
+            color = rollingAvgColor();
         }
     } else {
         //color = fract(texture(hdr, st));

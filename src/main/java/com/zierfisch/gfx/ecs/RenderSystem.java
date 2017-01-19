@@ -156,6 +156,11 @@ public class RenderSystem extends EntitySystem {
 	private void presentPostprocessed(Texture tex) {
 		postShader.bind();
 		
+		postShader.setUniform("downscaledHdr", 6);
+		GLErrors.check();
+		glActiveTexture(GL_TEXTURE0 + 6);
+		averager.getAverageColorTexture().bind();
+		
 		postShader.setUniform("hdr", 0);
 		GLErrors.check();
 		glActiveTexture(GL_TEXTURE0);
