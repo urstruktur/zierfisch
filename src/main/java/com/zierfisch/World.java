@@ -57,7 +57,7 @@ public final class World {
 		
 		Entity cam = new Entity();
 		cam.add(new Camera());
-		cam.add(new PathFollower());
+		cam.add(new PathFollower(0.017f));
 		cam.add(pose);
 		
 		engine.addEntity(cam);
