@@ -69,10 +69,47 @@ public class ResizerBuilder {
 	public Resizer build(Texture sourceTexture, Texture targetTexture, TextureUsage usage) {
 		selectDimensions();
 		
-		if(iterations != 1) {
-			throw new UnsupportedOperationException("Sorry, only one-off resizing is supported atm");
+		if(iterations <= 0) {
+			throw new IllegalStateException("Iterations needs to be ≥ 1, but was: " + iterations);
+		} else if(iterations == 1) {
+			return buildeOneOffResizer(sourceTexture, targetTexture, usage);
+		} else {
+			return buildResizerChain(sourceTexture, targetTexture, usage);
+		}
+	}
+
+	private Resizer buildResizerChain(Texture firstSourceTexture, Texture finalTargetTexture, TextureUsage usage) {
+		Resizer[] resizers = new Resizer[iterations];
+		
+		Texture source = firstSourceTexture;
+		Texture target;
+		
+		ResizerBuilder resizerBuilder = new ResizerBuilder();
+		resizerBuilder.setFrom(sourceWidth, sourceHeight);
+		
+		// Leave the last resizer in the array at null
+		for(int i = 0; i < (iterations-1); ++i) {
+			target = new Texture();
+			
+			double alpha = (double) (i+1) / (double) iterations;
+			int middleWidth = (int) (alpha * sourceWidth + (1-alpha) * targetWidth);
+			int middleHeight = (int) (alpha * sourceHeight + (1-alpha) * targetHeight);
+			
+			resizerBuilder.setTo(middleWidth, middleHeight);
+			
+			resizers[i] = resizerBuilder.build(source, target, usage);
+					
+			resizerBuilder.setFrom(middleWidth, middleHeight);
+			source = target;
 		}
 		
+		// And set it to resize into the final target texture 
+		resizers[iterations-1] = buildeOneOffResizer(source, finalTargetTexture, usage);
+		
+		return new ResizerChain(resizers);
+	}
+
+	private Resizer buildeOneOffResizer(Texture sourceTexture, Texture targetTexture, TextureUsage usage) {
 		SurfaceBuilder surfBuilder = new SurfaceBuilder().attach(usage);
 		
 		Surface sourceSurf = surfBuilder.setSize(sourceWidth, sourceHeight).build(sourceTexture);
