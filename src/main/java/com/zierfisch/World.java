@@ -72,11 +72,14 @@ public final class World {
 		
 		// make skybox
 		Gestalt gestalt = new Gestalt();
-		gestalt.mesh = new SkyboxMaker().make(new SegmentedMeshBuilder(Primitive.TRIANGLES),200);
+		gestalt.mesh = new SkyboxMaker().make(new SegmentedMeshBuilder(Primitive.TRIANGLES),190);
 		gestalt.texture4 = new TextureBuilder().setContents("assets/textures/fog-gradient-03.png").build();
-		gestalt.shader = new ShaderBuilder().setVertexShader("assets/shaders/cc/depth.vert.glsl")
-                							.setFragmentShader("assets/shaders/cc/depth.frag.glsl").build();
-		
+		gestalt.shader = new ShaderBuilder().setVertexShader("assets/shaders/cc/skybox.vert.glsl")
+                							.setFragmentShader("assets/shaders/cc/skybox.frag.glsl").build();
+		Entity box = new Entity();
+		box.add(gestalt);
+		box.add(new Pose());
+		engine.addEntity(box);
 		//cam.add(gestalt);
 		
 		engine.addEntity(cam);
