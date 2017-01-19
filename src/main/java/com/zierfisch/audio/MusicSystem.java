@@ -5,7 +5,7 @@ import com.badlogic.ashley.core.EntitySystem;
 
 public class MusicSystem extends EntitySystem {
 
-	private static final String SOUNDTRACK_WAV_FILE = "assets/audio/non.wav";
+	private static final String SOUNDTRACK_WAV_FILE = "assets/audio/LustmordSubspaceExcerpt.wav";
 	
 	private GhettoBlaster blaster;
 	private boolean playing;
