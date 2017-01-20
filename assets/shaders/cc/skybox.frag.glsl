@@ -7,9 +7,9 @@ in vec4 fragPosWorld;
 layout (location = 0) out vec4 color;
 layout (location = 1) out vec4 BrightColor;
 
-vec4 colorTop =  vec4(0.09,0.24,0.29,1.0);
+vec4 colorTop =  vec4(0.1,0.3,0.35,1.0);
 //vec4 colorBottom = vec4(0.07,0.18,0.22,1.0);
-vec4 colorBottom = vec4(0.0,0.1,0.1,1.0);
+vec4 colorBottom = vec4(0.02,0.18,0.2,1.0);
 
 void main()
 {

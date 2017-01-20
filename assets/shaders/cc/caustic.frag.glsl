@@ -134,9 +134,11 @@ void main()
 	color = mix(fogColor, materialColor, fogFactor);
 	color.a = 1.0;
 	
+	//color *= 5.5;
+	
 	// -- EXTRACT BRIGHT PIXELS --
 	
-	float bloomThreshold = averageLuminosity * 15;  // factor seems a bit arbitrary, comes from the low life of averageLuminosity
+	float bloomThreshold = averageLuminosity * 5;  // factor seems a bit arbitrary, comes from the low life of averageLuminosity
 	
 	// calculate brigthness by applying luminosity contribution of rgb colors (see https://en.wikipedia.org/wiki/Relative_luminance)
 	float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
