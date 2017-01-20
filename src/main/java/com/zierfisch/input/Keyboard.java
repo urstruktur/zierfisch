@@ -15,7 +15,10 @@ public class Keyboard extends GLFWKeyCallback {
 
 	@Override
 	public void invoke(long window, int key, int scancode, int action, int mod) {
-		keys[key] = action == GLFW_REPEAT || action == GLFW_PRESS;
+		if(key >= 0){
+			keys[key] = action == GLFW_REPEAT || action == GLFW_PRESS;
+		}
+		
 		shift = mod == GLFW_MOD_SHIFT;
 
 		if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
