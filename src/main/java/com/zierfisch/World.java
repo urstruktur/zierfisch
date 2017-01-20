@@ -41,6 +41,7 @@ public final class World {
 		addMainCamera(engine);
 		addAuxiliaryQuantumLightConvolutionAcceleratorBuffer();
 		addFishflock(engine, 7, 7, 7, 0.4f);
+		addSkybox(engine);
 		//addFishflock(engine, 3, 5, 3, 0.5f);
 	}
 	
@@ -70,19 +71,15 @@ public final class World {
 		//cam.add(new PathFollower(0.01f));
 		cam.add(pose);
 		
-		// make skybox
-		Gestalt gestalt = new Gestalt();
-		gestalt.mesh = new SkyboxMaker().make(new SegmentedMeshBuilder(Primitive.TRIANGLES),190);
-		gestalt.texture4 = new TextureBuilder().setContents("assets/textures/fog-gradient-03.png").build();
-		gestalt.shader = new ShaderBuilder().setVertexShader("assets/shaders/cc/skybox.vert.glsl")
-                							.setFragmentShader("assets/shaders/cc/skybox.frag.glsl").build();
-		Entity box = new Entity();
-		box.add(gestalt);
-		box.add(new Pose());
-		engine.addEntity(box);
-		//cam.add(gestalt);
-		
 		engine.addEntity(cam);
+	}
+	
+	private static void addSkybox(Engine engine){
+		Maker maker = new Maker().setMesh(new SkyboxMaker().make(new SegmentedMeshBuilder(Primitive.TRIANGLES),115))
+				 .setShader("assets/shaders/cc/skybox.vert.glsl", "assets/shaders/cc/skybox.frag.glsl")
+                .setTexture(4, "assets/textures/fog-gradient-03.png");
+
+		engine.addEntity(maker.build());
 	}
 	
 	private static void addFishflock(Engine engine, int nrX, int nrY, int nrZ, float margin){

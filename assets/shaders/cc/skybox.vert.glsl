@@ -12,10 +12,15 @@ out vec4 fragPosWorld;
 
 void main()
 {
-	mat4 mv = u_view * u_model;
-	mat4 mvp = u_projection * mv;
+	mat4 view_rot = u_view;
+	view_rot[0].w = 0;
+	view_rot[1].w = 0;
+	view_rot[2].w = 0;
+	view_rot[3] = vec4(0.0,0.0,0.0,1.0);
 
-	fragPosWorld = u_model * vec4(position, 1.0);
+	mat4 vp = u_projection * view_rot;
 
-    gl_Position = mvp * vec4(position, 1.0);
+	fragPosWorld = vec4(position, 1.0);
+
+    gl_Position = vp * vec4(position, 1.0);
 }
