@@ -20,6 +20,14 @@ switch ( OperatingSystem.current() ) {
 		break
 }
 
+distributions {
+    main {
+        contents {
+            from('assets') { into 'bin/assets' }
+        }
+    }
+}
+
 project.ext.lwjglVersion = "3.1.0"
 project.ext.jomlVersion = "1.9.0"
 
