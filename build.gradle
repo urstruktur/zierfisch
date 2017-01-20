@@ -6,7 +6,6 @@ apply plugin: "eclipse"
 
 sourceCompatibility = 1.8
 mainClassName = "com.zierfisch.Main"
-applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
 
 switch ( OperatingSystem.current() ) {
 	case OperatingSystem.WINDOWS:
@@ -17,6 +16,7 @@ switch ( OperatingSystem.current() ) {
 	break
 	case OperatingSystem.MAC_OS:
 		project.ext.lwjglNatives = "natives-macos"
+		applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
 		break
 }
 
