@@ -37,6 +37,8 @@ import com.zierfisch.gfx.shader.ShaderBuilder;
 import com.zierfisch.gfx.surf.PingPong;
 import com.zierfisch.gfx.surf.Surface;
 import com.zierfisch.gfx.surf.SurfaceBuilder;
+import com.zierfisch.gfx.tex.Resizer;
+import com.zierfisch.gfx.tex.ResizerBuilder;
 import com.zierfisch.gfx.tex.Texture;
 import com.zierfisch.gfx.tex.TextureBuilder;
 import com.zierfisch.gfx.tex.TextureUsage;
@@ -85,7 +87,10 @@ public class RenderSystem extends EntitySystem {
 	private Texture offscreenDepth;
 	
 	private PingPong pingPong;
-	
+	private Texture tempTex;
+	private Resizer resizerUp;
+	private Resizer resizerCopy;
+	private Resizer resizerDown;
 	
 	private TextureAverager averager;
 	private long startTime;
@@ -147,10 +152,20 @@ public class RenderSystem extends EntitySystem {
 		                                .attach(TextureUsage.VECTOR)
 		                                .build(new Texture[]{offscreenColor,offscreenBrightColor}, offscreenDepth);
 		
-		SurfaceBuilder blurSurfaceBuilder = new SurfaceBuilder().setSize(surface)
+		SurfaceBuilder blurSurfaceBuilder = new SurfaceBuilder().setSize(surface.getWidth()/2, surface.getHeight()/2)
 									      .attach(TextureUsage.VECTOR);
 		pingPong = new PingPong(blurSurfaceBuilder);
 		
+		tempTex = new Texture();
+	    ResizerBuilder resizerBuilder = new ResizerBuilder();
+	    
+		resizerBuilder.setFrom(surface.getWidth(), surface.getHeight())
+						.setTo(surface.getWidth()/2, surface.getHeight()/2);
+		resizerDown = resizerBuilder.build(offscreenBrightColor, pingPong.getColorTex(), TextureUsage.VECTOR);
+		
+		resizerBuilder.setFrom(surface.getWidth()/2, surface.getHeight()/2)
+						.setTo(surface.getWidth(), surface.getHeight());
+		resizerUp = resizerBuilder.build(pingPong.getColorTex(), offscreenBrightColor, TextureUsage.VECTOR);
 		
 		averager = new TextureAverager(offscreenColor, surface.getWidth(), surface.getHeight());
 	}
@@ -181,7 +196,7 @@ public class RenderSystem extends EntitySystem {
 		postShader.setUniform("rollingAvgLuminosity", averager.getRollingAverageLuminosity()); 
 		//System.out.println(averager.getRollingAverageLuminosity());
 		postShader.setUniform("rollingAvgColor", averager.getRollingAverageColor());
-		setTextureUniform(postShader, pingPong.getColorTex(), 1);
+		setTextureUniform(postShader, offscreenBrightColor, 1);
 		
 		// Apply gamma correction exactly once at this point.
 		// Do not do this again in a shader!
@@ -241,6 +256,7 @@ public class RenderSystem extends EntitySystem {
 		pingPong.clear();
 		
 		// here i want to scale pingpong down
+		resizerDown.resize();
 		
 		boolean first_iteration = true;
 		boolean horizontal = true;
@@ -266,6 +282,7 @@ public class RenderSystem extends EntitySystem {
 		
 		// here i want to scale pingpong up
 		
+		resizerUp.resize();
 		//pingPong.getColorTex()
 
 		GLErrors.check("Before binding physical surface");
@@ -276,9 +293,9 @@ public class RenderSystem extends EntitySystem {
 		
 		
 		//present(offscreenColor);
-		presentPostprocessed(offscreenColor);
+		//presentPostprocessed(offscreenColor);
 		
-		//present(pingPong.getColorTex());
+		present(offscreenBrightColor);
 		
 		//present(offscreenDepth);
 		//present(averager.getAverageColorTexture());
