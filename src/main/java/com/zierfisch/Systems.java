@@ -18,12 +18,12 @@ public final class Systems {
 	 */
 	public static void add(Application app, Engine engine) {
 
-		engine.addSystem(new TweakingSystem());
+		//engine.addSystem(new TweakingSystem());
 		engine.addSystem(new FlockingSystem());
 		engine.addSystem(new CameraSystem());
 		engine.addSystem(new RenderSystem(app.getPhysicalSurface()));
 		engine.addSystem(new MusicSystem());
-		//engine.addSystem(new PathFollowSystem());
+		engine.addSystem(new PathFollowSystem());
 
 		
 	}
