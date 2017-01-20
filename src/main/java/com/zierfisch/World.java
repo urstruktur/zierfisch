@@ -6,11 +6,20 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.zierfisch.assets.Maker;
+import com.zierfisch.assets.geom.CuboidMaker;
+import com.zierfisch.assets.geom.SkyboxMaker;
 import com.zierfisch.cam.Camera;
 import com.zierfisch.cam.PathFollower;
 import com.zierfisch.flocking.Boid;
+import com.zierfisch.gfx.ecs.Gestalt;
 import com.zierfisch.gfx.ecs.Light;
 import com.zierfisch.gfx.ecs.Pose;
+import com.zierfisch.gfx.mesh.Mesh;
+import com.zierfisch.gfx.mesh.MeshBuilder;
+import com.zierfisch.gfx.mesh.Primitive;
+import com.zierfisch.gfx.mesh.SegmentedMeshBuilder;
+import com.zierfisch.gfx.shader.ShaderBuilder;
+import com.zierfisch.gfx.tex.TextureBuilder;
 
 public final class World {
 
@@ -27,10 +36,12 @@ public final class World {
 		maker.setMesh("assets/models/seafloor.obj")
 			 .setShader("assets/shaders/cc/caustic.vert.glsl", "assets/shaders/cc/caustic.frag.glsl");
 		engine.addEntity(maker.build());
+	
 		
 		addMainCamera(engine);
 		addAuxiliaryQuantumLightConvolutionAcceleratorBuffer();
 		addFishflock(engine, 7, 7, 7, 0.4f);
+		addSkybox(engine);
 		//addFishflock(engine, 3, 5, 3, 0.5f);
 	}
 	
@@ -61,6 +72,14 @@ public final class World {
 		cam.add(pose);
 		
 		engine.addEntity(cam);
+	}
+	
+	private static void addSkybox(Engine engine){
+		Maker maker = new Maker().setMesh(new SkyboxMaker().make(new SegmentedMeshBuilder(Primitive.TRIANGLES),115))
+				 .setShader("assets/shaders/cc/skybox.vert.glsl", "assets/shaders/cc/skybox.frag.glsl")
+                .setTexture(4, "assets/textures/fog-gradient-03.png");
+
+		engine.addEntity(maker.build());
 	}
 	
 	private static void addFishflock(Engine engine, int nrX, int nrY, int nrZ, float margin){
