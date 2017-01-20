@@ -23,7 +23,7 @@ public class MusicSystem extends EntitySystem {
 	@Override
 	public void update(float deltaTime) {
 		if(!playing) {
-			//blaster.play();
+			blaster.play();
 			playing = true;
 		}
 	}
