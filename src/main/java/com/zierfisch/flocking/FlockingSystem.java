@@ -45,10 +45,11 @@ public class FlockingSystem extends IteratingSystem {
 				new Vector3(4.2f,-1.3f,-23.8f),
 				new Vector3(4.6f,-0.4f,-29.8f),
 				new Vector3(4.7f,-0.4f,-31f), // höhlenausgang
-				new Vector3(4.8f,0.7f,-37f),
-				new Vector3(11.1f,0.5f,-33f), // schiffsbug
-				new Vector3(12.8f,-0.4f,-42.4f), // behind ship
-				new Vector3(12.8f,-0.7f,-44f),};
+				new Vector3(4.8f,0.7f,-33f),
+				new Vector3(11.1f,0.5f,-30.5f), // schiffsbug
+				new Vector3(12.8f,-0.4f,-40f), // behind ship
+				new Vector3(11.1f,0.5f,-31.5f),
+				new Vector3(4.8f,0.7f,-34f)};
 		PreciseCatmullRomSpline<Vector3> spline = new PreciseCatmullRomSpline<Vector3>(Vector3.class, controlPoints, false, 0.1f);
 		RulePathFollow rf = new RulePathFollow(spline,0.2f);
 		

@@ -117,7 +117,7 @@ public final class World {
 		Entity randomEnt1 = allEnts.get(allEnts.size() - 1);
 		Light light1 = new Light();
 		light1.color.set(.3f, 0.9f, 1f);
-		light1.intensity = 0.9f;
+		light1.intensity = 0.7f;
 		randomEnt1.add(light1);
 		
 		

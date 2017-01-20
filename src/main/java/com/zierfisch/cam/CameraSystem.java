@@ -1,6 +1,8 @@
 package com.zierfisch.cam;
 
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
+
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -114,7 +116,9 @@ public class CameraSystem extends IteratingSystem {
 	public void recalculateView(Camera cam, Pose pose) {
 		// set focus to fishie average
 		if(fs != null){
-			focus.set(fs.getAverage());
+			Vector3fc fishflock = fs.getAverage();
+			fishflock.add(new Vector3f(-0.5f, 0.0f, 0.0f), (Vector3f) fishflock);
+			focus.set(fishflock);
 		}else{
 			focus.set(0, 0, 1);
 			pose.orientation.transform(focus);

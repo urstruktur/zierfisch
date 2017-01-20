@@ -17,7 +17,7 @@ import com.zierfisch.gfx.ecs.Pose;
 public class RulePathFollow implements Rule {
 	
 	private float weight;
-	//private float pathRadius;
+	private float pathRadius = 5f;
 	//private float offset;
 	Path<Vector3> curve;
 	
@@ -48,7 +48,12 @@ public class RulePathFollow implements Rule {
 			Vector3 point = new Vector3();
 			curve.valueAt(point, nearestCurveValue);
 			Vector3f nearestCurvePoint = new Vector3f(point.x, point.y, point.z);
-			desired_velocity = nearestCurvePoint.sub(p.position).normalize().mul(Boid.maxSpeed);
+			Vector3f positionToNearestCurvePoint = nearestCurvePoint.sub(p.position);
+			if(positionToNearestCurvePoint.lengthSquared() >= pathRadius){
+				desired_velocity = positionToNearestCurvePoint.normalize().mul(Boid.maxSpeed);
+			}else{
+				desired_velocity.zero();
+			}
 		}
 		
 		return desired_velocity.mul(weight);

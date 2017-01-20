@@ -138,7 +138,7 @@ void main()
 	
 	// -- EXTRACT BRIGHT PIXELS --
 	
-	float bloomThreshold = averageLuminosity * 5;  // factor seems a bit arbitrary, comes from the low life of averageLuminosity
+	float bloomThreshold = averageLuminosity * 3;  // factor seems a bit arbitrary, comes from the low life of averageLuminosity
 	
 	// calculate brigthness by applying luminosity contribution of rgb colors (see https://en.wikipedia.org/wiki/Relative_luminance)
 	float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
