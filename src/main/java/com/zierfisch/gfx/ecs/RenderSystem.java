@@ -293,9 +293,9 @@ public class RenderSystem extends EntitySystem {
 		
 		
 		//present(offscreenColor);
-		//presentPostprocessed(offscreenColor);
+		presentPostprocessed(offscreenColor);
 		
-		present(offscreenBrightColor);
+		//present(offscreenBrightColor);
 		
 		//present(offscreenDepth);
 		//present(averager.getAverageColorTexture());
