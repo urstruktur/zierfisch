@@ -10,7 +10,7 @@ uniform vec4 avgColor;
 uniform vec4 rollingAvgColor;
 
 /** HDR key for scaled luminance */
-const float keyBase = 0.03;
+const float keyBase = 0.009;
 
 const float exposure = 10.0;
 
@@ -59,7 +59,7 @@ vec4 hdrToClampedSRGB(float key, float exposure, vec4 color, vec4 avgColor) {
                      ( 1.0 + scaledL );
 
     // Exposure tone mapping @see https://learnopengl.com/#!Advanced-Lighting/HDR
-    vec3 ldr = vec3(1.0) - exp(-color.rgb * scaledL * exposure);
+    vec3 ldr = vec3(1.0) - exp(-color.rgb * mappedL * exposure);
 
     // Scale by mapped luminosity and clamp to 0 ≤ x ≤ 1
     // Alpha is set to 1.0
