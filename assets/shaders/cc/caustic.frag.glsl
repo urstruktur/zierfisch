@@ -24,7 +24,7 @@ struct Light {
 uniform Light lights[MAX_LIGHTS];
 
 layout (location = 0) out vec4 color;
-layout (location = 1) out vec4 BrightColor;  
+layout (location = 1) out vec4 BrightColor;
 
 in vec2 fragTexCoords;
 in vec4 fragPos; // view space
@@ -51,28 +51,66 @@ float diffuse(vec3 fragPosWorld, vec3 normalWorld, vec3 lightPosWorld) {
 	return att * diffuse;
 }
 
-// source: https://www.shadertoy.com/view/4ljXWh
+///
+/// Procedural texture that simulates caustics using angular functions and
+/// the running time in seconds.
+///
+/// See: https://www.shadertoy.com/view/4ljXWh
+///
 vec3 caustic(vec2 uv)
 {
-    vec2 p = mod(uv*TAU, TAU)-250.0;
-    float offset = time * .5+23.0; //time * .5+23.0;
+	// Each iteration adds one sine/cosine combination to c and i, essentially making the caustics more complex
+	const int iterations = 5;
+	const float timeScale = 0.5;
+	const float timeOffset = 23.5;
+	const float piHalved = TAU / 4.0;
 
+	// Scale uv coordinates by 2π but ensure the result  is in the interval [0,2π] using mod
+	// modulo is just in case the uv coordinates where scaled before and are not in range [0,1]
+	vec2 scaledUV = mod(uv*TAU, TAU);
+
+	// Then, subtract 250 from scaledUV, yielding a number in range [-250,-243.716814]
+    vec2 p = scaledUV - 250.0;
+
+	// Calculate scaled time scaledT, which accounts for desired animation speed in timeScale
+    float scaledT = time * timeScale + timeOffset;
+
+	// I is a version of p that is offset with each iteration of the for-loop by vector
+	// with its components in range [-1,1] that is returned from cosine and sine functions
+	// that are parametrized with the last version of i
+	// i then is used for manipulation of c
 	vec2 i = vec2(p);
 	float c = 1.0;
-	float inten = .005;
+	float intensity = .005;
 
+	// The loop prepares a c value that is then used to make a tilable
+	// texture, with some pow and abs postprocessing
+	// More iterations make for more complex/interesting patterns in c values
 	for (int n = 0; n < MAX_ITER; n++)
 	{
-		float t = offset * (1.0 - (3.5 / float(n+1)));
-		i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
-		c += 1.0/length(vec2(p.x / (sin(i.x+t)/inten),p.y / (cos(i.y+t)/inten)));
+		float t = scaledT * (3.5 / float(n+1));
+		i = p + sin(vec2(t + piHalved, t) - i.xy) +
+		        sin(vec2(t, t + piHalved) + i.yx);
+
+		c += 1.0/length(vec2(p.x / (sin(i.x+t)/intensity),p.y / (cos(i.y+t)/intensity)));
 	}
 
+	// Make brightness independent of iteration count
 	c /= float(MAX_ITER);
-	c = 1.17-pow(c, 1.4);
-	vec3 color = vec3(pow(abs(c), 8.0));
+
+	// This gives low numbers a brightness of 1 or slightly higher
+	// and high numbers become negative at a little ofer 1
+	c = abs(1.2-c);
+
+	// When this number is decreased, there are more distinguishible shades of
+	// brightness, decreasing it makes for more linear brightness distribution
+	const float contrast = 8.0;
+
+	vec3 color = vec3( pow(c, contrast) );
+
+	// This apparently makes for more blueish/greenish colors by adding to
+	// these two channels and then clamping to [0,1]
     color = clamp(color + vec3(0.0, 0.35, 0.5), 0.0, 1.0);
-    //color = mix(color, vec3(1.0,1.0,1.0),0.3);
 
     return color;
 }
@@ -133,13 +171,13 @@ void main()
 
 	color = mix(fogColor, materialColor, fogFactor);
 	color.a = 1.0;
-	
+
 	//color *= 5.5;
-	
+
 	// -- EXTRACT BRIGHT PIXELS --
-	
+
 	float bloomThreshold = averageLuminosity * 3;  // factor seems a bit arbitrary, comes from the low life of averageLuminosity
-	
+
 	// calculate brigthness by applying luminosity contribution of rgb colors (see https://en.wikipedia.org/wiki/Relative_luminance)
 	float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
 	if(brightness > bloomThreshold)
