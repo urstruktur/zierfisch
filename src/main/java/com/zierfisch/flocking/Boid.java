@@ -8,8 +8,6 @@ import com.badlogic.ashley.core.Component;
  * flag component for flocking behaviour
  */
 public class Boid implements Component{
-	public float influence = 1f;
-	
 	/**
 	 * describes the maxium thrust the entity can generate itself
 	 */
@@ -20,6 +18,7 @@ public class Boid implements Component{
 	 */
 	public static final float maxSpeed = 1f;
 	
+	public float influence = 1f;
 	/**
 	 * Holds mass of an object. It determines the effect of an applied steering force on the velocity.
 	 */
@@ -32,5 +31,6 @@ public class Boid implements Component{
 	public Boid(Boid other) {
 		influence = other.influence;
 		mass = other.mass;
+		up.set(other.up);
 	}
 }
