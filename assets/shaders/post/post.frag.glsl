@@ -115,11 +115,15 @@ vec4 vignettize(vec4 unvignetted, vec2 uv, float blackness) {
 }
 
 void main() {
+    // In non-bloomed areas, texture1 is zero and bloomedHdrColor contains original HDR color
+    // In bloomed arwas, texture1 is a blurred version of approximately equal brightness, so adding together
+    // will result in approximately double brightness
+    vec4 bloomedHdrColor = texture(hdr, st) + texture(texture1, st);
 
     color = hdrToClampedSRGB(
         keyBase,
         exposureFromColorDeviation(mix(rollingAvgColor, avgColor, 0.1), rollingAvgColor),
-        texture(hdr, st) + texture(texture1, st),
+        bloomedHdrColor,
         rollingAvgColor
     );
     color.a = 1.0;
@@ -140,7 +144,7 @@ void main() {
     } else {
         //color = fract(texture(hdr, st));
     }
-	
+
     color = vignettize(color, st, 0.8);
 
     //color = mix(mix(rollingAvgColor, vec4(0.0, 0.0, 0.0, 1.0), 0.8) , color, clamp(vignetteFactor, 0.0, 1.0));
