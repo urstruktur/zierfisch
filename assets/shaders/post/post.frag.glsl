@@ -51,18 +51,9 @@ vec4 hdrToClampedSRGB(float key, float exposure, vec4 color, vec4 avgColor) {
     // Scaled luminosity with respect to the average luminosity
     float scaledL = (key * fragL) / avgL;
 
-    // Good ol' Reinhard, no modifications
-    // float mappedL = scaledL / (1.0 + scaledL);
-
-    // Reinhard's operator for tone mapping, modified version
-    float mappedL =  ( scaledL * (1.0 + (scaledL / (fragL*fragL))) ) /
-                     ( 1.0 + scaledL );
-
     // Exposure tone mapping @see https://learnopengl.com/#!Advanced-Lighting/HDR
-    vec3 ldr = vec3(1.0) - exp(-color.rgb * mappedL * exposure);
+    vec3 ldr = vec3(1.0) - exp(-color.rgb * scaledL * exposure);
 
-    // Scale by mapped luminosity and clamp to 0 ≤ x ≤ 1
-    // Alpha is set to 1.0
     return vec4(
         clamp(ldr, 0.0, 1.0),
         1.0
